@@ -3,16 +3,16 @@ import type { DepositStatus, QuoteStatus } from "@/lib/types";
 import { cn } from "./cn";
 
 const tones: Record<Tone, string> = {
-  neutral: "bg-canvas text-ink-soft ring-line",
-  info: "bg-[#eaf1fb] text-[#1d4a80] ring-[#c9d9ef]",
-  warning: "bg-hivis-soft text-hivis-ink ring-hivis/50",
-  success: "bg-go-soft text-go-ink ring-go/25",
-  danger: "bg-red-50 text-stop ring-stop/25",
+  neutral: "bg-raised text-ink-soft ring-line",
+  info: "bg-[#101b2a] text-[#8cc0ff] ring-[#1f3550]",
+  warning: "bg-hivis-soft text-hivis-ink ring-hivis/25",
+  success: "bg-go-soft text-go-ink ring-go/30",
+  danger: "bg-stop-soft text-stop ring-stop/30",
 };
 
 const dots: Record<Tone, string> = {
-  neutral: "bg-slate-400",
-  info: "bg-sky-500",
+  neutral: "bg-muted",
+  info: "bg-[#5aa7ff]",
   warning: "bg-hivis",
   success: "bg-go",
   danger: "bg-rose-500",

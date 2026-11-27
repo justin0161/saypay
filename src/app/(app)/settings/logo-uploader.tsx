@@ -46,7 +46,7 @@ export function LogoUploader({ logoUrl, businessName, brandColor }: { logoUrl: s
           {busy ? "Uploading…" : preview ? "Change logo" : "Upload logo"}
         </Button>
         <input ref={ref} type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(e) => void onFile(e.target.files?.[0])} />
-        {error && <p className="mt-1 text-sm text-rose-700">{error}</p>}
+        {error && <p className="mt-1 text-sm text-stop">{error}</p>}
       </div>
     </div>
   );

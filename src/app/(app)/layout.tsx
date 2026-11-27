@@ -19,7 +19,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
           <div className="flex items-center gap-2">
             <span className="hidden max-w-52 items-center gap-2 truncate py-1 pr-1 text-sm font-semibold text-ink-soft md:inline-flex">
-              <span className="grid size-7 shrink-0 place-items-center rounded-full bg-ink text-[13px] font-semibold text-hivis">
+              <span className="grid size-7 shrink-0 place-items-center rounded-full bg-night text-[13px] font-semibold text-hivis">
                 {workspace.business_name.trim().charAt(0).toUpperCase() || "S"}
               </span>
               <span className="truncate">{workspace.business_name}</span>

@@ -175,7 +175,7 @@ export function Composer({
       )}
 
       {error && (
-        <p className="text-sm font-medium text-rose-700" role="alert">
+        <p className="text-sm font-medium text-stop" role="alert">
           {error}
         </p>
       )}

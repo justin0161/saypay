@@ -170,7 +170,7 @@ export function VoiceRecorder({
       )}
 
       {state.phase === "recording" && (
-        <div className="rounded-2xl bg-ink p-4 text-white" aria-live="polite">
+        <div className="rounded-2xl bg-night p-4 text-white" aria-live="polite">
           <div className="flex items-center gap-4">
             <button
               type="button"
@@ -212,7 +212,7 @@ export function VoiceRecorder({
       )}
 
       {error && (
-        <p className="text-sm font-medium text-rose-700" role="alert">
+        <p className="text-sm font-medium text-stop" role="alert">
           {error}
         </p>
       )}

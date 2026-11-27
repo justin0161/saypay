@@ -29,7 +29,7 @@ export function DepositToggle({ quoteId, paid }: { quoteId: string; paid: boolea
           </>
         )}
       </Button>
-      {error && <p className="mt-2 text-sm text-rose-700">{error}</p>}
+      {error && <p className="mt-2 text-sm text-stop">{error}</p>}
     </div>
   );
 }
@@ -62,7 +62,7 @@ export function DeleteQuoteButton({ quoteId }: { quoteId: string }) {
       <Button variant="ghost" onClick={() => setConfirming(false)}>
         Cancel
       </Button>
-      {error && <p className="w-full text-sm text-rose-700">{error}</p>}
+      {error && <p className="w-full text-sm text-stop">{error}</p>}
     </div>
   );
 }

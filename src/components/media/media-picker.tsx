@@ -58,7 +58,7 @@ export function MediaPicker({
         }}
       />
       {error && (
-        <p className="mt-2 text-sm font-medium text-rose-700" role="alert">
+        <p className="mt-2 text-sm font-medium text-stop" role="alert">
           {error}
         </p>
       )}

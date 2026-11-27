@@ -100,7 +100,7 @@ export function ProfileForm({ workspace: w }: { workspace: Workspace }) {
       >
         <Input id="deposit_link_url" name="deposit_link_url" type="url" inputMode="url" defaultValue={v("deposit_link_url", w.deposit_link_url ?? "")} placeholder="https://" />
       </Field>
-      {state?.error && <p className="text-sm font-medium text-rose-700" role="alert">{state.error}</p>}
+      {state?.error && <p className="text-sm font-medium text-stop" role="alert">{state.error}</p>}
       {state?.ok && <p className="text-sm font-semibold text-go-ink" role="status">Saved ✓</p>}
       <Button type="submit" disabled={pending}>
         {pending ? "Saving…" : "Save profile"}

@@ -81,28 +81,13 @@ export const BoltIcon = (p: P) => (
   <svg {...base(p)}><path d="M13 2 4 14h7l-1 8 9-12h-7Z" /></svg>
 );
 
-/**
- * SayPay mark: a speech bubble of sound bars. `tone` = the surface behind it:
- * "light" (cream/white), "dark" (navy) or "amber".
- */
-export const Logo = ({ className, tone = "light" }: { className?: string; tone?: "light" | "dark" | "amber" }) => (
+/** SayPay mark: dark sound bars in a lime disc, with a lowercase wordmark. */
+export const Logo = ({ className }: { className?: string; tone?: string }) => (
   <span className={className}>
-    <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden className="inline-block align-middle">
-      <path
-        d="M14 4h36a10 10 0 0 1 10 10v28a10 10 0 0 1-10 10H30l-12 9v-9h-4A10 10 0 0 1 4 42V14A10 10 0 0 1 14 4Z"
-        fill={tone === "light" ? "#0F1B2D" : tone === "dark" ? "#FFB627" : "#0F1B2D"}
-      />
-      <path
-        d="M20 25v8M27 19v20M34 23v12M41 27v4"
-        stroke={tone === "dark" ? "#0F1B2D" : "#FFB627"}
-        strokeWidth="5"
-        strokeLinecap="round"
-      />
+    <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden className="inline-block align-middle">
+      <circle cx="16" cy="16" r="16" fill="#C8FF3D" />
+      <path d="M9 14v4M13 10v12M17 12v8M21 14v4" stroke="#0B0D10" strokeWidth="2.6" strokeLinecap="round" />
     </svg>
-    <span
-      className={`ml-2 align-middle font-display text-[21px] leading-none font-bold tracking-[-0.03em] ${tone === "dark" ? "text-white" : "text-ink"}`}
-    >
-      SayPay
-    </span>
+    <span className="ml-2 align-middle font-display text-[21px] leading-none font-bold tracking-[-0.04em] text-ink">saypay</span>
   </span>
 );

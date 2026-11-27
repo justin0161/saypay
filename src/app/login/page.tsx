@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CardIcon, CheckIcon, Logo, PlayIcon } from "@/components/ui/icons";
+import { CheckIcon, Logo, PlayIcon } from "@/components/ui/icons";
 import { LoginForms } from "./login-forms";
 
 export const metadata: Metadata = { title: "Log in" };
@@ -21,13 +21,13 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         </Link>
         <div className="mx-auto mt-12 w-full max-w-sm flex-1 animate-rise sm:mt-20">
           <h1 className="text-center text-[2.5rem] leading-[1.02] font-bold lg:text-left">
-            {mode === "signup" ? "Start winning more quotes" : "Welcome back"}
+            {mode === "signup" ? "Create your account" : "Welcome back"}
           </h1>
           <p className="mt-3 text-center text-lg text-ink-soft lg:text-left">
             {mode === "signup" ? "Free for your first 5 quotes. No card needed." : "Log in to see your quotes and replies."}
           </p>
           {linkError && (
-            <p className="mt-5 rounded-2xl bg-red-50 p-3.5 text-sm font-medium text-stop ring-1 ring-stop/20 ring-inset" role="alert">
+            <p className="mt-5 rounded-2xl bg-stop-soft p-3.5 text-sm font-medium text-stop ring-1 ring-stop/30 ring-inset" role="alert">
               That sign-in link has expired or was already used. Request a new one below.
             </p>
           )}
@@ -36,46 +36,39 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
       </main>
 
       {/* Brand panel (desktop) */}
-      <aside className="hidden p-4 lg:block" aria-hidden>
-        <div className="relative flex h-full flex-col justify-center overflow-hidden rounded-[2.5rem] bg-hivis px-14 xl:px-20">
-          <div className="absolute -top-28 -right-20 size-96 rounded-full bg-[#ffc757]" />
-          <div className="absolute -bottom-32 -left-24 size-96 rounded-full bg-[#ffa90f]" />
-
-          <p className="relative max-w-md font-display text-5xl leading-[1.02] font-bold tracking-[-0.04em] text-ink">
-            Quotes clients understand. Deposits that actually get paid.
+      <aside className="hidden p-3 lg:block" aria-hidden>
+        <div className="relative flex h-full flex-col justify-center overflow-hidden rounded-[2rem] bg-surface px-14 ring-1 ring-line ring-inset xl:px-20">
+          <div className="absolute right-[-20%] bottom-[-25%] size-[40rem] rounded-full bg-[radial-gradient(closest-side,rgb(200_255_61/0.18),transparent)]" />
+          <p className="relative max-w-md font-display text-5xl leading-[1.02] font-bold tracking-[-0.045em]">
+            Quotes with your voice. <span className="text-hivis">Paid on the spot.</span>
           </p>
-
-          <div className="relative mt-12 w-full max-w-sm">
-            <div className="rounded-3xl bg-surface p-5 shadow-lift">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="font-display text-xl font-bold tracking-[-0.03em]">Back bedroom radiator</p>
-                  <p className="mt-0.5 text-sm text-muted">For Priya · £849.60</p>
-                </div>
-                <span className="rounded-full bg-go-soft px-2.5 py-1 text-xs font-semibold text-go-ink">Accepted</span>
-              </div>
-              <div className="mt-5 flex items-center gap-3 rounded-2xl bg-ink p-3 text-white">
-                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-hivis text-ink">
+          <div className="relative mt-14 w-full max-w-sm">
+            <div className="rounded-3xl bg-canvas p-5 shadow-lift">
+              <p className="text-xs text-muted">Harper &amp; Sons · Quote #0142</p>
+              <p className="mt-1 font-display text-xl font-bold tracking-[-0.03em]">Back bedroom radiator</p>
+              <div className="mt-4 flex items-center gap-3 rounded-2xl bg-night p-3">
+                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-hivis text-on-accent">
                   <PlayIcon width={15} height={15} />
                 </span>
                 <span className="flex h-7 flex-1 items-center gap-[3px]">
                   {WAVE.map((h, i) => (
-                    <span key={i} className={`flex-1 rounded-full ${i < 8 ? "bg-hivis" : "bg-white/25"}`} style={{ height: `${h * 100}%` }} />
+                    <span key={i} className={`flex-1 rounded-full ${i < 8 ? "bg-hivis" : "bg-[#3a3f3a]"}`} style={{ height: `${h * 100}%` }} />
                   ))}
                 </span>
-                <span className="tabular pr-1 text-xs text-white/70">0:34</span>
+                <span className="tabular pr-1 text-xs text-muted">0:34</span>
               </div>
-              <p className="mt-4 flex items-center gap-2 text-sm font-semibold text-go-ink">
-                <CheckIcon width={16} height={16} strokeWidth={3} className="text-go" /> Accepted by Priya · terms locked
-              </p>
+              <div className="mt-4 flex items-center justify-between border-t border-line pt-4 text-sm">
+                <span className="text-ink-soft">Total</span>
+                <span className="tabular font-semibold">£849.60</span>
+              </div>
             </div>
-            <div className="absolute -right-10 -bottom-10 flex animate-pop items-center gap-3 rounded-2xl bg-surface py-3 pr-5 pl-3 shadow-chip [animation-delay:500ms]">
-              <span className="grid size-10 place-items-center rounded-full bg-hivis text-ink">
-                <CardIcon width={18} height={18} />
+            <div className="absolute -right-8 -bottom-10 flex animate-pop items-center gap-3 rounded-2xl bg-raised py-3 pr-5 pl-3 shadow-chip [animation-delay:500ms]">
+              <span className="grid size-9 place-items-center rounded-full bg-hivis text-on-accent">
+                <CheckIcon width={18} height={18} strokeWidth={3} />
               </span>
               <div className="leading-tight">
                 <p className="text-sm font-semibold">Deposit paid · £212.40</p>
-                <p className="mt-0.5 text-xs text-muted">Just now</p>
+                <p className="mt-0.5 text-xs text-muted">By bank transfer</p>
               </div>
             </div>
           </div>

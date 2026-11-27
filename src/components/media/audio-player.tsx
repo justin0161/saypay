@@ -85,7 +85,7 @@ export function AudioPlayer({
       className={cn(
         "flex items-center gap-3 rounded-2xl p-2.5 pr-4",
         tone === "light" && "bg-canvas ring-1 ring-line ring-inset",
-        tone === "dark" && "bg-ink text-white",
+        tone === "dark" && "bg-night text-white",
         tone === "brand" && "bg-white/10 text-white ring-1 ring-white/15 ring-inset",
       )}
     >
@@ -98,7 +98,7 @@ export function AudioPlayer({
         className={cn(
           "grid shrink-0 place-items-center rounded-full transition active:scale-95 disabled:opacity-40",
           size === "lg" ? "size-14" : "size-11",
-          dark ? "bg-hivis text-ink hover:brightness-105" : "bg-ink text-white hover:bg-[#1c2032]",
+          dark ? "bg-hivis text-on-accent hover:brightness-105" : "bg-hivis text-on-accent hover:brightness-105",
         )}
       >
         {playing ? <PauseIcon /> : <PlayIcon className="translate-x-px" />}
@@ -120,7 +120,7 @@ export function AudioPlayer({
               key={i}
               className={cn(
                 "w-full max-w-1.5 flex-1 rounded-full transition-colors",
-                active ? (dark ? "bg-hivis" : "bg-ink") : dark ? "bg-white/25" : "bg-slate-300",
+                active ? "bg-hivis" : dark ? "bg-white/25" : "bg-line",
               )}
               style={{ height: `${h * 100}%` }}
             />

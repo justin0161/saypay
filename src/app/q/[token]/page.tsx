@@ -150,7 +150,7 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
       <main className="relative mx-auto -mt-3 max-w-2xl space-y-4 px-4 pb-4">
         {/* State banners */}
         {quote.status === "approved" && (
-          <div className="flex gap-3 rounded-card bg-go-soft p-4 text-go-ink ring-1 ring-emerald-200 ring-inset" role="status">
+          <div className="flex gap-3 rounded-card bg-go-soft p-4 text-go-ink ring-1 ring-go/30 ring-inset" role="status">
             <LockIcon className="mt-0.5 shrink-0" />
             <div>
               <p className="font-semibold">Approved by {quote.decided_by_name}</p>
@@ -171,7 +171,7 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
           </div>
         )}
         {quote.status === "declined" && (
-          <div className="flex gap-3 rounded-card bg-rose-50 p-4 text-rose-900 ring-1 ring-rose-200 ring-inset">
+          <div className="flex gap-3 rounded-card bg-stop-soft p-4 text-stop ring-1 ring-stop/30 ring-inset">
             <XIcon className="mt-0.5 shrink-0" />
             <div>
               <p className="font-semibold">You declined this quote</p>
@@ -181,7 +181,7 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
           </div>
         )}
         {quote.status === "changes_requested" && (
-          <div className="rounded-card bg-hivis-soft p-4 text-hivis-ink ring-1 ring-amber-200 ring-inset">
+          <div className="rounded-card bg-hivis-soft p-4 text-hivis-ink ring-1 ring-hivis/30 ring-inset">
             <p className="font-semibold">Changes requested</p>
             <p className="text-sm">{firstName} will update the quote — this page refreshes automatically. You can still approve as-is.</p>
           </div>

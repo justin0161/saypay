@@ -160,7 +160,7 @@ export function DecisionBar({
                 <Button variant="secondary" className="flex-1 whitespace-nowrap" onClick={() => setSheet("request_changes")}>
                   Request changes
                 </Button>
-                <Button variant="ghost" className="flex-1 text-rose-700" onClick={() => setSheet("decline")}>
+                <Button variant="ghost" className="flex-1 text-stop" onClick={() => setSheet("decline")}>
                   Decline
                 </Button>
               </div>
@@ -178,7 +178,7 @@ export function DecisionBar({
             className="w-full max-w-lg animate-rise space-y-4 rounded-t-3xl bg-surface p-6 pb-safe shadow-lift sm:rounded-3xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mx-auto h-1.5 w-10 rounded-full bg-slate-200 sm:hidden" />
+            <div className="mx-auto h-1.5 w-10 rounded-full bg-raised sm:hidden" />
             {sheet === "bank" && bank ? (
               <>
                 <h2 id="decision-title" className="text-3xl leading-none font-bold">
@@ -210,7 +210,7 @@ export function DecisionBar({
                   ))}
                 </dl>
                 {payError && (
-                  <p className="text-sm font-medium text-rose-700" role="alert">
+                  <p className="text-sm font-medium text-stop" role="alert">
                     {payError}
                   </p>
                 )}
@@ -285,7 +285,7 @@ export function DecisionBar({
             </label>
 
             {error && (
-              <p className="text-sm font-medium text-rose-700" role="alert">
+              <p className="text-sm font-medium text-stop" role="alert">
                 {error}
               </p>
             )}

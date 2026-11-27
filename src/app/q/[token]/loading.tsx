@@ -3,7 +3,7 @@ import { CardSkeleton, Skeleton } from "@/components/ui/skeleton";
 export default function Loading() {
   return (
     <div aria-busy="true" aria-label="Loading your quote">
-      <div className="bg-ink">
+      <div className="bg-night">
         <div className="mx-auto max-w-2xl space-y-4 px-4 pt-5 pb-6">
           <div className="flex items-center gap-3">
             <div className="size-12 animate-pulse rounded-2xl bg-white/15" />

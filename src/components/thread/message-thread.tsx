@@ -22,13 +22,13 @@ export function MessageThread({ messages, viewer }: { messages: ThreadMessage[];
               className={cn(
                 "max-w-[88%] space-y-2 rounded-2xl px-3.5 py-2.5 sm:max-w-[75%]",
                 mine
-                  ? "rounded-br-md bg-ink text-white"
+                  ? "rounded-br-md bg-hivis text-on-accent"
                   : "rounded-bl-md bg-canvas text-ink ring-1 ring-line ring-inset",
               )}
             >
               {m.audio && (
                 <div className="min-w-56">
-                  <AudioPlayer src={m.audio.url} durationHint={m.audio.duration_seconds} tone={mine ? "brand" : "light"} />
+                  <AudioPlayer src={m.audio.url} durationHint={m.audio.duration_seconds} tone="light" />
                 </div>
               )}
               {m.body && <p className="text-[15px] leading-relaxed break-words whitespace-pre-wrap">{m.body}</p>}

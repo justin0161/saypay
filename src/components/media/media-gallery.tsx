@@ -28,7 +28,7 @@ export function MediaGallery({
       {visual.length > 0 && (
         <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
           {visual.map((item) => (
-            <li key={item.id} className="group relative aspect-square overflow-hidden rounded-xl bg-slate-200">
+            <li key={item.id} className="group relative aspect-square overflow-hidden rounded-xl bg-raised">
               <button type="button" onClick={() => setOpen(item)} className="block size-full" aria-label={item.caption ?? `Open ${item.kind}`}>
                 {item.kind === "image" && item.url ? (
                   // eslint-disable-next-line @next/next/no-img-element -- signed URLs, sizes unknown
@@ -47,7 +47,7 @@ export function MediaGallery({
               <span
                 className={cn(
                   "pointer-events-none absolute top-1.5 left-1.5 rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase",
-                  item.uploaded_by === "client" ? "bg-hivis text-hivis-ink" : "bg-ink/80 text-white",
+                  item.uploaded_by === "client" ? "bg-hivis text-on-accent" : "bg-ink/80 text-white",
                 )}
               >
                 {item.uploaded_by === "client" ? "Client" : "Pro"}
@@ -56,7 +56,7 @@ export function MediaGallery({
                 <button
                   type="button"
                   onClick={() => onDelete(item.id)}
-                  className="absolute top-1 right-1 grid size-9 place-items-center rounded-lg bg-white/90 text-rose-700 shadow"
+                  className="absolute top-1 right-1 grid size-9 place-items-center rounded-lg bg-white/90 text-stop shadow"
                   aria-label="Remove"
                 >
                   <TrashIcon width={16} height={16} />

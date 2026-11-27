@@ -154,7 +154,7 @@ export function QuoteBuilder({
   return (
     <div className="space-y-4 pb-40">
       {formError && (
-        <p className="rounded-2xl bg-rose-50 p-4 font-medium text-rose-800 ring-1 ring-rose-200 ring-inset" role="alert">
+        <p className="rounded-2xl bg-stop-soft p-4 font-medium text-stop ring-1 ring-stop/30 ring-inset" role="alert">
           {formError}
         </p>
       )}
@@ -234,7 +234,7 @@ export function QuoteBuilder({
       {/* Line items */}
       <Card className="space-y-4">
         <CardTitle>Line items</CardTitle>
-        {errors.line_items && <p className="text-sm font-medium text-rose-700">{errors.line_items}</p>}
+        {errors.line_items && <p className="text-sm font-medium text-stop">{errors.line_items}</p>}
         <ul className="space-y-3">
           {rows.map((row, idx) => {
             const li = lineItems[idx];
@@ -255,7 +255,7 @@ export function QuoteBuilder({
                     type="button"
                     onClick={() => removeRow(row.id)}
                     disabled={rows.length === 1}
-                    className="grid size-12 shrink-0 place-items-center rounded-xl text-muted hover:bg-white disabled:opacity-30"
+                    className="grid size-12 shrink-0 place-items-center rounded-xl text-muted hover:bg-raised disabled:opacity-30"
                     aria-label={`Remove item ${idx + 1}`}
                   >
                     <XIcon />
@@ -288,7 +288,7 @@ export function QuoteBuilder({
                   </span>
                 </div>
                 {(err("description") || err("quantity")) && (
-                  <p className="mt-1.5 text-sm text-rose-700">{err("description") ?? err("quantity")}</p>
+                  <p className="mt-1.5 text-sm text-stop">{err("description") ?? err("quantity")}</p>
                 )}
               </li>
             );
@@ -332,9 +332,9 @@ export function QuoteBuilder({
             <input type="checkbox" checked={taxEnabled} onChange={(e) => setTaxEnabled(e.target.checked)} className="peer sr-only" />
             <span
               aria-hidden
-              className={cn("relative h-7 w-12 rounded-full transition", taxEnabled ? "bg-ink" : "bg-slate-300")}
+              className={cn("relative h-7 w-12 rounded-full transition", taxEnabled ? "bg-night" : "bg-line")}
             >
-              <span className={cn("absolute top-1 size-5 rounded-full bg-white shadow transition-all", taxEnabled ? "left-6" : "left-1")} />
+              <span className={cn("absolute top-1 size-5 rounded-full bg-surface shadow transition-all", taxEnabled ? "left-6" : "left-1")} />
             </span>
           </span>
         </label>
@@ -355,7 +355,7 @@ export function QuoteBuilder({
                 }}
                 className={cn(
                   "min-h-11 min-w-16 rounded-full px-4 text-sm font-semibold ring-1 ring-inset transition",
-                  depositType === "percent" && Number(depositPercent) === Number(p) ? "bg-ink text-white ring-ink" : "bg-surface ring-line hover:ring-ink/25",
+                  depositType === "percent" && Number(depositPercent) === Number(p) ? "bg-hivis text-on-accent ring-hivis" : "bg-surface ring-line hover:ring-ink/25",
                 )}
               >
                 {p === "0" ? "Nothing upfront" : p === "100" ? "Pay in full" : `${p}% deposit`}
@@ -366,7 +366,7 @@ export function QuoteBuilder({
               onClick={() => setDepositType("percent")}
               className={cn(
                 "min-h-11 rounded-full px-4 text-sm font-semibold ring-1 ring-inset transition",
-                depositType === "percent" && !["0", "25", "50", "100"].includes(String(Number(depositPercent))) ? "bg-ink text-white ring-ink" : "bg-surface ring-line hover:ring-ink/25",
+                depositType === "percent" && !["0", "25", "50", "100"].includes(String(Number(depositPercent))) ? "bg-hivis text-on-accent ring-hivis" : "bg-surface ring-line hover:ring-ink/25",
               )}
             >
               Custom %
@@ -374,7 +374,7 @@ export function QuoteBuilder({
             <button
               type="button"
               onClick={() => setDepositType("fixed")}
-              className={cn("min-h-11 rounded-full px-4 text-sm font-semibold ring-1 ring-inset transition", depositType === "fixed" ? "bg-ink text-white ring-ink" : "bg-surface ring-line hover:ring-ink/25")}
+              className={cn("min-h-11 rounded-full px-4 text-sm font-semibold ring-1 ring-inset transition", depositType === "fixed" ? "bg-hivis text-on-accent ring-hivis" : "bg-surface ring-line hover:ring-ink/25")}
             >
               Fixed amount
             </button>
@@ -417,7 +417,7 @@ export function QuoteBuilder({
             {staged
               .filter((s) => !s.is_walkthrough)
               .map((s) => (
-                <li key={s.path} className="relative aspect-square overflow-hidden rounded-xl bg-slate-200">
+                <li key={s.path} className="relative aspect-square overflow-hidden rounded-xl bg-raised">
                   {s.kind === "image" ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={s.preview} alt="" className="size-full object-cover" />
@@ -429,7 +429,7 @@ export function QuoteBuilder({
                   <button
                     type="button"
                     onClick={() => setStaged((list) => list.filter((x) => x.path !== s.path))}
-                    className="absolute top-1 right-1 grid size-9 place-items-center rounded-lg bg-white/90 text-rose-700 shadow"
+                    className="absolute top-1 right-1 grid size-9 place-items-center rounded-lg bg-white/90 text-stop shadow"
                     aria-label="Remove"
                   >
                     <TrashIcon width={16} height={16} />

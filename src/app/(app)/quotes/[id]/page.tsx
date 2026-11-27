@@ -72,7 +72,7 @@ export default async function QuoteDetailPage({ params, searchParams }: PageProp
         </div>
 
         {/* Share */}
-        <Card className={justSent ? "relative overflow-hidden bg-ink text-white ring-0" : ""}>
+        <Card className={justSent ? "relative overflow-hidden bg-night text-white ring-0" : ""}>
           {justSent && (
             <>
             </>
@@ -96,10 +96,10 @@ export default async function QuoteDetailPage({ params, searchParams }: PageProp
           <Card
             className={
               quote.status === "approved"
-                ? "bg-go-soft ring-1 ring-emerald-200 ring-inset"
+                ? "bg-go-soft ring-1 ring-go/30 ring-inset"
                 : quote.status === "declined"
-                  ? "bg-rose-50 ring-1 ring-rose-200 ring-inset"
-                  : "bg-hivis-soft ring-1 ring-amber-200 ring-inset"
+                  ? "bg-stop-soft ring-1 ring-stop/30 ring-inset"
+                  : "bg-hivis-soft ring-1 ring-hivis/30 ring-inset"
             }
           >
             <p className="flex items-center gap-2 font-semibold">

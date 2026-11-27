@@ -17,23 +17,22 @@ import {
 
 const FEATURES = [
   { icon: MicIcon, title: "Voice notes on every quote", body: "Record up to 60 seconds explaining the job, the options and why. Clients listen in one tap." },
+  { icon: CardIcon, title: "Deposit or full payment", body: "Ask for a deposit or the whole amount. Clients pay by card or bank transfer the moment they accept." },
   { icon: CameraIcon, title: "Photos, both ways", body: "Attach site photos and video. Clients can send back measurements, damage and access shots." },
   { icon: ChatIcon, title: "One thread per job", body: "Questions, replies and change requests stay with the quote — not lost in your texts." },
   { icon: LockIcon, title: "Locked, time-stamped acceptance", body: "When a client accepts, the terms freeze with who, when and from which device." },
-  { icon: CardIcon, title: "Deposit or full payment", body: "Ask for a deposit or the whole amount. Clients pay by card (Stripe) or bank transfer the moment they accept." },
   { icon: PhoneIcon, title: "Made for your phone", body: "Quote from the van in a couple of minutes. Install SayPay on your home screen like an app." },
 ];
 
 const WAVE = [0.4, 0.7, 0.5, 0.9, 0.6, 1, 0.7, 0.45, 0.85, 0.6, 0.95, 0.5, 0.7, 0.4, 0.8, 0.55, 0.9, 0.5, 0.65, 0.4, 0.75, 0.5];
 
-/** Small waveform used in illustrations. */
-function Wave({ className = "bg-hivis", count = 22, played = 9 }: { className?: string; count?: number; played?: number }) {
+function Wave({ played = 9, count = 22 }: { played?: number; count?: number }) {
   return (
-    <span className="flex h-7 flex-1 items-center gap-[3px]">
+    <span className="flex h-7 flex-1 items-center gap-[3px]" aria-hidden>
       {Array.from({ length: count }, (_, i) => (
         <span
           key={i}
-          className={`w-full max-w-1 flex-1 rounded-full ${i < played ? className : "bg-current opacity-25"}`}
+          className={`w-full max-w-1 flex-1 rounded-full ${i < played ? "bg-hivis" : "bg-[#3a3f3a]"}`}
           style={{ height: `${(WAVE[i % WAVE.length] ?? 0.5) * 100}%` }}
         />
       ))}
@@ -41,28 +40,36 @@ function Wave({ className = "bg-hivis", count = 22, played = 9 }: { className?: 
   );
 }
 
-/** Notification chip floating around the hero phone (wide screens only). */
-function Chip({ className, icon, title, sub }: { className: string; icon: React.ReactNode; title: string; sub: string }) {
+/** Lime tick in a circle. */
+function Tick({ size = 22 }: { size?: number }) {
   return (
-    <div className={`absolute z-10 hidden items-center gap-3 rounded-2xl bg-surface py-3 pr-5 pl-3 shadow-chip xl:flex ${className}`}>
-      {icon}
+    <span className="grid shrink-0 place-items-center rounded-full bg-hivis text-on-accent" style={{ width: size, height: size }}>
+      <CheckIcon width={size * 0.55} height={size * 0.55} strokeWidth={3} />
+    </span>
+  );
+}
+
+/** Notification chip floating near the hero phone (wide screens only). */
+function Chip({ className, title, sub }: { className: string; title: string; sub: string }) {
+  return (
+    <div className={`absolute z-10 hidden items-center gap-3 rounded-2xl bg-surface/95 py-3 pr-5 pl-3 shadow-chip backdrop-blur xl:flex ${className}`}>
+      <Tick size={36} />
       <div className="leading-tight">
-        <p className="text-sm font-semibold text-ink">{title}</p>
+        <p className="text-sm font-semibold">{title}</p>
         <p className="mt-0.5 text-xs text-muted">{sub}</p>
       </div>
     </div>
   );
 }
 
-function StepCard({ n, title, body, children }: { n: number; title: string; body: string; children: React.ReactNode }) {
+function SectionHead({ eyebrow, title, accent, body, center = false }: { eyebrow: string; title: string; accent?: string; body?: string; center?: boolean }) {
   return (
-    <div className="flex flex-col rounded-card bg-surface p-3 shadow-card">
-      <div className="grid h-52 place-items-center rounded-[1.1rem] bg-cream p-6">{children}</div>
-      <div className="p-5">
-        <p className="text-sm font-semibold text-gold">Step {n}</p>
-        <h3 className="mt-1.5 text-2xl font-bold">{title}</h3>
-        <p className="mt-2 leading-relaxed text-ink-soft">{body}</p>
-      </div>
+    <div className={center ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
+      <p className="text-sm font-semibold text-hivis">{eyebrow}</p>
+      <h2 className="mt-3 text-4xl leading-[1.02] font-bold sm:text-[3.5rem]">
+        {title} {accent && <span className="text-muted">{accent}</span>}
+      </h2>
+      {body && <p className="mt-5 text-lg leading-relaxed text-ink-soft">{body}</p>}
     </div>
   );
 }
@@ -71,7 +78,7 @@ export default function LandingPage() {
   return (
     <div className="overflow-x-clip bg-canvas">
       {/* Nav */}
-      <header className="sticky top-0 z-30 bg-canvas/85 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-line/60 bg-canvas/80 backdrop-blur-xl">
         <div className="mx-auto flex h-18 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link href="/" aria-label="SayPay home">
             <Logo />
@@ -83,7 +90,7 @@ export default function LandingPage() {
               ["#payments", "Payments"],
               ["#pricing", "Pricing"],
             ].map(([href, label]) => (
-              <a key={href} href={href} className="hidden min-h-10 items-center px-3.5 text-[15px] font-medium text-ink-soft transition hover:text-ink md:flex">
+              <a key={href} href={href} className="hidden min-h-10 items-center px-3.5 text-[15px] text-ink-soft transition hover:text-ink md:flex">
                 {label}
               </a>
             ))}
@@ -98,134 +105,105 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="mx-auto grid max-w-6xl gap-14 px-4 pt-10 pb-20 sm:px-6 sm:pt-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-10 lg:pb-28">
-        <div className="min-w-0 animate-rise">
-          <p className="inline-flex items-center gap-2 rounded-full bg-hivis-soft py-1.5 pr-4 pl-1.5 text-sm font-semibold text-hivis-ink">
-            <span className="grid size-6 place-items-center rounded-full bg-hivis text-ink">
-              <MicIcon width={13} height={13} strokeWidth={2.5} />
-            </span>
-            Quoting software for trades
-          </p>
-          <h1 className="mt-6 text-[3rem] leading-[0.98] font-bold tracking-[-0.045em] text-balance sm:text-[4.5rem]">
-            Win more quotes with a{" "}
-            <span className="relative whitespace-nowrap">
-              <span className="relative z-10">voice note.</span>
-              <span aria-hidden className="absolute inset-x-[-0.1em] bottom-[0.06em] z-0 h-[0.32em] rounded-full bg-hivis" />
-            </span>
-          </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-soft sm:text-xl">
-            Add a quick voice note to your quote and explain the job like you would on the doorstep. Clients understand it, trust it, accept it
-            — and pay there and then, by card or bank transfer.
-          </p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <ButtonLink href="/login?mode=signup" size="lg">
-              Send your first quote free <ArrowRightIcon width={18} height={18} className="transition group-hover/btn:translate-x-0.5" />
-            </ButtonLink>
-            <ButtonLink href="#demo" variant="secondary" size="lg">
-              <PlayIcon width={16} height={16} /> Try the live demo
-            </ButtonLink>
+      <section className="relative">
+        <div aria-hidden className="pointer-events-none absolute top-24 right-[-10%] size-[44rem] rounded-full bg-[radial-gradient(closest-side,rgb(200_255_61/0.16),transparent)]" />
+        <div className="relative mx-auto grid max-w-6xl gap-14 px-4 pt-12 pb-24 sm:px-6 sm:pt-20 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-10 lg:pb-32">
+          <div className="min-w-0 animate-rise">
+            <p className="inline-flex items-center gap-2 rounded-full bg-surface py-1.5 pr-4 pl-1.5 text-sm text-ink-soft ring-1 ring-line ring-inset">
+              <span className="rounded-full bg-hivis px-2 py-0.5 text-xs font-semibold text-on-accent">New</span>
+              Card and bank transfer payments
+            </p>
+            <h1 className="mt-7 text-[3.1rem] leading-[0.98] font-bold tracking-[-0.05em] text-balance sm:text-[4.75rem]">
+              Quotes with your voice. <span className="text-hivis">Paid on the spot.</span>
+            </h1>
+            <p className="mt-7 max-w-xl text-lg leading-relaxed text-ink-soft sm:text-xl">
+              Add a voice note to every quote. Clients understand the job, accept in one tap, and pay a deposit or in full — by card or bank
+              transfer.
+            </p>
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <ButtonLink href="/login?mode=signup" size="lg">
+                Start free <ArrowRightIcon width={18} height={18} className="transition group-hover/btn:translate-x-0.5" />
+              </ButtonLink>
+              <ButtonLink href="#demo" variant="secondary" size="lg">
+                <PlayIcon width={15} height={15} /> Try the live demo
+              </ButtonLink>
+            </div>
+            <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-soft">
+              {["Free for 5 quotes", "No app for clients", "Payments by Stripe"].map((t) => (
+                <li key={t} className="flex items-center gap-2">
+                  <CheckIcon width={15} height={15} strokeWidth={2.75} className="text-hivis" /> {t}
+                </li>
+              ))}
+            </ul>
           </div>
-          <p className="mt-6 text-sm text-muted">Deposit or pay in full · Card or bank transfer · Free for your first 5 quotes</p>
-        </div>
 
-        <div id="demo" className="relative min-w-0 scroll-mt-24 animate-rise [animation-delay:120ms]">
-          {/* Solid brand shape behind the phone */}
-          <div aria-hidden className="absolute top-[54%] left-1/2 size-[22rem] -translate-1/2 rounded-full bg-hivis sm:size-[34rem]" />
-          <Chip
-            className="top-[9%] -right-32 animate-pop [animation-delay:500ms]"
-            icon={<span className="grid size-10 place-items-center rounded-full bg-[#eaf1fb] font-display text-sm font-bold text-[#1d4a80]">P</span>}
-            title="Priya played your voice note"
-            sub="0:34 · 2 min ago"
-          />
-          <Chip
-            className="bottom-4 -left-32 animate-pop [animation-delay:800ms]"
-            icon={
-              <span className="grid size-10 place-items-center rounded-full bg-go-soft text-go">
-                <CheckIcon width={18} height={18} strokeWidth={3} />
-              </span>
-            }
-            title="Quote accepted"
-            sub="Radiator & flush · £849.60"
-          />
-          <Chip
-            className="-bottom-2 -right-28 animate-pop [animation-delay:1100ms]"
-            icon={
-              <span className="grid size-10 place-items-center rounded-full bg-hivis text-ink">
-                <CardIcon width={18} height={18} />
-              </span>
-            }
-            title="Deposit paid · £212.40"
-            sub="Booked in for Tuesday"
-          />
-          <div className="relative">
+          <div id="demo" className="relative min-w-0 scroll-mt-24 animate-rise [animation-delay:120ms]">
+            <Chip className="top-[11%] -right-28 animate-pop [animation-delay:600ms]" title="Priya played your voice note" sub="0:34 · 2 min ago" />
+            <Chip className="-bottom-14 -right-20 animate-pop [animation-delay:900ms]" title="Deposit paid · £212.40" sub="By card · just now" />
             <LiveDemo />
           </div>
         </div>
       </section>
 
       {/* Why voice */}
-      <section id="why" className="scroll-mt-20 px-3 sm:px-4">
-        <div className="mx-auto max-w-7xl rounded-[2.5rem] bg-hivis px-5 py-20 sm:px-10 sm:py-24 lg:px-16">
-          <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
-            <div>
-              <h2 className="text-4xl leading-[1.02] font-bold sm:text-[3.5rem]">A PDF can&apos;t explain itself. You can.</h2>
-              <p className="mt-6 max-w-lg text-lg leading-relaxed text-ink/80">
-                Quotes get lost when the client doesn&apos;t understand the price, or never gets round to replying. A voice note fixes both: they
-                hear what&apos;s included, why it costs what it does, and who&apos;ll be doing the work.
-              </p>
-              <ul className="mt-8 space-y-4">
-                {[
-                  ["Builds trust", "Clients hear a real person, not a spreadsheet."],
-                  ["Answers questions up front", "Scope, options and timings, in your own words."],
-                  ["Gets a decision", "Accept and pay — deposit or in full — in the same tap."],
-                ].map(([t, b]) => (
-                  <li key={t} className="flex gap-3">
-                    <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-ink text-hivis">
-                      <CheckIcon width={13} height={13} strokeWidth={3} />
-                    </span>
-                    <p className="text-ink/80">
-                      <span className="font-semibold text-ink">{t}.</span> {b}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
+      <section id="why" className="scroll-mt-20 border-t border-line/60">
+        <div className="mx-auto grid max-w-6xl gap-16 px-4 py-24 sm:px-6 sm:py-32 lg:grid-cols-2 lg:items-center">
+          <div>
+            <SectionHead
+              eyebrow="Why voice"
+              title="A PDF can't explain itself."
+              accent="You can."
+              body="Quotes get lost when the client doesn't understand the price, or never gets round to replying. A voice note fixes both: they hear what's included, why it costs what it does, and who'll be doing the work."
+            />
+            <ul className="mt-9 space-y-4">
+              {[
+                ["Builds trust", "Clients hear a real person, not a spreadsheet."],
+                ["Answers questions up front", "Scope, options and timings, in your own words."],
+                ["Gets a decision", "Accept and pay — deposit or in full — in the same tap."],
+              ].map(([t, b]) => (
+                <li key={t} className="flex gap-3">
+                  <Tick />
+                  <p className="text-ink-soft">
+                    <span className="font-semibold text-ink">{t}.</span> {b}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-            {/* Before / after */}
-            <div className="grid gap-4 sm:grid-cols-2 sm:items-end">
-              <div className="rounded-3xl bg-white/55 p-5 ring-1 ring-ink/10 sm:mb-10">
-                <p className="text-xs font-semibold tracking-[0.04em] text-ink/55 uppercase">A typical quote</p>
-                <div className="mt-4 rounded-2xl bg-white/80 p-4">
-                  <p className="text-sm font-semibold text-ink/70">Quote_0142_final.pdf</p>
-                  <div className="mt-3 space-y-2">
-                    {[100, 85, 92, 60, 78].map((w, i) => (
-                      <span key={i} className="block h-2 rounded-full bg-ink/10" style={{ width: `${w}%` }} />
-                    ))}
-                  </div>
+          <div className="grid gap-4 sm:grid-cols-2 sm:items-end">
+            <div className="rounded-3xl bg-surface/60 p-5 ring-1 ring-line ring-inset sm:mb-12">
+              <p className="text-xs font-medium tracking-[0.06em] text-muted uppercase">A typical quote</p>
+              <div className="mt-4 rounded-2xl bg-raised p-4">
+                <p className="text-sm font-medium text-ink-soft">Quote_0142_final.pdf</p>
+                <div className="mt-3 space-y-2">
+                  {[100, 85, 92, 60, 78].map((w, i) => (
+                    <span key={i} className="block h-2 rounded-full bg-[#2c3136]" style={{ width: `${w}%` }} />
+                  ))}
                 </div>
-                <p className="mt-4 flex items-center gap-2 text-sm font-medium text-ink/55">
-                  <span className="size-2 rounded-full bg-ink/30" /> Opened · no reply yet
-                </p>
               </div>
-              <div className="rounded-3xl bg-surface p-5 shadow-lift">
-                <p className="text-xs font-semibold tracking-[0.04em] text-gold uppercase">With SayPay</p>
-                <div className="mt-4 rounded-2xl bg-ink p-3 text-white">
-                  <div className="flex items-center gap-3">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-full bg-hivis text-ink">
-                      <PlayIcon width={15} height={15} />
-                    </span>
-                    <Wave />
-                  </div>
-                  <p className="mt-2.5 px-1 text-xs text-white/60">Voice note from Dan · 0:34</p>
+              <p className="mt-4 flex items-center gap-2 text-sm text-muted">
+                <span className="size-2 rounded-full bg-muted/60" /> Opened · no reply yet
+              </p>
+            </div>
+            <div className="rounded-3xl bg-surface p-5 shadow-lift">
+              <p className="text-xs font-medium tracking-[0.06em] text-hivis uppercase">With SayPay</p>
+              <div className="mt-4 rounded-2xl bg-night p-3">
+                <div className="flex items-center gap-3">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-full bg-hivis text-on-accent">
+                    <PlayIcon width={15} height={15} />
+                  </span>
+                  <Wave />
                 </div>
-                <div className="mt-4 space-y-2 text-sm">
-                  <p className="flex items-center gap-2 font-semibold text-go-ink">
-                    <CheckIcon width={16} height={16} strokeWidth={3} className="text-go" /> Accepted by Priya
-                  </p>
-                  <p className="flex items-center gap-2 font-semibold text-ink">
-                    <CardIcon width={16} height={16} className="text-gold" /> £212.40 deposit paid
-                  </p>
-                </div>
+                <p className="mt-2.5 px-1 text-xs text-muted">Voice note from Dan · 0:34</p>
+              </div>
+              <div className="mt-4 space-y-2 text-sm">
+                <p className="flex items-center gap-2 font-semibold">
+                  <CheckIcon width={16} height={16} strokeWidth={3} className="text-hivis" /> Accepted by Priya
+                </p>
+                <p className="flex items-center gap-2 font-semibold">
+                  <CardIcon width={16} height={16} className="text-hivis" /> £212.40 deposit paid
+                </p>
               </div>
             </div>
           </div>
@@ -233,75 +211,97 @@ export default function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section id="how" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-24 sm:px-6 sm:py-32">
-        <div className="max-w-2xl">
-          <h2 className="text-4xl leading-[1.02] font-bold sm:text-[3.5rem]">From site visit to deposit paid, in three steps.</h2>
-          <p className="mt-5 text-lg text-ink-soft">No PDFs and no chasing. It takes about as long as making a brew.</p>
-        </div>
-        <div className="mt-14 grid gap-5 md:grid-cols-3">
-          <StepCard n={1} title="Build the quote, add your voice" body="Add a few line items and site photos, then record a short voice note explaining the job.">
-            <div className="w-full max-w-[15rem] rounded-2xl bg-surface p-4 shadow-card">
-              <p className="flex items-center gap-2 text-xs font-semibold text-stop">
-                <span className="size-2 animate-pulse rounded-full bg-stop" /> Recording · 0:42
-              </p>
-              <div className="mt-3 text-ink">
-                <Wave className="bg-ink" played={22} />
-              </div>
-              <div className="mt-4 flex justify-center">
-                <span className="grid size-11 place-items-center rounded-full bg-stop">
-                  <span className="size-3.5 rounded-sm bg-white" />
-                </span>
-              </div>
-            </div>
-          </StepCard>
-          <StepCard n={2} title="Send one link" body="Share by WhatsApp or text. Your client opens it straight away — no app, no login, no PDF.">
-            <div className="w-full max-w-[15rem] space-y-2">
-              <div className="ml-auto w-[90%] rounded-2xl rounded-br-md bg-[#d9fdd3] p-3 text-[13px] leading-snug text-ink shadow-card">
-                Hi Priya, here&apos;s your quote with a quick voice note from me:
-                <span className="mt-1.5 block font-semibold text-[#1d4a80] underline">saypay.co/q/x8Kf…</span>
-              </div>
-              <p className="pr-1 text-right text-[11px] text-muted">Sent on WhatsApp</p>
-            </div>
-          </StepCard>
-          <StepCard n={3} title="Accepted and paid" body="They accept in one tap and pay a deposit or the full amount, by card or bank transfer. The price locks and you book the job in.">
-            <div className="w-full max-w-[15rem] rounded-2xl bg-surface p-4 shadow-card">
-              <div className="flex items-center gap-3">
-                <span className="grid size-10 place-items-center rounded-full bg-go text-white">
-                  <CheckIcon width={18} height={18} strokeWidth={3} />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold">Deposit paid</p>
-                  <p className="text-xs text-muted">Priya Shah · just now</p>
+      <section id="how" className="scroll-mt-20 border-t border-line/60">
+        <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6 sm:py-32">
+          <SectionHead eyebrow="How it works" title="Site visit to paid," accent="in three steps." />
+          <div className="mt-14 grid gap-4 md:grid-cols-3">
+            {[
+              {
+                n: "01",
+                t: "Build the quote, add your voice",
+                b: "Add line items and site photos, then record a short voice note explaining the job.",
+                art: (
+                  <div className="w-full max-w-[15rem] rounded-2xl bg-surface p-4 ring-1 ring-line ring-inset">
+                    <p className="flex items-center gap-2 text-xs font-semibold text-stop">
+                      <span className="size-2 animate-pulse rounded-full bg-stop" /> Recording · 0:42
+                    </p>
+                    <div className="mt-3">
+                      <Wave played={22} />
+                    </div>
+                    <div className="mt-4 flex justify-center">
+                      <span className="grid size-11 place-items-center rounded-full bg-stop">
+                        <span className="size-3.5 rounded-sm bg-night" />
+                      </span>
+                    </div>
+                  </div>
+                ),
+              },
+              {
+                n: "02",
+                t: "Send one link",
+                b: "Share by WhatsApp or text. Your client opens it straight away — no app, no login, no PDF.",
+                art: (
+                  <div className="w-full max-w-[15rem]">
+                    <div className="ml-auto w-[90%] rounded-2xl rounded-br-md bg-[#144d37] p-3 text-[13px] leading-snug text-[#e9f7ef]">
+                      Hi Priya, here&apos;s your quote with a quick voice note from me:
+                      <span className="mt-1.5 block font-semibold text-[#8fd3ff] underline">saypay.co/q/x8Kf…</span>
+                    </div>
+                    <p className="mt-2 pr-1 text-right text-[11px] text-muted">Sent on WhatsApp</p>
+                  </div>
+                ),
+              },
+              {
+                n: "03",
+                t: "Accepted and paid",
+                b: "They accept in one tap and pay a deposit or in full, by card or bank transfer. The price locks in.",
+                art: (
+                  <div className="w-full max-w-[15rem] rounded-2xl bg-surface p-4 ring-1 ring-line ring-inset">
+                    <div className="flex items-center gap-3">
+                      <Tick size={38} />
+                      <div>
+                        <p className="text-sm font-semibold">Deposit paid</p>
+                        <p className="text-xs text-muted">Priya Shah · just now</p>
+                      </div>
+                    </div>
+                    <p className="tabular mt-3 font-display text-3xl font-bold tracking-[-0.04em]">£212.40</p>
+                    <p className="mt-1 text-xs text-hivis">Quote accepted · terms locked</p>
+                  </div>
+                ),
+              },
+            ].map((s) => (
+              <div key={s.n} className="flex flex-col rounded-card bg-surface ring-1 ring-line ring-inset">
+                <div className="m-2 grid h-52 place-items-center rounded-[1rem] bg-night p-6">{s.art}</div>
+                <div className="p-6 pt-4">
+                  <p className="tabular text-sm font-semibold text-hivis">{s.n}</p>
+                  <h3 className="mt-2 text-2xl font-bold">{s.t}</h3>
+                  <p className="mt-2 leading-relaxed text-ink-soft">{s.b}</p>
                 </div>
               </div>
-              <p className="tabular mt-3 font-display text-3xl font-bold tracking-[-0.03em]">£212.40</p>
-              <p className="mt-1 text-xs font-medium text-go-ink">Quote accepted · terms locked</p>
-            </div>
-          </StepCard>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Payments */}
-      <section id="payments" className="scroll-mt-20 px-3 pb-24 sm:px-4 sm:pb-32">
-        <div className="mx-auto max-w-7xl rounded-[2.5rem] bg-cream px-5 py-20 sm:px-10 sm:py-24 lg:px-16">
-          <div className="grid gap-14 lg:grid-cols-[1fr_1.1fr] lg:items-center">
-            <div>
-              <h2 className="text-4xl leading-[1.02] font-bold sm:text-[3.5rem]">Get paid your way.</h2>
-              <p className="mt-5 max-w-lg text-lg leading-relaxed text-ink-soft">
-                For every quote, choose what you need upfront — and let clients pay however suits them. No chasing, no awkward phone calls.
-              </p>
-              <div className="mt-10 grid gap-4 sm:grid-cols-2">
-                <div className="rounded-3xl bg-surface p-6 shadow-card">
-                  <p className="text-sm font-semibold text-gold">How much</p>
-                  <ul className="mt-4 space-y-3">
-                    {[
-                      ["A deposit", "25%, 50%, or any amount you set"],
-                      ["Pay in full", "The whole quote, paid on acceptance"],
-                    ].map(([t, b]) => (
+      <section id="payments" className="scroll-mt-20 border-t border-line/60">
+        <div className="mx-auto grid max-w-6xl gap-16 px-4 py-24 sm:px-6 sm:py-32 lg:grid-cols-[1fr_1.05fr] lg:items-center">
+          <div>
+            <SectionHead
+              eyebrow="Payments"
+              title="Get paid your way."
+              body="For every quote, choose what you need upfront — and let clients pay however suits them. No chasing, no awkward phone calls."
+            />
+            <div className="mt-10 grid gap-4 sm:grid-cols-2">
+              {[
+                ["How much", [["A deposit", "25%, 50% or any amount you set"], ["Pay in full", "The whole quote, paid on acceptance"]]],
+                ["How they pay", [["Card", "Secure checkout by Stripe, straight to your account"], ["Bank transfer", "Your details and a job reference, shown after they accept"]]],
+              ].map(([head, items]) => (
+                <div key={head as string} className="rounded-3xl bg-surface p-6 ring-1 ring-line ring-inset">
+                  <p className="text-sm font-semibold text-hivis">{head as string}</p>
+                  <ul className="mt-4 space-y-4">
+                    {(items as string[][]).map(([t, b]) => (
                       <li key={t} className="flex gap-3">
-                        <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-hivis text-ink">
-                          <CheckIcon width={13} height={13} strokeWidth={3} />
-                        </span>
+                        <Tick />
                         <p>
                           <span className="block font-semibold">{t}</span>
                           <span className="text-sm text-ink-soft">{b}</span>
@@ -310,206 +310,182 @@ export default function LandingPage() {
                     ))}
                   </ul>
                 </div>
-                <div className="rounded-3xl bg-surface p-6 shadow-card">
-                  <p className="text-sm font-semibold text-gold">How they pay</p>
-                  <ul className="mt-4 space-y-3">
-                    {[
-                      ["Card", "Secure checkout by Stripe, straight to your account"],
-                      ["Bank transfer", "Your details and a job reference, shown after they accept"],
-                    ].map(([t, b]) => (
-                      <li key={t} className="flex gap-3">
-                        <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-hivis text-ink">
-                          <CheckIcon width={13} height={13} strokeWidth={3} />
-                        </span>
-                        <p>
-                          <span className="block font-semibold">{t}</span>
-                          <span className="text-sm text-ink-soft">{b}</span>
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+              ))}
             </div>
+          </div>
 
-            {/* What the client sees */}
-            <div className="relative mx-auto w-full max-w-md">
-              <div className="rounded-[2rem] bg-surface p-6 shadow-lift">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-muted">Quote accepted</p>
-                  <span className="rounded-full bg-go-soft px-2.5 py-1 text-xs font-semibold text-go-ink">Approved</span>
-                </div>
-                <p className="mt-3 font-display text-2xl font-bold tracking-[-0.03em]">Combi boiler replacement</p>
-                <div className="mt-5 flex items-center justify-between rounded-2xl bg-hivis-soft px-4 py-3 font-semibold text-hivis-ink">
-                  <span>Pay in full</span>
-                  <span className="tabular">£2,724.00</span>
-                </div>
-                <div className="mt-4 space-y-2.5">
-                  <span className="flex min-h-13 items-center justify-center gap-2 rounded-full bg-go font-semibold text-white">
-                    <CardIcon width={18} height={18} /> Pay £2,724.00 by card
-                  </span>
-                  <span className="flex min-h-13 items-center justify-center rounded-full bg-surface font-semibold text-ink ring-1 ring-line ring-inset">
-                    Pay by bank transfer
-                  </span>
-                </div>
-                <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-muted">
-                  <LockIcon width={13} height={13} /> Card payments secured by Stripe
-                </p>
+          <div className="relative mx-auto w-full max-w-md">
+            <div aria-hidden className="absolute inset-0 -z-0 scale-125 rounded-full bg-[radial-gradient(closest-side,rgb(200_255_61/0.12),transparent)]" />
+            <div className="relative rounded-[1.75rem] bg-surface p-6 shadow-lift">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted">Harper &amp; Sons · Quote #0142</p>
+                <span className="rounded-full bg-go-soft px-2.5 py-1 text-xs font-semibold text-go-ink">Accepted</span>
               </div>
-              <div className="relative -mt-6 ml-auto w-[88%] rounded-3xl bg-ink p-5 text-white shadow-lift sm:-mr-8">
-                <p className="text-sm font-semibold text-hivis">Bank transfer details</p>
-                <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
-                  {[
-                    ["Account name", "Harper & Sons Ltd"],
-                    ["Reference", "SP-2F449C"],
-                    ["Sort code", "12-34-56"],
-                    ["Account no.", "12345678"],
-                  ].map(([k, v]) => (
-                    <div key={k}>
-                      <dt className="text-xs text-white/55">{k}</dt>
-                      <dd className="tabular font-semibold">{v}</dd>
-                    </div>
-                  ))}
-                </dl>
+              <p className="mt-2 font-display text-2xl font-bold tracking-[-0.03em]">Combi boiler replacement</p>
+              <div className="mt-5 flex items-center justify-between rounded-2xl bg-hivis-soft px-4 py-3 font-semibold text-hivis-ink">
+                <span>Pay in full</span>
+                <span className="tabular">£2,724.00</span>
               </div>
+              <div className="mt-4 space-y-2.5">
+                <span className="flex min-h-13 items-center justify-center gap-2 rounded-full bg-hivis font-semibold text-on-accent">
+                  <CardIcon width={18} height={18} /> Pay £2,724.00 by card
+                </span>
+                <span className="flex min-h-13 items-center justify-center rounded-full font-semibold ring-1 ring-[#2f343a] ring-inset">
+                  Pay by bank transfer
+                </span>
+              </div>
+              <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-muted">
+                <LockIcon width={13} height={13} /> Card payments secured by Stripe
+              </p>
+            </div>
+            <div className="relative -mt-5 ml-auto w-[88%] rounded-3xl bg-raised p-5 shadow-lift sm:-mr-8">
+              <p className="text-sm font-semibold text-hivis">Bank transfer details</p>
+              <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
+                {[
+                  ["Account name", "Harper & Sons Ltd"],
+                  ["Reference", "SP-2F449C"],
+                  ["Sort code", "12-34-56"],
+                  ["Account no.", "12345678"],
+                ].map(([k, v]) => (
+                  <div key={k}>
+                    <dt className="text-xs text-muted">{k}</dt>
+                    <dd className="tabular font-semibold">{v}</dd>
+                  </div>
+                ))}
+              </dl>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features */}
-      <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6 sm:pb-32">
-        <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-          <h2 className="max-w-xl text-4xl leading-[1.02] font-bold sm:text-[3.5rem]">Everything you need to close the job.</h2>
-          <p className="max-w-md text-lg text-ink-soft">Built for the way you actually work — on site, on your phone, between jobs.</p>
-        </div>
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((f) => (
-            <div key={f.title} className="rounded-card bg-surface p-7 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-lift">
-              <span className="grid size-12 place-items-center rounded-2xl bg-hivis-soft text-gold">
-                <f.icon width={22} height={22} />
-              </span>
-              <h3 className="mt-6 text-xl font-bold">{f.title}</h3>
-              <p className="mt-2 leading-relaxed text-ink-soft">{f.body}</p>
-            </div>
-          ))}
+      <section className="border-t border-line/60">
+        <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6 sm:py-32">
+          <SectionHead eyebrow="Features" title="Everything you need" accent="to close the job." />
+          <div className="mt-14 grid gap-px overflow-hidden rounded-card bg-line ring-1 ring-line sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map((f) => (
+              <div key={f.title} className="group bg-canvas p-8 transition hover:bg-surface">
+                <span className="grid size-11 place-items-center rounded-xl bg-hivis-soft text-hivis transition group-hover:bg-hivis group-hover:text-on-accent">
+                  <f.icon width={20} height={20} />
+                </span>
+                <h3 className="mt-6 text-lg font-semibold tracking-[-0.02em]">{f.title}</h3>
+                <p className="mt-2 leading-relaxed text-ink-soft">{f.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Trust */}
-      <section className="px-3 sm:px-4">
-        <div className="mx-auto max-w-7xl rounded-[2.5rem] bg-ink px-5 py-20 text-white sm:px-10 sm:py-24 lg:px-16">
-          <div className="grid gap-12 lg:grid-cols-[1fr_1.3fr] lg:items-start">
-            <div>
-              <h2 className="text-4xl leading-[1.02] font-bold sm:text-[3.5rem]">
-                Safe for your clients. <span className="text-hivis">Solid for you.</span>
-              </h2>
-              <p className="mt-5 max-w-md text-lg text-white/65">Every quote link is private, every acceptance is recorded, and payments are handled by Stripe.</p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
-              {[
-                [ShieldIcon, "Private links", "Every client link is a long random code that can't be guessed. Photos and voice notes use short-lived secure links."],
-                [LockIcon, "A record that stands up", "When a quote is accepted, the price and scope are locked with who accepted it, when, and from which device."],
-                [CardIcon, "Payments by Stripe", "Card details never touch SayPay. Deposits go straight to your own connected account."],
-              ].map(([Icon, t, b]) => {
-                const I = Icon as typeof ShieldIcon;
-                return (
-                  <div key={t as string} className="flex flex-col gap-4 rounded-3xl bg-white/[0.06] p-6 lg:flex-row">
-                    <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-hivis text-ink">
-                      <I width={20} height={20} />
-                    </span>
-                    <div>
-                      <p className="font-display text-lg font-bold">{t as string}</p>
-                      <p className="mt-1.5 text-sm leading-relaxed text-white/60">{b as string}</p>
-                    </div>
+      <section className="border-t border-line/60">
+        <div className="mx-auto grid max-w-6xl gap-12 px-4 py-24 sm:px-6 sm:py-32 lg:grid-cols-[1fr_1.3fr] lg:items-start">
+          <SectionHead
+            eyebrow="Security"
+            title="Safe for your clients."
+            accent="Solid for you."
+            body="Every quote link is private, every acceptance is recorded, and card payments are handled by Stripe."
+          />
+          <div className="grid gap-4">
+            {[
+              [ShieldIcon, "Private links", "Every client link is a long random code that can't be guessed. Photos and voice notes use short-lived secure links."],
+              [LockIcon, "A record that stands up", "When a quote is accepted, the price and scope are locked with who accepted it, when, and from which device."],
+              [CardIcon, "Payments by Stripe", "Card details never touch SayPay. Payments go straight to your own connected account."],
+            ].map(([Icon, t, b]) => {
+              const I = Icon as typeof ShieldIcon;
+              return (
+                <div key={t as string} className="flex gap-4 rounded-3xl bg-surface p-6 ring-1 ring-line ring-inset">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-hivis-soft text-hivis">
+                    <I width={20} height={20} />
+                  </span>
+                  <div>
+                    <p className="font-display text-lg font-semibold tracking-[-0.02em]">{t as string}</p>
+                    <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">{b as string}</p>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-24 sm:px-6 sm:py-32">
-        <div className="text-center">
-          <h2 className="text-4xl leading-[1.02] font-bold sm:text-[3.5rem]">Simple pricing.</h2>
-          <p className="mt-4 text-lg text-ink-soft">One accepted quote pays for months of SayPay.</p>
-        </div>
-        <div className="mx-auto mt-14 grid max-w-4xl gap-5 md:grid-cols-2">
-          <div className="flex flex-col rounded-card bg-surface p-8 shadow-card sm:p-10">
-            <h3 className="text-xl font-bold">Starter</h3>
-            <p className="mt-4 font-display text-6xl font-bold tracking-[-0.04em]">Free</p>
-            <p className="mt-2 text-muted">Your first 5 quotes</p>
-            <ul className="mt-8 flex-1 space-y-3.5 text-ink-soft">
-              {["Voice notes on quotes", "Private client links", "Deposit or full payment", "Bank transfer payments", "Photos, video and messaging"].map((t) => (
-                <li key={t} className="flex items-center gap-3">
-                  <span className="grid size-5 shrink-0 place-items-center rounded-full bg-go-soft text-go">
-                    <CheckIcon width={12} height={12} strokeWidth={3} />
+      <section id="pricing" className="scroll-mt-20 border-t border-line/60">
+        <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6 sm:py-32">
+          <SectionHead center eyebrow="Pricing" title="Simple pricing." body="One accepted quote pays for months of SayPay." />
+          <div className="mx-auto mt-14 grid max-w-4xl gap-4 md:grid-cols-2">
+            {[
+              {
+                name: "Starter",
+                price: "Free",
+                per: "",
+                note: "Your first 5 quotes",
+                items: ["Voice notes on quotes", "Private client links", "Deposit or full payment", "Card and bank transfer", "Photos, video and messaging"],
+                featured: false,
+              },
+              {
+                name: "Pro",
+                price: "£19",
+                per: "/month",
+                note: "Unlimited quotes",
+                items: ["Everything in Starter", "Unlimited quotes", "Cancel any time"],
+                featured: true,
+              },
+            ].map((plan) => (
+              <div
+                key={plan.name}
+                className={`relative flex flex-col rounded-card p-8 sm:p-10 ${plan.featured ? "bg-surface shadow-lift ring-1 ring-hivis/60 ring-inset" : "bg-surface ring-1 ring-line ring-inset"}`}
+              >
+                {plan.featured && (
+                  <span className="absolute top-8 right-8 rounded-full bg-hivis px-3 py-1 text-xs font-semibold text-on-accent sm:top-10 sm:right-10">
+                    Most popular
                   </span>
-                  {t}
-                </li>
-              ))}
-            </ul>
-            <ButtonLink href="/login?mode=signup" variant="secondary" size="lg" className="mt-10 w-full">
-              Start free
-            </ButtonLink>
-          </div>
-          <div className="relative flex flex-col rounded-card bg-ink p-8 text-white shadow-lift sm:p-10">
-            <span className="absolute top-8 right-8 rounded-full bg-hivis px-3 py-1 text-xs font-semibold text-ink sm:top-10 sm:right-10">Most popular</span>
-            <h3 className="text-xl font-bold">Pro</h3>
-            <p className="mt-4 font-display text-6xl font-bold tracking-[-0.04em]">
-              £19<span className="ml-1 font-sans text-lg font-medium tracking-normal text-white/55">/month</span>
-            </p>
-            <p className="mt-2 text-white/60">Unlimited quotes</p>
-            <ul className="mt-8 flex-1 space-y-3.5 text-white/80">
-              {["Everything in Starter", "Unlimited quotes and storage", "Card payments via Stripe", "Bank transfer payments", "Your logo and brand colour"].map((t) => (
-                <li key={t} className="flex items-center gap-3">
-                  <span className="grid size-5 shrink-0 place-items-center rounded-full bg-hivis text-ink">
-                    <CheckIcon width={12} height={12} strokeWidth={3} />
-                  </span>
-                  {t}
-                </li>
-              ))}
-            </ul>
-            <ButtonLink href="/login?mode=signup" variant="hivis" size="lg" className="mt-10 w-full">
-              Go Pro <ArrowRightIcon width={18} height={18} className="transition group-hover/btn:translate-x-0.5" />
-            </ButtonLink>
+                )}
+                <h3 className="text-lg font-semibold">{plan.name}</h3>
+                <p className="mt-4 font-display text-6xl font-bold tracking-[-0.05em]">
+                  {plan.price}
+                  <span className="ml-1 font-sans text-base font-normal tracking-normal text-muted">{plan.per}</span>
+                </p>
+                <p className="mt-2 text-muted">{plan.note}</p>
+                <ul className="mt-8 flex-1 space-y-3.5 border-t border-line pt-8 text-ink-soft">
+                  {plan.items.map((t) => (
+                    <li key={t} className="flex items-center gap-3">
+                      <CheckIcon width={16} height={16} strokeWidth={2.75} className="shrink-0 text-hivis" /> {t}
+                    </li>
+                  ))}
+                </ul>
+                <ButtonLink href="/login?mode=signup" variant={plan.featured ? "primary" : "secondary"} size="lg" className="mt-10 w-full">
+                  {plan.featured ? "Go Pro" : "Start free"}
+                </ButtonLink>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Closing CTA */}
-      <section className="px-3 pb-6 sm:px-4">
-        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] bg-hivis px-6 py-20 text-center sm:px-12 sm:py-24">
-          <div aria-hidden className="absolute -bottom-24 -left-24 size-72 rounded-full bg-[#ffc757]" />
-          <div aria-hidden className="absolute -top-28 -right-16 size-80 rounded-full bg-[#ffa90f]" />
+      <section className="px-4 pb-24 sm:px-6">
+        <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2rem] bg-surface px-6 py-20 text-center ring-1 ring-line ring-inset sm:px-12 sm:py-24">
+          <div aria-hidden className="absolute -bottom-48 left-1/2 h-96 w-[48rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(200_255_61/0.22),transparent)]" />
           <div className="relative">
-            <h2 className="mx-auto max-w-3xl text-4xl leading-[1.02] font-bold text-balance sm:text-6xl">Your next quote could be accepted tonight.</h2>
-            <p className="mx-auto mt-5 max-w-md text-lg text-ink/75">Free for your first 5 quotes. No card needed. Set up in two minutes.</p>
+            <h2 className="mx-auto max-w-3xl text-4xl leading-[1.02] font-bold text-balance sm:text-6xl">
+              Your next quote could be <span className="text-hivis">paid tonight.</span>
+            </h2>
+            <p className="mx-auto mt-5 max-w-md text-lg text-ink-soft">Free for your first 5 quotes. No card needed. Set up in two minutes.</p>
             <ButtonLink href="/login?mode=signup" size="lg" className="mt-10">
-              Send your first quote free <ArrowRightIcon width={18} height={18} className="transition group-hover/btn:translate-x-0.5" />
+              Start free <ArrowRightIcon width={18} height={18} className="transition group-hover/btn:translate-x-0.5" />
             </ButtonLink>
           </div>
         </div>
       </section>
 
-      <footer>
+      <footer className="border-t border-line/60">
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-12 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <Logo />
-          <div className="flex flex-wrap items-center gap-6 font-medium">
-            <a href="#why" className="transition hover:text-ink">
-              Why voice
-            </a>
-            <a href="#how" className="transition hover:text-ink">
-              How it works
-            </a>
-            <a href="#pricing" className="transition hover:text-ink">
-              Pricing
-            </a>
-            <Link href="/login" className="transition hover:text-ink">
-              Log in
-            </Link>
+          <div className="flex flex-wrap items-center gap-6">
+            <a href="#why" className="transition hover:text-ink">Why voice</a>
+            <a href="#payments" className="transition hover:text-ink">Payments</a>
+            <a href="#pricing" className="transition hover:text-ink">Pricing</a>
+            <Link href="/login" className="transition hover:text-ink">Log in</Link>
           </div>
           <p>© {new Date().getFullYear()} SayPay</p>
         </div>

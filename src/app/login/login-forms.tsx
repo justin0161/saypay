@@ -10,7 +10,7 @@ function Notice({ state }: { state: AuthState }) {
   if (!state) return null;
   if (state.error)
     return (
-      <p className="rounded-xl bg-red-50 p-3 text-sm font-medium text-stop ring-1 ring-stop/30 ring-inset" role="alert">
+      <p className="rounded-xl bg-stop-soft p-3 text-sm font-medium text-stop ring-1 ring-stop/30 ring-inset" role="alert">
         {state.error}
       </p>
     );
@@ -42,7 +42,7 @@ export function LoginForms({ initialMode, next }: { initialMode: "signin" | "sig
             key={key}
             type="button"
             onClick={() => setMode(key)}
-            className={cn("min-h-10 flex-1 rounded-full text-sm font-semibold transition", mode === key ? "bg-ink text-white" : "text-muted hover:text-ink")}
+            className={cn("min-h-10 flex-1 rounded-full text-sm font-semibold transition", mode === key ? "bg-raised text-ink ring-1 ring-line ring-inset" : "text-muted hover:text-ink")}
           >
             {label}
           </button>

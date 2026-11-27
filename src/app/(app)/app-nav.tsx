@@ -21,7 +21,7 @@ export function AppNav({ variant }: { variant: "top" | "bottom" }) {
         href={l.href}
         className={cn(
           "flex min-h-10 items-center rounded-full px-4 text-[15px] font-semibold transition",
-          active(l.href) ? "bg-ink text-white" : "text-ink-soft hover:bg-ink/[0.05] hover:text-ink",
+          active(l.href) ? "bg-raised text-ink" : "text-ink-soft hover:bg-ink/[0.05] hover:text-ink",
         )}
       >
         {l.label}
@@ -42,7 +42,7 @@ export function AppNav({ variant }: { variant: "top" | "bottom" }) {
         <Link
           href="/quotes/new"
           aria-label="New quote"
-          className="mx-auto -mt-6 grid size-14 place-items-center rounded-full bg-hivis text-ink shadow-lift ring-4 ring-canvas transition active:scale-95"
+          className="mx-auto -mt-6 grid size-14 place-items-center rounded-full bg-hivis text-on-accent shadow-lift ring-4 ring-canvas transition active:scale-95"
         >
           <PlusIcon width={28} height={28} />
         </Link>

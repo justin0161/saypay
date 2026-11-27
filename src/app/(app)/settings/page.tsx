@@ -37,10 +37,10 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
       <h1 className="text-5xl leading-none font-bold sm:text-6xl">Settings</h1>
 
       {sp.billing === "success" && (
-        <p className="rounded-2xl bg-go-soft p-4 font-semibold text-go-ink ring-1 ring-emerald-200 ring-inset">You&apos;re on SayPay Pro. Thanks! It can take a few seconds to show below.</p>
+        <p className="rounded-2xl bg-go-soft p-4 font-semibold text-go-ink ring-1 ring-go/30 ring-inset">You&apos;re on SayPay Pro. Thanks! It can take a few seconds to show below.</p>
       )}
       {sp.connect === "done" && (
-        <p className="rounded-2xl bg-go-soft p-4 font-semibold text-go-ink ring-1 ring-emerald-200 ring-inset">Stripe setup saved. Card payments switch on once Stripe verifies your details.</p>
+        <p className="rounded-2xl bg-go-soft p-4 font-semibold text-go-ink ring-1 ring-go/30 ring-inset">Stripe setup saved. Card payments switch on once Stripe verifies your details.</p>
       )}
 
       <Card className="space-y-4">
@@ -94,7 +94,7 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
         ) : (
           <>
             <p className="text-ink-soft">
-              Starter includes {freeQuoteLimit()} quotes. Pro is unlimited, with card deposits and your branding.
+              Starter includes {freeQuoteLimit()} quotes. Pro gives you unlimited quotes.
             </p>
             <div className="flex flex-wrap gap-2">
               <form action={startSubscriptionCheckout}>

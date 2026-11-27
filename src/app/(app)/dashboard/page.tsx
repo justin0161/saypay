@@ -98,7 +98,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
   return (
     <div className="space-y-6">
       {welcome && (
-        <div className="overflow-hidden rounded-card bg-ink text-white">
+        <div className="overflow-hidden rounded-card bg-night text-white">
           <div className="p-6">
           <p className="font-display text-3xl leading-none font-bold">Welcome to <span className="text-hivis">SayPay</span></p>
           <p className="mt-2 text-white/70">
@@ -156,7 +156,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
               href={filterHref(f.key)}
               className={cn(
                 "flex min-h-10 shrink-0 items-center rounded-full px-4 text-sm font-semibold ring-1 ring-inset transition",
-                filter === f.key ? "bg-ink text-white ring-ink" : "bg-surface text-ink-soft ring-line hover:text-ink hover:ring-ink/25",
+                filter === f.key ? "bg-hivis text-on-accent ring-hivis" : "bg-surface text-ink-soft ring-line hover:text-ink hover:ring-ink/25",
               )}
             >
               {f.label}
@@ -168,7 +168,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
       {/* List */}
       {quotes.length === 0 ? (
         <div className="relative overflow-hidden rounded-card bg-surface p-12 text-center ring-2 ring-ink">
-          <div className="relative mx-auto grid size-14 place-items-center rounded-2xl bg-hivis text-ink shadow-card">
+          <div className="relative mx-auto grid size-14 place-items-center rounded-2xl bg-hivis text-on-accent shadow-card">
             <MicIcon width={24} height={24} />
           </div>
           <p className="relative mt-6 font-display text-3xl leading-none font-bold">{all.length === 0 ? "Send your first voice quote" : "Nothing here yet"}</p>
@@ -211,7 +211,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
                     <StatusPill status={quote.status} />
                     <DepositPill status={quote.deposit_status} />
                     {awaiting && (
-                      <span className="rounded-full bg-hivis px-2.5 py-1 text-xs font-semibold text-ink">New reply</span>
+                      <span className="rounded-full bg-hivis px-2.5 py-1 text-xs font-semibold text-on-accent">New reply</span>
                     )}
                   </div>
                 </Link>

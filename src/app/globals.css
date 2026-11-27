@@ -1,43 +1,47 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-display: var(--font-bricolage), var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: var(--font-inter-tight), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  /* Deep navy ink, warm cream canvas. */
-  --color-ink: #0f1b2d;
-  --color-ink-soft: #3c4a5e;
-  --color-muted: #6a7587;
-  --color-line: #e8e3d8;
-  --color-canvas: #faf6ee;
-  --color-surface: #ffffff;
-  --color-cream: #f4ecdc;
+  /* Midnight: roles, not literal colours. `ink` is the main text colour. */
+  --color-ink: #f2f4f0;
+  --color-ink-soft: #b9beb8;
+  --color-muted: #868c86;
+  --color-line: #24282c;
+  --color-canvas: #0b0d10;
+  --color-surface: #14171b;
+  --color-raised: #1c2025;
+  --color-night: #070809;
+  --color-cream: #101316;
+  --color-on-accent: #0b0d10;
 
-  /* Brand amber. */
-  --color-hivis: #ffb627;
-  --color-hivis-soft: #fff2d6;
-  --color-hivis-ink: #4a3000;
-  --color-gold: #c98a00;
+  /* Electric lime accent. */
+  --color-hivis: #c8ff3d;
+  --color-hivis-soft: #1b240e;
+  --color-hivis-ink: #d9ff7c;
+  --color-gold: #c8ff3d;
 
-  --color-go: #12a26b;
-  --color-go-soft: #e4f6ee;
-  --color-go-ink: #075236;
+  --color-go: #22b35e;
+  --color-go-soft: #0f2318;
+  --color-go-ink: #7fe5a8;
 
-  --color-stop: #d63b2b;
+  --color-stop: #ff7a68;
+  --color-stop-soft: #2a1513;
 
-  --radius-card: 1.5rem;
-  --shadow-card: 0 1px 2px rgb(15 27 45 / 0.05), 0 4px 14px -6px rgb(15 27 45 / 0.08);
-  --shadow-lift: 0 2px 6px rgb(15 27 45 / 0.06), 0 22px 44px -18px rgb(15 27 45 / 0.28);
-  --shadow-float: 0 -6px 24px -12px rgb(15 27 45 / 0.2);
-  --shadow-stamp: 0 1px 2px rgb(15 27 45 / 0.08);
-  --shadow-device: 0 50px 100px -30px rgb(15 27 45 / 0.45), 0 20px 40px -20px rgb(15 27 45 / 0.3);
-  --shadow-chip: 0 12px 32px -10px rgb(15 27 45 / 0.28), 0 2px 6px rgb(15 27 45 / 0.06);
+  --radius-card: 1.25rem;
+  --shadow-card: 0 0 0 1px var(--color-line);
+  --shadow-lift: 0 0 0 1px var(--color-line), 0 30px 60px -24px rgb(0 0 0 / 0.7);
+  --shadow-float: 0 -1px 0 var(--color-line);
+  --shadow-stamp: 0 0 0 1px var(--color-line);
+  --shadow-device: 0 0 0 1px rgb(255 255 255 / 0.08), 0 60px 120px -30px rgb(0 0 0 / 0.9);
+  --shadow-chip: 0 0 0 1px var(--color-line), 0 20px 40px -16px rgb(0 0 0 / 0.8);
 
   --animate-pulse-ring: pulse-ring 1.4s ease-out infinite;
   @keyframes pulse-ring {
-    0% { box-shadow: 0 0 0 0 rgb(214 59 43 / 0.45); }
-    100% { box-shadow: 0 0 0 14px rgb(214 59 43 / 0); }
+    0% { box-shadow: 0 0 0 0 rgb(255 122 104 / 0.45); }
+    100% { box-shadow: 0 0 0 14px rgb(255 122 104 / 0); }
   }
   --animate-bar: bar 1s ease-in-out infinite;
   @keyframes bar {
@@ -51,13 +55,8 @@
   }
   --animate-pop: pop 0.6s cubic-bezier(0.3, 1.4, 0.5, 1) both;
   @keyframes pop {
-    from { opacity: 0; transform: translateY(10px) scale(0.92); }
+    from { opacity: 0; transform: translateY(10px) scale(0.94); }
     to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  --animate-bob: bob 5s ease-in-out infinite;
-  @keyframes bob {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
   }
 }
 
@@ -66,20 +65,21 @@
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
+    color-scheme: dark;
   }
   body {
     @apply bg-canvas text-ink antialiased;
   }
   h1, h2, h3 {
     font-family: var(--font-display);
-    letter-spacing: -0.03em;
+    letter-spacing: -0.035em;
   }
   :focus-visible {
-    @apply outline-[3px] outline-offset-2 outline-hivis;
+    @apply outline-2 outline-offset-2 outline-hivis;
   }
   ::selection {
     background: var(--color-hivis);
-    color: var(--color-ink);
+    color: var(--color-on-accent);
   }
   input, textarea, select {
     /* 16px prevents iOS zoom-on-focus. */

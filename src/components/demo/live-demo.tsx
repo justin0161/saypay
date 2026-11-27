@@ -105,7 +105,7 @@ function DemoVoiceNote() {
         <button
           type="button"
           onClick={play}
-          className="grid size-14 shrink-0 place-items-center rounded-full bg-hivis text-ink transition hover:brightness-105 active:scale-95"
+          className="grid size-14 shrink-0 place-items-center rounded-full bg-hivis text-on-accent transition hover:brightness-105 active:scale-95"
           aria-label={playing ? "Pause voice note" : "Play Dan's voice note"}
         >
           {playing ? <PauseIcon /> : <PlayIcon className="translate-x-px" />}
@@ -254,12 +254,12 @@ export function LiveDemo() {
               }}
               className={cn(
                 "relative min-h-10 flex-1 rounded-full px-4 text-sm font-semibold transition sm:flex-none",
-                view === key ? "bg-ink text-white" : "text-ink-soft hover:text-ink",
+                view === key ? "bg-hivis text-on-accent" : "text-ink-soft hover:text-ink",
               )}
             >
               {label}
               {key === "contractor" && unseen > 0 && view !== "contractor" && (
-                <span className="absolute -top-1.5 -right-1.5 grid size-5 place-items-center rounded-full bg-hivis text-[11px] font-semibold text-hivis-ink">
+                <span className="absolute -top-1.5 -right-1.5 grid size-5 place-items-center rounded-full bg-hivis text-[11px] font-semibold text-on-accent">
                   {unseen}
                 </span>
               )}
@@ -272,7 +272,7 @@ export function LiveDemo() {
       </div>
 
       {/* Device frame */}
-      <div className="mx-auto w-full max-w-[400px] rounded-[2.75rem] bg-ink p-2.5 shadow-device">
+      <div className="mx-auto w-full max-w-[400px] rounded-[2.75rem] bg-night p-2.5 shadow-device">
         <div className="relative h-[640px] overflow-hidden rounded-[2.2rem] bg-canvas text-ink">
           <div className="flex h-7 items-center justify-center bg-surface text-[10px] font-semibold text-muted">
             {view === "client" ? "🔒 saypay.co/q/x8Kf… · no login needed" : "saypay.co/dashboard"}
@@ -281,9 +281,9 @@ export function LiveDemo() {
           {view === "client" ? (
             <div className="h-[calc(100%-1.75rem)] overflow-y-auto pb-28">
               {/* Business header */}
-              <div className="bg-ink px-4 pt-4 pb-5 text-white">
+              <div className="bg-night px-4 pt-4 pb-5 text-white">
                 <div className="flex items-center gap-3">
-                  <div className="grid size-11 place-items-center rounded-2xl bg-hivis font-display text-sm font-bold text-ink">H&S</div>
+                  <div className="grid size-11 place-items-center rounded-2xl bg-hivis font-display text-sm font-bold text-on-accent">H&S</div>
                   <div className="min-w-0">
                     <p className="truncate font-semibold">{BUSINESS.name}</p>
                     <p className="truncate text-xs text-white/65">{BUSINESS.trade}</p>
@@ -302,7 +302,7 @@ export function LiveDemo() {
                   <div
                     className={cn(
                       "flex items-start gap-3 rounded-2xl p-3.5 ring-1 ring-inset",
-                      status === "approved" ? "bg-go-soft text-go-ink ring-emerald-200" : "bg-rose-50 text-rose-800 ring-rose-200",
+                      status === "approved" ? "bg-go-soft text-go-ink ring-go/30" : "bg-stop-soft text-stop ring-stop/30",
                     )}
                   >
                     {status === "approved" ? <LockIcon className="mt-0.5 shrink-0" /> : <XIcon className="mt-0.5 shrink-0" />}
@@ -313,7 +313,7 @@ export function LiveDemo() {
                   </div>
                 )}
                 {status === "changes_requested" && (
-                  <div className="rounded-2xl bg-hivis-soft p-3.5 text-sm text-hivis-ink ring-1 ring-amber-200 ring-inset">
+                  <div className="rounded-2xl bg-hivis-soft p-3.5 text-sm text-hivis-ink ring-1 ring-hivis/30 ring-inset">
                     <p className="font-semibold">Changes requested</p>
                     <p>Dan&apos;s been notified and will send an updated quote.</p>
                   </div>
@@ -410,7 +410,7 @@ export function LiveDemo() {
                       <Button variant="secondary" className="flex-1 whitespace-nowrap" onClick={() => setSheet("changes")}>
                         <PencilIcon width={16} height={16} /> Request changes
                       </Button>
-                      <Button variant="ghost" className="flex-1 text-rose-700" onClick={() => setSheet("decline")}>
+                      <Button variant="ghost" className="flex-1 text-stop" onClick={() => setSheet("decline")}>
                         Decline
                       </Button>
                     </div>
@@ -422,7 +422,7 @@ export function LiveDemo() {
               {sheet && (
                 <div className="absolute inset-0 z-10 flex items-end bg-black/40" onClick={() => setSheet(null)}>
                   <div className="w-full space-y-3 rounded-t-3xl bg-surface p-4" onClick={(e) => e.stopPropagation()}>
-                    <div className="mx-auto h-1.5 w-10 rounded-full bg-slate-200" />
+                    <div className="mx-auto h-1.5 w-10 rounded-full bg-raised" />
                     <h4 className="text-lg font-semibold">
                       {sheet === "approve" ? "Approve this quote" : sheet === "changes" ? "Request changes" : "Decline quote"}
                     </h4>
@@ -449,7 +449,7 @@ export function LiveDemo() {
                       className="w-full rounded-xl bg-canvas p-3 text-[16px] ring-1 ring-line ring-inset"
                       aria-label="Note"
                     />
-                    {sheetError && <p className="text-sm font-medium text-rose-700">{sheetError}</p>}
+                    {sheetError && <p className="text-sm font-medium text-stop">{sheetError}</p>}
                     <Button
                       variant={sheet === "decline" ? "danger" : "go"}
                       size="lg"
@@ -479,7 +479,7 @@ function DemoThread({ messages, viewer, typing }: { messages: Msg[]; viewer: Msg
           <p
             className={cn(
               "max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-relaxed",
-              m.from === viewer ? "rounded-br-md bg-ink text-white" : "rounded-bl-md bg-canvas ring-1 ring-line ring-inset",
+              m.from === viewer ? "rounded-br-md bg-night text-white" : "rounded-bl-md bg-canvas ring-1 ring-line ring-inset",
             )}
           >
             {m.text}
@@ -490,7 +490,7 @@ function DemoThread({ messages, viewer, typing }: { messages: Msg[]; viewer: Msg
         <li className="flex justify-start" aria-live="polite">
           <span className="flex gap-1 rounded-2xl rounded-bl-md bg-canvas px-3 py-3 ring-1 ring-line ring-inset">
             {[0, 1, 2].map((i) => (
-              <span key={i} className="size-1.5 animate-bounce rounded-full bg-slate-400" style={{ animationDelay: `${i * 150}ms` }} />
+              <span key={i} className="size-1.5 animate-bounce rounded-full bg-muted" style={{ animationDelay: `${i * 150}ms` }} />
             ))}
           </span>
         </li>
