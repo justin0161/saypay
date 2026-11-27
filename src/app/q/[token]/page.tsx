@@ -94,7 +94,7 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
         />
         <div className="relative mx-auto max-w-2xl px-4 pt-5 pb-7">
           <div className="flex items-center gap-3">
-            <div className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-[6px] bg-white/15 text-base font-semibold ring-1 ring-white/20 ring-inset">
+            <div className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-white/15 text-base font-semibold ring-1 ring-white/20 ring-inset">
               {logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={logoUrl} alt="" className="size-full object-cover" />
@@ -117,17 +117,17 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
             )}
           </div>
 
-          <h1 className="mt-7 text-4xl leading-[0.95] font-extrabold break-words uppercase sm:text-5xl">{quote.title}</h1>
+          <h1 className="mt-7 text-4xl leading-[0.95] font-bold break-words sm:text-5xl">{quote.title}</h1>
           <p className="mt-1 text-white/70">
             For {quote.client_name} · {new Date(quote.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
             {quote.valid_until &&
               ` · ${expired ? "Expired" : "Valid until"} ${new Date(quote.valid_until).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`}
           </p>
-          <p className="mt-4 font-mono text-4xl font-semibold tracking-[-0.02em] tabular">{formatMoney(quote.total_cents, quote.currency)}</p>
+          <p className="mt-4 text-4xl font-semibold tracking-[-0.02em] tabular">{formatMoney(quote.total_cents, quote.currency)}</p>
 
           {walkthrough && (
             <div className="mt-5">
-              <p className="mb-2.5 font-mono text-[11px] font-medium tracking-[0.14em] text-white/70 uppercase">Voice walkthrough from {firstName}</p>
+              <p className="mb-2.5 text-[11px] font-medium text-white/70">Voice walkthrough from {firstName}</p>
               <AudioPlayer src={walkthrough.url} durationHint={walkthrough.duration_seconds} tone="brand" size="lg" label="Play walkthrough" />
             </div>
           )}

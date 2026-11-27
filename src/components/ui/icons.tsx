@@ -82,17 +82,25 @@ export const BoltIcon = (p: P) => (
 );
 
 /**
- * SayPay mark: charcoal sound-wave bars on a hi-vis amber plate.
- * `tone` = the surface behind it: "light" (chalk/white), "dark" (charcoal) or "amber" (hi-vis, which flips the plate to charcoal).
+ * SayPay mark: a speech bubble of sound bars. `tone` = the surface behind it:
+ * "light" (cream/white), "dark" (navy) or "amber".
  */
 export const Logo = ({ className, tone = "light" }: { className?: string; tone?: "light" | "dark" | "amber" }) => (
   <span className={className}>
     <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden className="inline-block align-middle">
-      <rect width="64" height="64" rx="8" fill={tone === "amber" ? "#16181B" : "#FFB81C"} />
-      <path d="M19 27v10M27 19v26M35 24v16M43 29v6" stroke={tone === "amber" ? "#FFB81C" : "#16181B"} strokeWidth="6" strokeLinecap="square" />
+      <path
+        d="M14 4h36a10 10 0 0 1 10 10v28a10 10 0 0 1-10 10H30l-12 9v-9h-4A10 10 0 0 1 4 42V14A10 10 0 0 1 14 4Z"
+        fill={tone === "light" ? "#0F1B2D" : tone === "dark" ? "#FFB627" : "#0F1B2D"}
+      />
+      <path
+        d="M20 25v8M27 19v20M34 23v12M41 27v4"
+        stroke={tone === "dark" ? "#0F1B2D" : "#FFB627"}
+        strokeWidth="5"
+        strokeLinecap="round"
+      />
     </svg>
     <span
-      className={`ml-2 align-middle font-display text-[22px] leading-none font-extrabold tracking-[0.01em] uppercase ${tone === "dark" ? "text-white" : "text-ink"}`}
+      className={`ml-2 align-middle font-display text-[21px] leading-none font-bold tracking-[-0.03em] ${tone === "dark" ? "text-white" : "text-ink"}`}
     >
       SayPay
     </span>

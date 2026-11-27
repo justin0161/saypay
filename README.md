@@ -1,4 +1,4 @@
-# SayPay — Voice-backed quotes for trades
+# SayPay — Quotes with a voice note, for trades
 
 **saypay.co** · Quote-to-cash for tradespeople, contractors and service businesses.
 

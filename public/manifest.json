@@ -1,5 +1,5 @@
 {
-  "name": "SayPay — Voice-backed quotes",
+  "name": "SayPay — Quotes with a voice note",
   "short_name": "SayPay",
   "description": "Send quotes with a voice note, get approvals in one tap, and collect deposits faster.",
   "id": "/dashboard",
@@ -7,8 +7,8 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F3F0E8",
-  "theme_color": "#16181B",
+  "background_color": "#FAF6EE",
+  "theme_color": "#0F1B2D",
   "categories": ["business", "productivity", "finance"],
   "icons": [
     { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },

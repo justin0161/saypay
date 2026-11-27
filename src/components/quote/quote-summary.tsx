@@ -37,11 +37,11 @@ export function QuoteSummary({ quote }: { quote: Quote }) {
           </>
         )}
         <div className="flex items-baseline justify-between pt-1">
-          <dt className="font-display text-xl font-bold uppercase">Total</dt>
-          <dd className="tabular font-mono text-2xl font-semibold">{formatMoney(quote.total_cents, c)}</dd>
+          <dt className="font-display text-xl font-bold">Total</dt>
+          <dd className="tabular text-2xl font-semibold">{formatMoney(quote.total_cents, c)}</dd>
         </div>
         {quote.deposit_cents > 0 && (
-          <div className="mt-2 flex items-center justify-between rounded-[5px] bg-hivis px-3.5 py-2.5 font-semibold text-ink ring-[1.5px] ring-ink ring-inset">
+          <div className="mt-3 flex items-center justify-between rounded-2xl bg-hivis-soft px-4 py-3 font-semibold text-hivis-ink">
             <dt>
               Deposit to book
               {quote.deposit_type === "percent" && quote.deposit_percent ? ` (${Number(quote.deposit_percent)}%)` : ""}

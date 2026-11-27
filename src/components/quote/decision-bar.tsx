@@ -97,7 +97,7 @@ export function DecisionBar({
 
   return (
     <>
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-ink bg-canvas/95 pb-safe backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas/90 pb-safe backdrop-blur-xl">
         <div className="mx-auto max-w-2xl space-y-2 px-4 pt-3">
           {needsDeposit ? (
             <>
@@ -134,11 +134,11 @@ export function DecisionBar({
             role="dialog"
             aria-modal="true"
             aria-labelledby="decision-title"
-            className="w-full max-w-lg animate-rise space-y-4 rounded-t-[12px] bg-surface p-5 pb-safe ring-2 ring-ink sm:rounded-[8px] sm:shadow-[8px_8px_0_var(--color-ink)]"
+            className="w-full max-w-lg animate-rise space-y-4 rounded-t-3xl bg-surface p-6 pb-safe shadow-lift sm:rounded-3xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mx-auto h-1.5 w-10 rounded-full bg-slate-200 sm:hidden" />
-            <h2 id="decision-title" className="text-3xl leading-none font-extrabold uppercase">
+            <h2 id="decision-title" className="text-3xl leading-none font-bold">
               {sheet === "approve" ? "Approve this quote" : sheet === "request_changes" ? "Request changes" : "Decline this quote"}
             </h2>
 

@@ -99,9 +99,8 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
     <div className="space-y-6">
       {welcome && (
         <div className="overflow-hidden rounded-card bg-ink text-white">
-          <div aria-hidden className="h-2 bg-hazard" />
           <div className="p-6">
-          <p className="font-display text-3xl leading-none font-extrabold uppercase">Welcome to <span className="text-hivis">SayPay</span></p>
+          <p className="font-display text-3xl leading-none font-bold">Welcome to <span className="text-hivis">SayPay</span></p>
           <p className="mt-2 text-white/70">
             Add your logo and contact number in <Link href="/settings" className="font-semibold text-hivis underline underline-offset-2">Settings</Link>, then send your first voice quote.
           </p>
@@ -111,8 +110,8 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
 
       <div className="flex items-end justify-between gap-4">
         <div>
-          <p className="font-mono text-xs font-medium tracking-[0.14em] text-muted uppercase">{workspace.business_name}</p>
-          <h1 className="mt-1 text-5xl leading-none font-extrabold uppercase sm:text-6xl">Quotes</h1>
+          <p className="text-xs font-medium text-muted">{workspace.business_name}</p>
+          <h1 className="mt-1 text-5xl leading-none font-bold sm:text-6xl">Quotes</h1>
         </div>
       </div>
 
@@ -123,15 +122,15 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
             key={s.key}
             href={filterHref(s.key)}
             className={cn(
-              "group rounded-card bg-surface p-4 ring-[1.5px] ring-ink/15 ring-inset transition hover:ring-ink sm:p-5",
+              "group rounded-card bg-surface p-4 ring-1 ring-line ring-inset transition hover:ring-ink sm:p-5",
               filter === s.key && "bg-hivis ring-2 ring-ink",
             )}
           >
-            <p className="flex items-start justify-between gap-2 font-mono text-[11px] leading-snug font-medium tracking-[0.08em] text-ink-soft uppercase">
+            <p className="flex items-start justify-between gap-2 text-sm leading-snug font-medium text-muted">
               <span>{s.label}</span>
               <span className="shrink-0 text-ink/50 transition group-hover:text-ink max-sm:hidden">{STAT_ICON[s.key]}</span>
             </p>
-            <p className="tabular mt-3 font-display text-4xl leading-none font-extrabold sm:text-5xl">{s.value}</p>
+            <p className="tabular mt-3 font-display text-4xl leading-none font-bold sm:text-5xl">{s.value}</p>
           </Link>
         ))}
       </div>
@@ -146,7 +145,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
             name="q"
             defaultValue={q}
             placeholder="Search by job or client"
-            className="min-h-12 w-full rounded-[5px] bg-surface pr-4 pl-11 ring-[1.5px] ring-[#cfcabd] ring-inset transition placeholder:text-[#a5a39c] focus:ring-2 focus:ring-ink focus:shadow-[0_0_0_4px_rgb(255_184_28/0.35)] focus:outline-none"
+            className="min-h-12 w-full rounded-xl bg-surface pr-4 pl-11 ring-1 ring-[#cfcabd] ring-inset transition placeholder:text-[#a5a39c] focus:ring-2 focus:ring-ink focus:shadow-[0_0_0_4px_rgb(255_184_28/0.35)] focus:outline-none"
             aria-label="Search quotes"
           />
         </form>
@@ -156,8 +155,8 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
               key={f.key}
               href={filterHref(f.key)}
               className={cn(
-                "flex min-h-10 shrink-0 items-center rounded-[5px] px-3.5 font-display text-[15px] font-bold tracking-[0.05em] uppercase ring-[1.5px] ring-inset transition",
-                filter === f.key ? "bg-ink text-hivis ring-ink" : "bg-surface text-ink-soft ring-ink/15 hover:text-ink hover:ring-ink",
+                "flex min-h-10 shrink-0 items-center rounded-full px-4 text-sm font-semibold ring-1 ring-inset transition",
+                filter === f.key ? "bg-ink text-white ring-ink" : "bg-surface text-ink-soft ring-line hover:text-ink hover:ring-ink/25",
               )}
             >
               {f.label}
@@ -168,11 +167,11 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
 
       {/* List */}
       {quotes.length === 0 ? (
-        <div className="relative overflow-hidden rounded-card bg-surface bg-jobsheet p-12 text-center ring-2 ring-ink">
-          <div className="relative mx-auto grid size-14 place-items-center rounded-[6px] bg-hivis text-ink ring-2 ring-ink shadow-stamp">
+        <div className="relative overflow-hidden rounded-card bg-surface p-12 text-center ring-2 ring-ink">
+          <div className="relative mx-auto grid size-14 place-items-center rounded-2xl bg-hivis text-ink shadow-card">
             <MicIcon width={24} height={24} />
           </div>
-          <p className="relative mt-6 font-display text-3xl leading-none font-extrabold uppercase">{all.length === 0 ? "Send your first voice quote" : "Nothing here yet"}</p>
+          <p className="relative mt-6 font-display text-3xl leading-none font-bold">{all.length === 0 ? "Send your first voice quote" : "Nothing here yet"}</p>
           <p className="relative mx-auto mt-1 max-w-sm text-muted">
             {all.length === 0
               ? "It takes about 60 seconds: add a few line items, record a quick walkthrough, and share the link."
@@ -194,25 +193,25 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
               <li
                 key={quote.id}
                 className={cn(
-                  "relative min-w-0 overflow-hidden rounded-card bg-surface p-4 ring-[1.5px] ring-ink/15 ring-inset transition hover:ring-ink sm:p-5",
+                  "relative min-w-0 overflow-hidden rounded-card bg-surface p-4 ring-1 ring-line ring-inset transition hover:ring-ink sm:p-5",
                   awaiting && "ring-2 ring-ink before:absolute before:inset-y-0 before:left-0 before:w-1.5 before:bg-hivis",
                 )}
               >
                 <Link href={`/quotes/${quote.id}`} className="block">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate font-display text-[22px] leading-tight font-bold uppercase">{quote.title}</p>
+                      <p className="truncate font-display text-xl leading-tight font-bold">{quote.title}</p>
                       <p className="truncate text-sm text-muted">
                         {quote.client_name} · {timeAgo(quote.updated_at)}
                       </p>
                     </div>
-                    <p className="tabular shrink-0 font-mono text-[17px] font-semibold">{formatMoney(quote.total_cents, quote.currency)}</p>
+                    <p className="tabular shrink-0 text-[17px] font-semibold">{formatMoney(quote.total_cents, quote.currency)}</p>
                   </div>
                   <div className="mt-3 flex flex-wrap items-center gap-1.5">
                     <StatusPill status={quote.status} />
                     <DepositPill status={quote.deposit_status} />
                     {awaiting && (
-                      <span className="rounded-[3px] bg-hivis px-2 py-0.5 font-mono text-[11px] font-semibold tracking-[0.06em] text-ink uppercase ring-1 ring-ink ring-inset">New reply</span>
+                      <span className="rounded-full bg-hivis px-2.5 py-1 text-xs font-semibold text-ink">New reply</span>
                     )}
                   </div>
                 </Link>

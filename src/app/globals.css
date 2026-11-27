@@ -1,57 +1,63 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-barlow), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-display: var(--font-barlow-condensed), var(--font-barlow), "Arial Narrow", sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  /* Workwear charcoal + site-board chalk. */
-  --color-ink: #16181b;
-  --color-ink-soft: #3d4148;
-  --color-muted: #6b6e73;
-  --color-line: #dedad0;
-  --color-canvas: #f3f0e8;
-  --color-surface: #fffdf8;
+  /* Deep navy ink, warm cream canvas. */
+  --color-ink: #0f1b2d;
+  --color-ink-soft: #3c4a5e;
+  --color-muted: #6a7587;
+  --color-line: #e8e3d8;
+  --color-canvas: #faf6ee;
+  --color-surface: #ffffff;
+  --color-cream: #f4ecdc;
 
-  /* Hi-vis safety amber — the brand. */
-  --color-hivis: #ffb81c;
-  --color-hivis-soft: #fff1cc;
-  --color-hivis-ink: #16181b;
-  --color-hivis-deep: #e59a00;
+  /* Brand amber. */
+  --color-hivis: #ffb627;
+  --color-hivis-soft: #fff2d6;
+  --color-hivis-ink: #4a3000;
+  --color-gold: #c98a00;
 
-  --color-go: #138a4a;
-  --color-go-soft: #e3f3e8;
-  --color-go-ink: #0b4d2a;
+  --color-go: #12a26b;
+  --color-go-soft: #e4f6ee;
+  --color-go-ink: #075236;
 
-  --color-stop: #c8321e;
+  --color-stop: #d63b2b;
 
-  --radius-card: 0.375rem;
-  /* Hard, "stamped" shadows — no soft blur. */
-  --shadow-card: 0 1px 0 rgb(22 24 27 / 0.06);
-  --shadow-lift: 4px 4px 0 var(--color-ink);
-  --shadow-stamp: 3px 3px 0 var(--color-ink);
-  --shadow-float: 0 -2px 0 rgb(22 24 27 / 0.08);
-  --shadow-device: 10px 10px 0 var(--color-ink);
+  --radius-card: 1.5rem;
+  --shadow-card: 0 1px 2px rgb(15 27 45 / 0.05), 0 4px 14px -6px rgb(15 27 45 / 0.08);
+  --shadow-lift: 0 2px 6px rgb(15 27 45 / 0.06), 0 22px 44px -18px rgb(15 27 45 / 0.28);
+  --shadow-float: 0 -6px 24px -12px rgb(15 27 45 / 0.2);
+  --shadow-stamp: 0 1px 2px rgb(15 27 45 / 0.08);
+  --shadow-device: 0 50px 100px -30px rgb(15 27 45 / 0.45), 0 20px 40px -20px rgb(15 27 45 / 0.3);
+  --shadow-chip: 0 12px 32px -10px rgb(15 27 45 / 0.28), 0 2px 6px rgb(15 27 45 / 0.06);
 
   --animate-pulse-ring: pulse-ring 1.4s ease-out infinite;
   @keyframes pulse-ring {
-    0% { box-shadow: 0 0 0 0 rgb(200 50 30 / 0.45); }
-    100% { box-shadow: 0 0 0 14px rgb(200 50 30 / 0); }
+    0% { box-shadow: 0 0 0 0 rgb(214 59 43 / 0.45); }
+    100% { box-shadow: 0 0 0 14px rgb(214 59 43 / 0); }
   }
   --animate-bar: bar 1s ease-in-out infinite;
   @keyframes bar {
     0%, 100% { transform: scaleY(0.35); }
     50% { transform: scaleY(1); }
   }
-  --animate-rise: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-rise: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   @keyframes rise {
-    from { opacity: 0; transform: translateY(8px); }
+    from { opacity: 0; transform: translateY(14px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  --animate-stamp: stamp 0.35s cubic-bezier(0.3, 1.6, 0.5, 1) both;
-  @keyframes stamp {
-    from { opacity: 0; transform: rotate(-8deg) scale(1.6); }
-    to { opacity: 1; transform: rotate(-8deg) scale(1); }
+  --animate-pop: pop 0.6s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  @keyframes pop {
+    from { opacity: 0; transform: translateY(10px) scale(0.92); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  --animate-bob: bob 5s ease-in-out infinite;
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
   }
 }
 
@@ -64,12 +70,9 @@
   body {
     @apply bg-canvas text-ink antialiased;
   }
-  h1, h2 {
+  h1, h2, h3 {
     font-family: var(--font-display);
-    letter-spacing: -0.005em;
-  }
-  h3, h4 {
-    letter-spacing: -0.005em;
+    letter-spacing: -0.03em;
   }
   :focus-visible {
     @apply outline-[3px] outline-offset-2 outline-hivis;
@@ -98,29 +101,4 @@
 
 @utility tabular {
   font-variant-numeric: tabular-nums;
-}
-
-/* Hazard tape: diagonal amber / charcoal stripes. */
-@utility bg-hazard {
-  background-image: repeating-linear-gradient(-45deg, var(--color-hivis) 0 14px, var(--color-ink) 14px 28px);
-}
-
-/* Hi-vis vest reflective band. */
-@utility bg-reflective {
-  background-image: linear-gradient(180deg, #d9dadc 0%, #f4f5f6 45%, #c9cbce 100%);
-}
-
-/* Tape-measure tick marks (every 8px, longer every 40px). */
-@utility bg-ruler {
-  background-image:
-    repeating-linear-gradient(90deg, var(--color-ink) 0 1.5px, transparent 1.5px 40px),
-    repeating-linear-gradient(90deg, var(--color-ink) 0 1px, transparent 1px 8px);
-  background-size: 100% 16px, 100% 8px;
-  background-repeat: repeat-x;
-  background-position: 0 0, 0 0;
-}
-
-/* Lined job-sheet paper. */
-@utility bg-jobsheet {
-  background-image: repeating-linear-gradient(180deg, transparent 0 31px, rgb(22 24 27 / 0.07) 31px 32px);
 }

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckIcon, Logo, PlayIcon } from "@/components/ui/icons";
+import { CardIcon, CheckIcon, Logo, PlayIcon } from "@/components/ui/icons";
 import { LoginForms } from "./login-forms";
 
 export const metadata: Metadata = { title: "Log in" };
+
+const WAVE = [0.4, 0.7, 0.5, 0.9, 0.6, 1, 0.7, 0.45, 0.85, 0.6, 0.95, 0.5, 0.7, 0.4, 0.8, 0.55, 0.9, 0.5];
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const sp = await searchParams;
@@ -18,17 +20,14 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
           <Logo />
         </Link>
         <div className="mx-auto mt-12 w-full max-w-sm flex-1 animate-rise sm:mt-20">
-          <p className="text-center font-mono text-xs font-medium tracking-[0.16em] text-muted uppercase lg:text-left">
-            {mode === "signup" ? "Free for your first 5 quotes" : "SayPay dashboard"}
-          </p>
-          <h1 className="mt-3 text-center text-5xl leading-[0.92] font-extrabold uppercase lg:text-left">
-            {mode === "signup" ? "Get set up" : "Welcome back"}
+          <h1 className="text-center text-[2.5rem] leading-[1.02] font-bold lg:text-left">
+            {mode === "signup" ? "Start winning more quotes" : "Welcome back"}
           </h1>
-          <p className="mt-3 text-center text-ink-soft lg:text-left">
-            {mode === "signup" ? "Takes two minutes. No card needed." : "Log in to see your quotes and replies."}
+          <p className="mt-3 text-center text-lg text-ink-soft lg:text-left">
+            {mode === "signup" ? "Free for your first 5 quotes. No card needed." : "Log in to see your quotes and replies."}
           </p>
           {linkError && (
-            <p className="mt-5 rounded-[5px] bg-red-50 p-3 text-sm font-medium text-stop ring-1 ring-stop/30 ring-inset" role="alert">
+            <p className="mt-5 rounded-2xl bg-red-50 p-3.5 text-sm font-medium text-stop ring-1 ring-stop/20 ring-inset" role="alert">
               That sign-in link has expired or was already used. Request a new one below.
             </p>
           )}
@@ -37,46 +36,50 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
       </main>
 
       {/* Brand panel (desktop) */}
-      <aside className="relative hidden flex-col overflow-hidden border-l-2 border-ink bg-hivis lg:flex" aria-hidden>
-        <div className="h-4 bg-hazard" />
-        <div className="flex flex-1 flex-col justify-center px-14 xl:px-20">
-          <p className="max-w-md font-display text-6xl leading-[0.9] font-extrabold text-ink uppercase">
-            Send it from the van.
-            <span className="mt-2 block">
-              <span className="bg-ink box-decoration-clone px-2 leading-[1.08] text-hivis">Booked by tonight.</span>
-            </span>
+      <aside className="hidden p-4 lg:block" aria-hidden>
+        <div className="relative flex h-full flex-col justify-center overflow-hidden rounded-[2.5rem] bg-hivis px-14 xl:px-20">
+          <div className="absolute -top-28 -right-20 size-96 rounded-full bg-[#ffc757]" />
+          <div className="absolute -bottom-32 -left-24 size-96 rounded-full bg-[#ffa90f]" />
+
+          <p className="relative max-w-md font-display text-5xl leading-[1.02] font-bold tracking-[-0.04em] text-ink">
+            Quotes clients understand. Deposits that actually get paid.
           </p>
 
-          {/* Job sheet card */}
-          <div className="relative mt-14 w-full max-w-sm rounded-card bg-surface ring-2 ring-ink shadow-[8px_8px_0_var(--color-ink)]">
-            <div className="flex items-center justify-between bg-ink px-4 py-2.5 font-mono text-[11px] font-medium tracking-[0.12em] text-white uppercase">
-              <span>Quote</span>
-              <span className="text-hivis">No. 0142</span>
-            </div>
-            <div className="p-4">
-              <p className="font-display text-2xl leading-tight font-bold uppercase">Back bedroom radiator</p>
-              <p className="mt-0.5 font-mono text-xs text-muted">For Priya · £849.60</p>
-              <div className="mt-4 flex items-center gap-3 rounded-[5px] bg-ink p-2.5">
-                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-hivis text-ink">
-                  <PlayIcon width={14} height={14} />
+          <div className="relative mt-12 w-full max-w-sm">
+            <div className="rounded-3xl bg-surface p-5 shadow-lift">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-display text-xl font-bold tracking-[-0.03em]">Back bedroom radiator</p>
+                  <p className="mt-0.5 text-sm text-muted">For Priya · £849.60</p>
+                </div>
+                <span className="rounded-full bg-go-soft px-2.5 py-1 text-xs font-semibold text-go-ink">Accepted</span>
+              </div>
+              <div className="mt-5 flex items-center gap-3 rounded-2xl bg-ink p-3 text-white">
+                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-hivis text-ink">
+                  <PlayIcon width={15} height={15} />
                 </span>
-                <span className="flex h-6 flex-1 items-center gap-[3px]">
-                  {[0.4, 0.7, 0.5, 0.9, 0.6, 1, 0.7, 0.45, 0.85, 0.6, 0.95, 0.5, 0.7, 0.4, 0.8, 0.55].map((h, i) => (
-                    <span key={i} className={`flex-1 ${i < 9 ? "bg-hivis" : "bg-white/25"}`} style={{ height: `${h * 100}%` }} />
+                <span className="flex h-7 flex-1 items-center gap-[3px]">
+                  {WAVE.map((h, i) => (
+                    <span key={i} className={`flex-1 rounded-full ${i < 8 ? "bg-hivis" : "bg-white/25"}`} style={{ height: `${h * 100}%` }} />
                   ))}
                 </span>
-                <span className="tabular pr-1 font-mono text-xs text-white/70">0:34</span>
+                <span className="tabular pr-1 text-xs text-white/70">0:34</span>
               </div>
-              <p className="mt-4 flex items-center gap-2 border-t-2 border-dashed border-ink/15 pt-4 text-sm font-semibold text-ink">
-                <CheckIcon width={16} height={16} strokeWidth={3} className="text-go" /> Deposit of £212.40 received
+              <p className="mt-4 flex items-center gap-2 text-sm font-semibold text-go-ink">
+                <CheckIcon width={16} height={16} strokeWidth={3} className="text-go" /> Accepted by Priya · terms locked
               </p>
             </div>
-            <span className="absolute -right-8 -bottom-9 animate-stamp rounded-[4px] border-[3px] border-go bg-surface/90 px-3 py-1 font-display text-2xl font-extrabold tracking-[0.08em] text-go uppercase [animation-delay:400ms]">
-              Approved ✓
-            </span>
+            <div className="absolute -right-10 -bottom-10 flex animate-pop items-center gap-3 rounded-2xl bg-surface py-3 pr-5 pl-3 shadow-chip [animation-delay:500ms]">
+              <span className="grid size-10 place-items-center rounded-full bg-hivis text-ink">
+                <CardIcon width={18} height={18} />
+              </span>
+              <div className="leading-tight">
+                <p className="text-sm font-semibold">Deposit paid · £212.40</p>
+                <p className="mt-0.5 text-xs text-muted">Just now</p>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="h-4 bg-hazard" />
       </aside>
     </div>
   );

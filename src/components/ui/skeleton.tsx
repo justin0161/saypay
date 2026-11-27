@@ -1,7 +1,7 @@
 import { cn } from "./cn";
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div aria-hidden className={cn("animate-pulse rounded-[5px] bg-[#e6e1d5]", className)} />;
+  return <div aria-hidden className={cn("animate-pulse rounded-2xl bg-[#ece5d7]", className)} />;
 }
 
 export function CardSkeleton({ lines = 3 }: { lines?: number }) {

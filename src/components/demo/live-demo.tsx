@@ -105,7 +105,7 @@ function DemoVoiceNote() {
         <button
           type="button"
           onClick={play}
-          className="grid size-14 shrink-0 place-items-center rounded-full bg-hivis text-ink ring-2 ring-ink transition hover:brightness-105 active:scale-95"
+          className="grid size-14 shrink-0 place-items-center rounded-full bg-hivis text-ink transition hover:brightness-105 active:scale-95"
           aria-label={playing ? "Pause voice note" : "Play Dan's voice note"}
         >
           {playing ? <PauseIcon /> : <PlayIcon className="translate-x-px" />}
@@ -236,7 +236,7 @@ export function LiveDemo() {
     <div className="relative min-w-0">
       {/* View toggle */}
       <div className="mx-auto mb-4 flex w-full max-w-[400px] items-center justify-between gap-3">
-        <div className="flex flex-1 rounded-[6px] bg-ink/10 p-1 ring-2 ring-ink ring-inset sm:flex-none" role="tablist" aria-label="Demo view">
+        <div className="flex flex-1 rounded-full bg-surface p-1 shadow-card sm:flex-none" role="tablist" aria-label="Demo view">
           {(
             [
               ["client", "Client view"],
@@ -253,8 +253,8 @@ export function LiveDemo() {
                 if (key === "contractor") setUnseen(0);
               }}
               className={cn(
-                "relative min-h-10 flex-1 rounded-[3px] px-4 font-display text-[15px] font-bold tracking-[0.05em] uppercase transition sm:flex-none",
-                view === key ? "bg-ink text-hivis" : "text-ink/70 hover:text-ink",
+                "relative min-h-10 flex-1 rounded-full px-4 text-sm font-semibold transition sm:flex-none",
+                view === key ? "bg-ink text-white" : "text-ink-soft hover:text-ink",
               )}
             >
               {label}
@@ -266,7 +266,7 @@ export function LiveDemo() {
             </button>
           ))}
         </div>
-        <button type="button" onClick={reset} className="min-h-10 px-3 font-mono text-xs font-medium tracking-[0.1em] text-ink/70 uppercase underline-offset-4 transition hover:text-ink hover:underline">
+        <button type="button" onClick={reset} className="min-h-10 px-3 text-sm font-medium text-muted transition hover:text-ink">
           Reset
         </button>
       </div>
@@ -275,7 +275,7 @@ export function LiveDemo() {
       <div className="mx-auto w-full max-w-[400px] rounded-[2.75rem] bg-ink p-2.5 shadow-device">
         <div className="relative h-[640px] overflow-hidden rounded-[2.2rem] bg-canvas text-ink">
           <div className="flex h-7 items-center justify-center bg-surface text-[10px] font-semibold text-muted">
-            {view === "client" ? "🔒 saypay.co/q/x8Kf…  ·  no login needed" : "saypay.co/dashboard"}
+            {view === "client" ? "🔒 saypay.co/q/x8Kf… · no login needed" : "saypay.co/dashboard"}
           </div>
 
           {view === "client" ? (
@@ -283,16 +283,16 @@ export function LiveDemo() {
               {/* Business header */}
               <div className="bg-ink px-4 pt-4 pb-5 text-white">
                 <div className="flex items-center gap-3">
-                  <div className="grid size-11 place-items-center rounded-[6px] bg-hivis font-display text-base font-extrabold text-ink">H&S</div>
+                  <div className="grid size-11 place-items-center rounded-2xl bg-hivis font-display text-sm font-bold text-ink">H&S</div>
                   <div className="min-w-0">
                     <p className="truncate font-semibold">{BUSINESS.name}</p>
                     <p className="truncate text-xs text-white/65">{BUSINESS.trade}</p>
                   </div>
                 </div>
-                <h3 className="mt-4 font-display text-[26px] leading-[0.95] font-extrabold uppercase">Back bedroom radiator & system flush</h3>
+                <h3 className="mt-4 font-display text-[22px] leading-tight font-bold tracking-[-0.03em]">Back bedroom radiator & system flush</h3>
                 <p className="mt-1 text-sm text-white/70">For {CLIENT} · 14 Elm Road</p>
                 <div className="mt-4">
-                  <p className="mb-2 font-mono text-[10px] font-medium tracking-[0.14em] text-hivis uppercase">Voice walkthrough from Dan</p>
+                  <p className="mb-2 text-xs font-semibold text-hivis">Voice note from Dan</p>
                   <DemoVoiceNote />
                 </div>
               </div>
@@ -360,7 +360,7 @@ export function LiveDemo() {
 
                 {/* Thread */}
                 <div className="rounded-2xl bg-surface p-4 shadow-card">
-                  <p className="mb-3 text-xs font-semibold tracking-wide text-muted uppercase">Messages</p>
+                  <p className="mb-3 text-xs font-semibold tracking-wide text-muted">Messages</p>
                   <DemoThread messages={messages} viewer="client" typing={typing} />
                   <div ref={threadEnd} />
                   <div className="mt-3 flex gap-2">
