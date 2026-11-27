@@ -8,17 +8,26 @@ import { createClient } from "@/lib/supabase/server";
 import type { ActionResult } from "@/lib/types";
 import { fieldErrors, firstError, uploadRequestSchema, workspaceSchema } from "@/lib/validation";
 
-export type WorkspaceFormState = { ok?: boolean; error?: string; fieldErrors?: Record<string, string> } | undefined;
+export type WorkspaceFormState =
+  | {
+      ok?: boolean;
+      error?: string;
+      fieldErrors?: Record<string, string>;
+      /** What was submitted, so the form can refill fields React resets after a rejected save. */
+      values?: Record<string, string>;
+    }
+  | undefined;
 
 export async function updateWorkspace(_: WorkspaceFormState, formData: FormData): Promise<WorkspaceFormState> {
   const raw = Object.fromEntries(formData.entries());
+  const values = Object.fromEntries(Object.entries(raw).map(([k, v]) => [k, typeof v === "string" ? v : ""]));
   const parsed = workspaceSchema.safeParse({ ...raw, currency: String(raw.currency ?? "").toUpperCase() });
-  if (!parsed.success) return { error: firstError(parsed.error), fieldErrors: fieldErrors(parsed.error) };
+  if (!parsed.success) return { error: firstError(parsed.error), fieldErrors: fieldErrors(parsed.error), values };
 
   const { workspace } = await requireWorkspace();
   const supabase = await createClient();
   const { error } = await supabase.from("workspaces").update(parsed.data).eq("id", workspace.id);
-  if (error) return { error: error.message };
+  if (error) return { error: error.message, values };
   revalidatePath("/", "layout");
   return { ok: true };
 }

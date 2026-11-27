@@ -1,11 +1,11 @@
 import { PGlite } from "@electric-sql/pglite";
-// Runs 001_init.sql against an in-memory Postgres (PGlite) with minimal Supabase
+// Runs the migrations (in the order given) against an in-memory Postgres (PGlite) with minimal Supabase
 // auth/storage stand-ins, then exercises RLS, column grants and lock triggers.
-// Usage: npm run test:db
+// Usage: npm run test:db  (node rls.test.mjs 001.sql 002.sql …)
 import { readFileSync } from "node:fs";
 
 const db = new PGlite();
-const migration = readFileSync(process.argv[2], "utf8");
+const migrations = process.argv.slice(2).map((p) => readFileSync(p, "utf8"));
 
 // Minimal Supabase stand-ins: roles, auth schema, storage schema.
 await db.exec(`
@@ -24,8 +24,8 @@ await db.exec(`
   alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
   alter default privileges in schema public grant execute on functions to anon, authenticated, service_role;
 `);
-await db.exec(migration);
-console.log("✓ migration applied");
+for (const m of migrations) await db.exec(m);
+console.log(`✓ ${migrations.length} migration(s) applied`);
 
 const A = "11111111-1111-1111-1111-111111111111";
 const B = "22222222-2222-2222-2222-222222222222";
@@ -79,6 +79,16 @@ await expectOk("owner updates profile", "authenticated", A, `update public.works
 await expectErr("owner cannot set stripe fields", "authenticated", A, `update public.workspaces set subscription_status='active' where id='${wsA}'`, /permission denied/);
 await expectOk("anon sees nothing", "anon", null, `select 1`, () => true);
 await expectErr("anon cannot read quotes", "anon", null, `select * from public.quotes`, /permission denied/);
+
+console.log("\nBank transfer details");
+await expectOk("owner saves bank details", "authenticated", A,
+  `update public.workspaces set bank_account_name='Alpha Plumbing Ltd', bank_sort_code='112233', bank_account_number='12345678' where id='${wsA}' returning id`, (r) => r.rows.length === 1);
+await expectOk("other user cannot change them", "authenticated", B,
+  `update public.workspaces set bank_account_number='87654321' where id='${wsA}' returning id`, (r) => r.rows.length === 0);
+await expectErr("half a set of details is rejected", "authenticated", A,
+  `update public.workspaces set bank_sort_code='112233' where id='${wsA}'`, /bank_details_complete/);
+await expectErr("badly formatted account number rejected", "authenticated", A,
+  `update public.workspaces set bank_account_name='A', bank_sort_code='112233', bank_account_number='123' where id='${wsA}'`, /check constraint/);
 
 console.log("\nRLS — quotes");
 await expectOk("owner reads own quote", "authenticated", A, `select * from public.quotes`, (r) => r.rows.length === 1);

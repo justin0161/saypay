@@ -12,7 +12,8 @@ import { MessageThread } from "@/components/thread/message-thread";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CheckIcon, LockIcon, PhoneIcon, ShieldIcon, XIcon } from "@/components/ui/icons";
 import { StatusPill } from "@/components/ui/pill";
-import { formatDateTime, initials } from "@/lib/format";
+import { formatDateTime, initials, isFullPayment, paymentReference } from "@/lib/format";
+import { isStripeConfigured } from "@/lib/env";
 import { formatMoney } from "@/lib/quote-math";
 import { loadQuoteBundle, signPaths, toQuote } from "@/lib/quotes";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -33,7 +34,9 @@ const loadByToken = cache(async (token: string) => {
   if (!quote) return null;
   const { data: ws } = await admin
     .from("workspaces")
-    .select("business_name, contact_name, contact_phone, contact_email, trade, brand_color, logo_path")
+    .select(
+      "business_name, contact_name, contact_phone, contact_email, trade, brand_color, logo_path, stripe_connect_account_id, deposit_link_url, bank_account_name, bank_sort_code, bank_account_number",
+    )
     .eq("id", quote.workspace_id)
     .single();
   if (!ws) return null;
@@ -80,9 +83,19 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
   const firstName = ws.contact_name?.split(" ")[0] ?? ws.business_name;
   const expired = Boolean(quote.valid_until && new Date(`${quote.valid_until}T23:59:59Z`) < new Date());
   const justPaid = sp.paid === "1";
+  const payInFull = isFullPayment(quote.deposit_cents, quote.total_cents);
+  const dueLabel = payInFull ? "Payment" : "Deposit";
+  // Card: Stripe Connect (verified at checkout time) or the contractor's own payment link.
+  const cardAvailable = Boolean((isStripeConfigured() && ws.stripe_connect_account_id) || ws.deposit_link_url);
+  // Bank details are only revealed once the quote is accepted.
+  const bank =
+    quote.status === "approved" && ws.bank_account_name && ws.bank_sort_code && ws.bank_account_number
+      ? { name: ws.bank_account_name, sortCode: ws.bank_sort_code, accountNumber: ws.bank_account_number, reference: paymentReference(quote.id) }
+      : null;
+  const bankOffered = Boolean(ws.bank_account_number);
 
   return (
-    <div className="min-h-dvh pb-48">
+    <div className="min-h-dvh pb-64">
       <AutoRefresh intervalMs={15_000} />
 
       {/* Business header */}
@@ -146,10 +159,12 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
               {quote.deposit_cents > 0 && (
                 <p className="mt-2 font-semibold">
                   {quote.deposit_status === "paid"
-                    ? `✓ Deposit of ${formatMoney(quote.deposit_cents, quote.currency)} received — you're booked in.`
+                    ? `✓ ${dueLabel} of ${formatMoney(quote.deposit_cents, quote.currency)} received — you're booked in.`
                     : justPaid
                       ? "Payment received — confirming with your bank…"
-                      : `Deposit of ${formatMoney(quote.deposit_cents, quote.currency)} due to secure your booking.`}
+                      : payInFull
+                        ? `Payment of ${formatMoney(quote.deposit_cents, quote.currency)} due.`
+                        : `Deposit of ${formatMoney(quote.deposit_cents, quote.currency)} due to secure your booking.`}
                 </p>
               )}
             </div>
@@ -219,11 +234,15 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
         clientName={quote.client_name}
         businessName={ws.business_name}
         expired={expired}
+        payInFull={payInFull}
+        cardAvailable={cardAvailable}
+        bankOffered={bankOffered}
+        bank={bank}
       />
       {quote.status === "approved" && quote.deposit_status === "paid" && (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 pb-safe backdrop-blur">
           <p className="mx-auto flex min-h-14 max-w-2xl items-center justify-center gap-2 px-4 pt-3 font-semibold text-go-ink">
-            <CheckIcon /> All set — deposit paid
+            <CheckIcon /> All set — {payInFull ? "paid in full" : "deposit paid"}
           </p>
         </div>
       )}

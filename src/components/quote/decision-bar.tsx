@@ -1,19 +1,23 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { decideQuote, startDepositPayment } from "@/actions/client-quote";
+import { decideQuote, notifyBankTransfer, startDepositPayment } from "@/actions/client-quote";
+import { formatSortCode } from "@/lib/format";
 import { formatMoney } from "@/lib/quote-math";
 import type { DepositStatus, QuoteStatus } from "@/lib/types";
 import { Button } from "../ui/button";
 import { inputClass } from "../ui/field";
+import { CopyButton } from "../copy-button";
 import { CardIcon, CheckIcon, ShieldIcon } from "../ui/icons";
 import { cn } from "../ui/cn";
 
-type Sheet = null | "approve" | "request_changes" | "decline";
+type Sheet = null | "approve" | "request_changes" | "decline" | "bank";
+
+export type BankDetails = { name: string; sortCode: string; accountNumber: string; reference: string };
 
 /**
  * Sticky, thumb-reachable decision bar for the client magic link.
- * Approve → (deposit) pay; Request changes (note required); Decline (optional reason).
+ * Approve → pay (deposit or in full, by card and/or bank transfer); Request changes (note required); Decline (optional reason).
  */
 export function DecisionBar({
   token,
@@ -25,6 +29,10 @@ export function DecisionBar({
   clientName,
   businessName,
   expired,
+  payInFull,
+  cardAvailable,
+  bankOffered,
+  bank,
 }: {
   token: string;
   status: QuoteStatus;
@@ -35,6 +43,11 @@ export function DecisionBar({
   clientName: string;
   businessName: string;
   expired: boolean;
+  payInFull: boolean;
+  cardAvailable: boolean;
+  /** The business accepts bank transfer (details are only sent once the quote is accepted). */
+  bankOffered: boolean;
+  bank: BankDetails | null;
 }) {
   const [sheet, setSheet] = useState<Sheet>(null);
   const [name, setName] = useState(clientName);
@@ -43,6 +56,10 @@ export function DecisionBar({
   const [payError, setPayError] = useState<string | null>(null);
   const [pending, start] = useTransition();
   const [paying, startPay] = useTransition();
+  const [bankSent, setBankSent] = useState(false);
+  const [notifying, startNotify] = useTransition();
+  const due = formatMoney(depositCents, currency);
+  const dueWord = payInFull ? "in full" : "deposit";
 
   useEffect(() => {
     try {
@@ -65,7 +82,7 @@ export function DecisionBar({
   }, [sheet]);
 
   const submit = () => {
-    if (!sheet) return;
+    if (!sheet || sheet === "bank") return;
     setError(null);
     start(async () => {
       const res = await decideQuote(token, { decision: sheet, name: name.trim(), note: note.trim() || null });
@@ -90,6 +107,16 @@ export function DecisionBar({
     });
   };
 
+  const sentBankTransfer = () => {
+    setPayError(null);
+    startNotify(async () => {
+      const res = await notifyBankTransfer(token, { name: name.trim() });
+      if (!res.ok) return setPayError(res.error);
+      setBankSent(true);
+      setSheet(null);
+    });
+  };
+
   const open = status === "sent" || status === "viewed" || status === "changes_requested";
   const needsDeposit = status === "approved" && depositCents > 0 && depositStatus !== "paid";
 
@@ -101,9 +128,23 @@ export function DecisionBar({
         <div className="mx-auto max-w-2xl space-y-2 px-4 pt-3">
           {needsDeposit ? (
             <>
-              <Button variant="go" size="lg" className="w-full" onClick={pay} disabled={paying}>
-                <CardIcon /> {paying ? "Opening secure checkout…" : `Pay ${formatMoney(depositCents, currency)} deposit`}
-              </Button>
+              {bankSent && (
+                <p className="rounded-2xl bg-go-soft px-4 py-3 text-center text-sm font-semibold text-go-ink" role="status">
+                  Thanks — {businessName} will confirm when your transfer arrives.
+                </p>
+              )}
+              {(cardAvailable || !bank) && (
+                <Button variant="go" size="lg" className="w-full" onClick={pay} disabled={paying}>
+                  <CardIcon /> {paying
+                    ? "Opening secure checkout…"
+                    : `Pay ${due}${payInFull ? "" : " deposit"}${cardAvailable ? " by card" : ""}`}
+                </Button>
+              )}
+              {bank && (
+                <Button variant={cardAvailable ? "secondary" : "go"} size="lg" className="w-full" onClick={() => setSheet("bank")}>
+                  Pay {cardAvailable ? "" : `${due} `}by bank transfer
+                </Button>
+              )}
               {payError && <p className="text-center text-sm font-medium text-ink-soft">{payError}</p>}
             </>
           ) : expired ? (
@@ -113,7 +154,7 @@ export function DecisionBar({
           ) : (
             <>
               <Button variant="go" size="lg" className="w-full" onClick={() => setSheet("approve")}>
-                <CheckIcon /> {depositCents > 0 ? "Approve & pay deposit" : "Approve quote"}
+                <CheckIcon /> {depositCents > 0 ? (payInFull ? "Approve & pay" : "Approve & pay deposit") : "Approve quote"}
               </Button>
               <div className="flex gap-2">
                 <Button variant="secondary" className="flex-1 whitespace-nowrap" onClick={() => setSheet("request_changes")}>
@@ -138,6 +179,52 @@ export function DecisionBar({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mx-auto h-1.5 w-10 rounded-full bg-slate-200 sm:hidden" />
+            {sheet === "bank" && bank ? (
+              <>
+                <h2 id="decision-title" className="text-3xl leading-none font-bold">
+                  Pay by bank transfer
+                </h2>
+                <p className="text-ink-soft">
+                  Send <span className="font-semibold text-ink">{due}</span> {payInFull ? "" : "(your deposit) "}from your banking app using these
+                  details. Please include the reference so {businessName} can match your payment.
+                </p>
+                <dl className="divide-y divide-line rounded-2xl bg-canvas px-4">
+                  {(
+                    [
+                      ["Amount", due, (depositCents / 100).toFixed(2)],
+                      ["Account name", bank.name, bank.name],
+                      ["Sort code", formatSortCode(bank.sortCode), bank.sortCode],
+                      ["Account number", bank.accountNumber, bank.accountNumber],
+                      ["Reference", bank.reference, bank.reference],
+                    ] as const
+                  ).map(([label, shown, copy]) => (
+                    <div key={label} className="flex items-center justify-between gap-3 py-3">
+                      <div className="min-w-0">
+                        <dt className="text-xs font-medium text-muted">{label}</dt>
+                        <dd className="tabular truncate font-semibold">{shown}</dd>
+                      </div>
+                      <CopyButton text={copy} variant="ghost" className="shrink-0 px-3!">
+                        Copy
+                      </CopyButton>
+                    </div>
+                  ))}
+                </dl>
+                {payError && (
+                  <p className="text-sm font-medium text-rose-700" role="alert">
+                    {payError}
+                  </p>
+                )}
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="lg" onClick={() => setSheet(null)} disabled={notifying}>
+                    Close
+                  </Button>
+                  <Button variant="go" size="lg" className="flex-1" onClick={sentBankTransfer} disabled={notifying}>
+                    <CheckIcon /> {notifying ? "Letting them know…" : "I've sent the payment"}
+                  </Button>
+                </div>
+              </>
+            ) : (
+            <>
             <h2 id="decision-title" className="text-3xl leading-none font-bold">
               {sheet === "approve" ? "Approve this quote" : sheet === "request_changes" ? "Request changes" : "Decline this quote"}
             </h2>
@@ -150,9 +237,14 @@ export function DecisionBar({
                 </div>
                 {depositCents > 0 && (
                   <div className="flex justify-between text-ink-soft">
-                    <span>Deposit due now</span>
-                    <span className="tabular font-semibold">{formatMoney(depositCents, currency)}</span>
+                    <span>{payInFull ? "To pay now (in full)" : "Deposit due now"}</span>
+                    <span className="tabular font-semibold">{due}</span>
                   </div>
+                )}
+                {depositCents > 0 && (cardAvailable || bankOffered) && (
+                  <p className="text-sm text-ink-soft">
+                    Pay by {[cardAvailable && "card", bankOffered && "bank transfer"].filter(Boolean).join(" or ")} after approving.
+                  </p>
                 )}
                 <p className="flex gap-2 pt-1 text-sm text-muted">
                   <ShieldIcon width={18} height={18} className="shrink-0 text-go" />
@@ -218,6 +310,8 @@ export function DecisionBar({
                       : "Decline quote"}
               </Button>
             </div>
+            </>
+            )}
           </div>
         </div>
       )}

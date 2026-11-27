@@ -25,6 +25,9 @@ type WorkspaceRow = {
   default_tax_rate: number;
   tax_label: string;
   deposit_link_url: string | null;
+  bank_account_name: string | null;
+  bank_sort_code: string | null;
+  bank_account_number: string | null;
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
   subscription_status: string | null;

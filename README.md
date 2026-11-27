@@ -47,6 +47,7 @@ saypay/
 │   └── icons/                        # 192/512/maskable PNG, apple-touch-icon, SVG
 ├── supabase/
 │   ├── migrations/001_init.sql       # Schema, RLS, triggers, storage bucket + policies
+│   ├── migrations/002_bank_transfer.sql # Bank details for bank-transfer payments
 │   └── tests/rls.test.mjs            # Runs the migration in PGlite and asserts RLS (npm run test:db)
 ├── src/
 │   ├── proxy.ts                      # Session refresh + route protection (Next 16 "proxy", ex-middleware)
@@ -103,7 +104,7 @@ Requires Node 20.9+.
 
 1. Create a project at [supabase.com](https://supabase.com).
 2. Run the migration using **either** method:
-   - **SQL editor**: paste the contents of `supabase/migrations/001_init.sql` and run it.
+   - **SQL editor**: paste the contents of `supabase/migrations/001_init.sql` and run it, then do the same with `002_bank_transfer.sql`.
    - **CLI**:
      ```bash
      npx supabase link --project-ref YOUR_REF
@@ -205,7 +206,7 @@ Runs the quote-math unit tests.
 npm run test:db
 ```
 
-Applies `001_init.sql` to an in-memory Postgres (PGlite) and runs 33 RLS, grant, trigger and storage-policy assertions.
+Applies the migrations to an in-memory Postgres (PGlite) and runs 37 RLS, grant, constraint, trigger and storage-policy assertions.
 
 ```bash
 npm run typecheck

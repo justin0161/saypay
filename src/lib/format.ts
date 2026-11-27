@@ -10,8 +10,8 @@ export const STATUS_META: Record<QuoteStatus, { label: string; tone: Tone }> = {
 
 export const DEPOSIT_META: Record<DepositStatus, { label: string; tone: Tone }> = {
   not_required: { label: "No deposit", tone: "neutral" },
-  unpaid: { label: "Deposit due", tone: "warning" },
-  paid: { label: "Deposit paid", tone: "success" },
+  unpaid: { label: "Payment due", tone: "warning" },
+  paid: { label: "Paid", tone: "success" },
 };
 
 export type Tone = "neutral" | "info" | "warning" | "success" | "danger";
@@ -47,4 +47,19 @@ export function initials(name: string): string {
     .slice(0, 2)
     .map((p) => p[0]?.toUpperCase() ?? "")
     .join("");
+}
+
+/** Short, bank-friendly payment reference for a quote, e.g. "SP-1B14C4". */
+export function paymentReference(quoteId: string): string {
+  return `SP-${quoteId.replace(/-/g, "").slice(0, 6).toUpperCase()}`;
+}
+
+/** "112233" → "11-22-33". */
+export function formatSortCode(code: string): string {
+  return code.replace(/\D/g, "").replace(/^(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3");
+}
+
+/** True when the amount due on acceptance is the whole quote (pay in full rather than a deposit). */
+export function isFullPayment(depositCents: number, totalCents: number): boolean {
+  return totalCents > 0 && depositCents >= totalCents;
 }

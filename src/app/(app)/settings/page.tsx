@@ -40,7 +40,7 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
         <p className="rounded-2xl bg-go-soft p-4 font-semibold text-go-ink ring-1 ring-emerald-200 ring-inset">You&apos;re on SayPay Pro. Thanks! It can take a few seconds to show below.</p>
       )}
       {sp.connect === "done" && (
-        <p className="rounded-2xl bg-go-soft p-4 font-semibold text-go-ink ring-1 ring-emerald-200 ring-inset">Stripe setup saved. Card deposits switch on once Stripe verifies your details.</p>
+        <p className="rounded-2xl bg-go-soft p-4 font-semibold text-go-ink ring-1 ring-emerald-200 ring-inset">Stripe setup saved. Card payments switch on once Stripe verifies your details.</p>
       )}
 
       <Card className="space-y-4">
@@ -55,12 +55,12 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
 
       <Card className="space-y-4">
         <div className="flex items-center justify-between">
-          <CardTitle>Card deposits</CardTitle>
+          <CardTitle>Card payments (Stripe)</CardTitle>
           {connect === "active" ? <Pill tone="success">Live</Pill> : connect === "pending" ? <Pill tone="warning">Finish setup</Pill> : null}
         </div>
         <p className="text-ink-soft">
-          When a client approves, they can pay the deposit by card. Money goes straight to your Stripe account. Prefer your own link?
-          Add a payment link (Stripe, PayPal, SumUp…) in the profile above.
+          When a client accepts a quote, they can pay the deposit or the full amount by card. Money goes straight to your Stripe account.
+          Bank transfer details and an optional payment link are in your profile above.
         </p>
         {stripeOn ? (
           <form action={startConnectOnboarding}>

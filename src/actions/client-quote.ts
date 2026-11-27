@@ -14,6 +14,8 @@
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { publicEnv } from "@/lib/env";
+import { isFullPayment, paymentReference } from "@/lib/format";
+import { formatMoney } from "@/lib/quote-math";
 import { kindFromMime, MAX_ATTACHMENTS_PER_QUOTE } from "@/lib/media";
 import { parseLineItems } from "@/lib/quotes";
 import { baseMime, buildObjectPath, createSignedUpload, statObject, type SignedUpload } from "@/lib/storage";
@@ -253,7 +255,10 @@ export async function startDepositPayment(token: string): Promise<ActionResult<{
               price_data: {
                 currency: quote.currency.toLowerCase(),
                 unit_amount: quote.deposit_cents,
-                product_data: { name: `Deposit — ${quote.title}`, description: ws.business_name },
+                product_data: {
+                  name: `${isFullPayment(quote.deposit_cents, quote.total_cents) ? "Payment" : "Deposit"} — ${quote.title}`,
+                  description: ws.business_name,
+                },
               },
             },
           ],
@@ -279,4 +284,43 @@ export async function startDepositPayment(token: string): Promise<ActionResult<{
 
   if (ws.deposit_link_url) return { ok: true, data: { url: ws.deposit_link_url } };
   return fail(`${ws.business_name} will send you payment details shortly.`);
+}
+
+// ---------------------------------------------------------------------------
+// Bank transfer
+// ---------------------------------------------------------------------------
+
+/**
+ * The client says they've paid by bank transfer. We can't see the bank, so this
+ * just posts a note in the quote thread; the contractor confirms the money has
+ * arrived with "Mark payment received". Idempotent: repeat taps don't spam the thread.
+ */
+export async function notifyBankTransfer(token: string, input: unknown): Promise<ActionResult> {
+  const quote = await quoteByToken(token);
+  if (!quote) return fail("This link is no longer valid.");
+  if (quote.status !== "approved") return fail("Approve the quote first.");
+  if (quote.deposit_status === "paid" || quote.deposit_cents <= 0) return fail("Nothing is due on this quote.");
+
+  const name = typeof input === "object" && input && "name" in input ? String((input as { name: unknown }).name ?? "").trim().slice(0, 80) : "";
+  const admin = createAdminClient();
+  const { data: ws } = await admin.from("workspaces").select("bank_account_number").eq("id", quote.workspace_id).single();
+  if (!ws?.bank_account_number) return fail("Bank transfer isn't set up for this business.");
+
+  const ref = paymentReference(quote.id);
+  const body = `🏦 Paid ${formatMoney(quote.deposit_cents, quote.currency)} by bank transfer (reference ${ref}). Please confirm when it arrives.`;
+  const { data: existing } = await admin
+    .from("quote_messages")
+    .select("id")
+    .eq("quote_id", quote.id)
+    .eq("sender_role", "client")
+    .eq("body", body)
+    .limit(1);
+  if (!existing?.length) {
+    const { error } = await admin
+      .from("quote_messages")
+      .insert({ quote_id: quote.id, sender_role: "client", sender_name: name || quote.client_name, body });
+    if (error) return fail("Couldn't send that. Please try again.");
+  }
+  refresh(token);
+  return { ok: true, data: undefined };
 }

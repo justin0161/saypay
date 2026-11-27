@@ -31,3 +31,12 @@ test("formats money", () => {
   assert.equal(formatMoney(120000, "GBP"), "£1,200");
   assert.equal(formatMoney(1250, "GBP"), "£12.50");
 });
+
+test("payment helpers", async () => {
+  const { paymentReference, formatSortCode, isFullPayment } = await import("./format.ts");
+  assert.equal(paymentReference("1b14c442-fa99-4b14-8879-cd880f9e4aa2"), "SP-1B14C4");
+  assert.equal(formatSortCode("112233"), "11-22-33");
+  assert.equal(isFullPayment(84960, 84960), true);
+  assert.equal(isFullPayment(21240, 84960), false);
+  assert.equal(isFullPayment(0, 0), false);
+});

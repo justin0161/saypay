@@ -15,7 +15,7 @@ import { LockIcon, PencilIcon } from "@/components/ui/icons";
 import { DepositPill, StatusPill } from "@/components/ui/pill";
 import { requireWorkspace } from "@/lib/auth";
 import { publicEnv } from "@/lib/env";
-import { formatDateTime, isDecided } from "@/lib/format";
+import { formatDateTime, isDecided, isFullPayment } from "@/lib/format";
 import { formatMoney } from "@/lib/quote-math";
 import { loadQuoteBundle, toQuote } from "@/lib/quotes";
 import { shareMessage, shareUrl } from "@/lib/share";
@@ -127,13 +127,13 @@ export default async function QuoteDetailPage({ params, searchParams }: PageProp
         {quote.deposit_cents > 0 && quote.status === "approved" && (
           <Card className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <CardTitle>Deposit</CardTitle>
+              <CardTitle>{isFullPayment(quote.deposit_cents, quote.total_cents) ? "Payment (in full)" : "Deposit"}</CardTitle>
               <p className="mt-1 text-xl font-semibold">
                 {formatMoney(quote.deposit_cents, quote.currency)}{" "}
                 <span className="text-base font-semibold text-muted">
                   {quote.deposit_status === "paid"
                     ? `paid ${quote.deposit_paid_at ? formatDateTime(quote.deposit_paid_at) : ""}`
-                    : "awaiting payment"}
+                    : "awaiting payment · card or bank transfer"}
                 </span>
               </p>
             </div>

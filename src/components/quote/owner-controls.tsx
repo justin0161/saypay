@@ -23,9 +23,9 @@ export function DepositToggle({ quoteId, paid }: { quoteId: string; paid: boolea
           })
         }
       >
-        {paid ? "Mark deposit as unpaid" : (
+        {paid ? "Mark as unpaid" : (
           <>
-            <CheckIcon width={18} height={18} /> Mark deposit received
+            <CheckIcon width={18} height={18} /> Mark payment received
           </>
         )}
       </Button>

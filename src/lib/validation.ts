@@ -106,6 +106,14 @@ export const decisionSchema = z.discriminatedUnion("decision", [
 ]);
 export type DecisionInput = z.input<typeof decisionSchema>;
 
+/** Keep digits only, so "11-22-33" and "11 22 33" are both accepted. */
+const digits = (len: number, label: string) =>
+  z
+    .string()
+    .optional()
+    .transform((v) => (v ?? "").replace(/\D/g, ""))
+    .refine((v) => v === "" || v.length === len, `${label} must be ${len} digits`);
+
 export const workspaceSchema = z.object({
   business_name: trimmed(120).min(1, "Business name is required"),
   contact_name: optionalText(120),
@@ -124,6 +132,17 @@ export const workspaceSchema = z.object({
     .union([z.literal(""), z.url({ protocol: /^https$/, message: "Use an https:// link" })])
     .optional()
     .transform((v) => (v ? v : null)),
+  bank_account_name: optionalText(70),
+  bank_sort_code: digits(6, "Sort code").transform((v) => v || null),
+  bank_account_number: digits(8, "Account number").transform((v) => v || null),
+}).superRefine((w, ctx) => {
+  // Bank details are all-or-nothing, so clients never see half a set.
+  const set = [w.bank_account_name, w.bank_sort_code, w.bank_account_number].filter(Boolean).length;
+  if (set > 0 && set < 3) {
+    for (const field of ["bank_account_name", "bank_sort_code", "bank_account_number"] as const) {
+      if (!w[field]) ctx.addIssue({ code: "custom", path: [field], message: "Fill in all three bank details, or leave them all blank" });
+    }
+  }
 });
 
 export const credentialsSchema = z.object({

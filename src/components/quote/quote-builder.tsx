@@ -311,9 +311,9 @@ export function QuoteBuilder({
         </div>
       </Card>
 
-      {/* Tax & deposit */}
+      {/* Tax & payment */}
       <Card className="space-y-5">
-        <CardTitle>Tax & deposit</CardTitle>
+        <CardTitle>Tax & payment</CardTitle>
         <label className="flex min-h-11 cursor-pointer items-center justify-between gap-3">
           <span className="font-semibold">Add {taxLabel}</span>
           <span className="flex items-center gap-3">
@@ -340,9 +340,12 @@ export function QuoteBuilder({
         </label>
 
         <div className="space-y-2.5">
-          <p className="font-semibold">Deposit to book</p>
+          <div>
+            <p className="font-semibold">Payment when accepted</p>
+            <p className="text-sm text-muted">Ask for a deposit, or the full amount. Clients pay by card or bank transfer.</p>
+          </div>
           <div className="flex flex-wrap gap-2">
-            {["0", "25", "50"].map((p) => (
+            {["0", "25", "50", "100"].map((p) => (
               <button
                 key={p}
                 type="button"
@@ -355,7 +358,7 @@ export function QuoteBuilder({
                   depositType === "percent" && Number(depositPercent) === Number(p) ? "bg-ink text-white ring-ink" : "bg-surface ring-line hover:ring-ink/25",
                 )}
               >
-                {p === "0" ? "None" : `${p}%`}
+                {p === "0" ? "Nothing upfront" : p === "100" ? "Pay in full" : `${p}% deposit`}
               </button>
             ))}
             <button
@@ -363,7 +366,7 @@ export function QuoteBuilder({
               onClick={() => setDepositType("percent")}
               className={cn(
                 "min-h-11 rounded-full px-4 text-sm font-semibold ring-1 ring-inset transition",
-                depositType === "percent" && !["0", "25", "50"].includes(String(Number(depositPercent))) ? "bg-ink text-white ring-ink" : "bg-surface ring-line hover:ring-ink/25",
+                depositType === "percent" && !["0", "25", "50", "100"].includes(String(Number(depositPercent))) ? "bg-ink text-white ring-ink" : "bg-surface ring-line hover:ring-ink/25",
               )}
             >
               Custom %
@@ -450,7 +453,8 @@ export function QuoteBuilder({
             <p className="tabular text-xl leading-tight font-semibold">{formatMoney(totals.total_cents, currency)}</p>
             <p className="tabular truncate text-sm text-muted">
               {taxEnabled ? `inc. ${formatMoney(totals.tax_cents, currency)} ${taxLabel}` : "No tax"}
-              {totals.deposit_cents > 0 && ` · ${formatMoney(totals.deposit_cents, currency)} deposit`}
+              {totals.deposit_cents > 0 &&
+                (totals.deposit_cents >= totals.total_cents ? " · paid in full on acceptance" : ` · ${formatMoney(totals.deposit_cents, currency)} deposit`)}
             </p>
           </div>
           <Button variant="hivis" size="lg" onClick={submit} disabled={pending} className="shrink-0">

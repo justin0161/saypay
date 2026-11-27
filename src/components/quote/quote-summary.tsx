@@ -1,3 +1,4 @@
+import { isFullPayment } from "@/lib/format";
 import { formatMoney, lineTotalCents } from "@/lib/quote-math";
 import type { Quote } from "@/lib/types";
 
@@ -43,8 +44,9 @@ export function QuoteSummary({ quote }: { quote: Quote }) {
         {quote.deposit_cents > 0 && (
           <div className="mt-3 flex items-center justify-between rounded-2xl bg-hivis-soft px-4 py-3 font-semibold text-hivis-ink">
             <dt>
-              Deposit to book
-              {quote.deposit_type === "percent" && quote.deposit_percent ? ` (${Number(quote.deposit_percent)}%)` : ""}
+              {isFullPayment(quote.deposit_cents, quote.total_cents)
+                ? "Pay in full on acceptance"
+                : `Deposit to book${quote.deposit_type === "percent" && quote.deposit_percent ? ` (${Number(quote.deposit_percent)}%)` : ""}`}
             </dt>
             <dd className="tabular">{formatMoney(quote.deposit_cents, c)}</dd>
           </div>

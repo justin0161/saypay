@@ -20,7 +20,7 @@ const FEATURES = [
   { icon: CameraIcon, title: "Photos, both ways", body: "Attach site photos and video. Clients can send back measurements, damage and access shots." },
   { icon: ChatIcon, title: "One thread per job", body: "Questions, replies and change requests stay with the quote — not lost in your texts." },
   { icon: LockIcon, title: "Locked, time-stamped acceptance", body: "When a client accepts, the terms freeze with who, when and from which device." },
-  { icon: CardIcon, title: "Deposits on acceptance", body: "Clients pay the deposit by card the moment they accept, straight to your account via Stripe." },
+  { icon: CardIcon, title: "Deposit or full payment", body: "Ask for a deposit or the whole amount. Clients pay by card (Stripe) or bank transfer the moment they accept." },
   { icon: PhoneIcon, title: "Made for your phone", body: "Quote from the van in a couple of minutes. Install SayPay on your home screen like an app." },
 ];
 
@@ -80,6 +80,7 @@ export default function LandingPage() {
             {[
               ["#why", "Why voice"],
               ["#how", "How it works"],
+              ["#payments", "Payments"],
               ["#pricing", "Pricing"],
             ].map(([href, label]) => (
               <a key={href} href={href} className="hidden min-h-10 items-center px-3.5 text-[15px] font-medium text-ink-soft transition hover:text-ink md:flex">
@@ -114,7 +115,7 @@ export default function LandingPage() {
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-soft sm:text-xl">
             Add a quick voice note to your quote and explain the job like you would on the doorstep. Clients understand it, trust it, accept it
-            — and pay the deposit there and then.
+            — and pay there and then, by card or bank transfer.
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <ButtonLink href="/login?mode=signup" size="lg">
@@ -124,7 +125,7 @@ export default function LandingPage() {
               <PlayIcon width={16} height={16} /> Try the live demo
             </ButtonLink>
           </div>
-          <p className="mt-6 text-sm text-muted">Free for your first 5 quotes · No card needed · Works on any phone</p>
+          <p className="mt-6 text-sm text-muted">Deposit or pay in full · Card or bank transfer · Free for your first 5 quotes</p>
         </div>
 
         <div id="demo" className="relative min-w-0 scroll-mt-24 animate-rise [animation-delay:120ms]">
@@ -176,7 +177,7 @@ export default function LandingPage() {
                 {[
                   ["Builds trust", "Clients hear a real person, not a spreadsheet."],
                   ["Answers questions up front", "Scope, options and timings, in your own words."],
-                  ["Gets a decision", "Accept and pay the deposit in the same tap."],
+                  ["Gets a decision", "Accept and pay — deposit or in full — in the same tap."],
                 ].map(([t, b]) => (
                   <li key={t} className="flex gap-3">
                     <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-ink text-hivis">
@@ -262,7 +263,7 @@ export default function LandingPage() {
               <p className="pr-1 text-right text-[11px] text-muted">Sent on WhatsApp</p>
             </div>
           </StepCard>
-          <StepCard n={3} title="Accepted and paid" body="They accept in one tap and pay the deposit by card. The price locks and you book the job in.">
+          <StepCard n={3} title="Accepted and paid" body="They accept in one tap and pay a deposit or the full amount, by card or bank transfer. The price locks and you book the job in.">
             <div className="w-full max-w-[15rem] rounded-2xl bg-surface p-4 shadow-card">
               <div className="flex items-center gap-3">
                 <span className="grid size-10 place-items-center rounded-full bg-go text-white">
@@ -277,6 +278,102 @@ export default function LandingPage() {
               <p className="mt-1 text-xs font-medium text-go-ink">Quote accepted · terms locked</p>
             </div>
           </StepCard>
+        </div>
+      </section>
+
+      {/* Payments */}
+      <section id="payments" className="scroll-mt-20 px-3 pb-24 sm:px-4 sm:pb-32">
+        <div className="mx-auto max-w-7xl rounded-[2.5rem] bg-cream px-5 py-20 sm:px-10 sm:py-24 lg:px-16">
+          <div className="grid gap-14 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+            <div>
+              <h2 className="text-4xl leading-[1.02] font-bold sm:text-[3.5rem]">Get paid your way.</h2>
+              <p className="mt-5 max-w-lg text-lg leading-relaxed text-ink-soft">
+                For every quote, choose what you need upfront — and let clients pay however suits them. No chasing, no awkward phone calls.
+              </p>
+              <div className="mt-10 grid gap-4 sm:grid-cols-2">
+                <div className="rounded-3xl bg-surface p-6 shadow-card">
+                  <p className="text-sm font-semibold text-gold">How much</p>
+                  <ul className="mt-4 space-y-3">
+                    {[
+                      ["A deposit", "25%, 50%, or any amount you set"],
+                      ["Pay in full", "The whole quote, paid on acceptance"],
+                    ].map(([t, b]) => (
+                      <li key={t} className="flex gap-3">
+                        <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-hivis text-ink">
+                          <CheckIcon width={13} height={13} strokeWidth={3} />
+                        </span>
+                        <p>
+                          <span className="block font-semibold">{t}</span>
+                          <span className="text-sm text-ink-soft">{b}</span>
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="rounded-3xl bg-surface p-6 shadow-card">
+                  <p className="text-sm font-semibold text-gold">How they pay</p>
+                  <ul className="mt-4 space-y-3">
+                    {[
+                      ["Card", "Secure checkout by Stripe, straight to your account"],
+                      ["Bank transfer", "Your details and a job reference, shown after they accept"],
+                    ].map(([t, b]) => (
+                      <li key={t} className="flex gap-3">
+                        <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-hivis text-ink">
+                          <CheckIcon width={13} height={13} strokeWidth={3} />
+                        </span>
+                        <p>
+                          <span className="block font-semibold">{t}</span>
+                          <span className="text-sm text-ink-soft">{b}</span>
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* What the client sees */}
+            <div className="relative mx-auto w-full max-w-md">
+              <div className="rounded-[2rem] bg-surface p-6 shadow-lift">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-muted">Quote accepted</p>
+                  <span className="rounded-full bg-go-soft px-2.5 py-1 text-xs font-semibold text-go-ink">Approved</span>
+                </div>
+                <p className="mt-3 font-display text-2xl font-bold tracking-[-0.03em]">Combi boiler replacement</p>
+                <div className="mt-5 flex items-center justify-between rounded-2xl bg-hivis-soft px-4 py-3 font-semibold text-hivis-ink">
+                  <span>Pay in full</span>
+                  <span className="tabular">£2,724.00</span>
+                </div>
+                <div className="mt-4 space-y-2.5">
+                  <span className="flex min-h-13 items-center justify-center gap-2 rounded-full bg-go font-semibold text-white">
+                    <CardIcon width={18} height={18} /> Pay £2,724.00 by card
+                  </span>
+                  <span className="flex min-h-13 items-center justify-center rounded-full bg-surface font-semibold text-ink ring-1 ring-line ring-inset">
+                    Pay by bank transfer
+                  </span>
+                </div>
+                <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-muted">
+                  <LockIcon width={13} height={13} /> Card payments secured by Stripe
+                </p>
+              </div>
+              <div className="relative -mt-6 ml-auto w-[88%] rounded-3xl bg-ink p-5 text-white shadow-lift sm:-mr-8">
+                <p className="text-sm font-semibold text-hivis">Bank transfer details</p>
+                <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
+                  {[
+                    ["Account name", "Harper & Sons Ltd"],
+                    ["Reference", "SP-2F449C"],
+                    ["Sort code", "12-34-56"],
+                    ["Account no.", "12345678"],
+                  ].map(([k, v]) => (
+                    <div key={k}>
+                      <dt className="text-xs text-white/55">{k}</dt>
+                      <dd className="tabular font-semibold">{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -345,7 +442,7 @@ export default function LandingPage() {
             <p className="mt-4 font-display text-6xl font-bold tracking-[-0.04em]">Free</p>
             <p className="mt-2 text-muted">Your first 5 quotes</p>
             <ul className="mt-8 flex-1 space-y-3.5 text-ink-soft">
-              {["Voice notes on quotes", "Private client links", "Photos, video and messaging", "Acceptance record"].map((t) => (
+              {["Voice notes on quotes", "Private client links", "Deposit or full payment", "Bank transfer payments", "Photos, video and messaging"].map((t) => (
                 <li key={t} className="flex items-center gap-3">
                   <span className="grid size-5 shrink-0 place-items-center rounded-full bg-go-soft text-go">
                     <CheckIcon width={12} height={12} strokeWidth={3} />
@@ -366,7 +463,7 @@ export default function LandingPage() {
             </p>
             <p className="mt-2 text-white/60">Unlimited quotes</p>
             <ul className="mt-8 flex-1 space-y-3.5 text-white/80">
-              {["Everything in Starter", "Unlimited quotes and storage", "Card deposits via Stripe", "Your logo and brand colour"].map((t) => (
+              {["Everything in Starter", "Unlimited quotes and storage", "Card payments via Stripe", "Bank transfer payments", "Your logo and brand colour"].map((t) => (
                 <li key={t} className="flex items-center gap-3">
                   <span className="grid size-5 shrink-0 place-items-center rounded-full bg-hivis text-ink">
                     <CheckIcon width={12} height={12} strokeWidth={3} />
