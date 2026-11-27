@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireWorkspace } from "@/lib/auth";
-import { freeQuoteLimit, isStripeConfigured } from "@/lib/env";
+import { freeQuoteLimit, isBillingConfigured } from "@/lib/env";
 import { kindFromMime } from "@/lib/media";
 import { computeTotals } from "@/lib/quote-math";
 import { baseMime, buildObjectPath, createSignedUpload, removeObjects, statObject, type SignedUpload } from "@/lib/storage";
@@ -142,6 +142,8 @@ function buildQuoteColumns(v: z.output<typeof quoteInputSchema>, currency: strin
     valid_until: v.valid_until,
     deposit_type: v.deposit.type,
     deposit_percent: v.deposit.type === "percent" ? v.deposit.percent : null,
+    accept_card: v.accept_card,
+    accept_bank: v.accept_bank,
     ...totals,
   };
 }
@@ -196,7 +198,7 @@ export async function createQuote(input: QuoteInput): Promise<ActionResult<{ id:
   const { workspace } = await requireWorkspace();
   const supabase = await createClient();
 
-  if (isStripeConfigured() && !isSubscriptionActive(workspace.subscription_status)) {
+  if (isBillingConfigured() && !isSubscriptionActive(workspace.subscription_status)) {
     const { count } = await supabase
       .from("quotes")
       .select("id", { count: "exact", head: true })

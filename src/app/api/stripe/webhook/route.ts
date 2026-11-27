@@ -63,7 +63,10 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       quote_id: quoteId,
       sender_role: "client",
       sender_name: session.customer_details?.name || "Client",
-      body: "💳 Deposit paid via card.",
+      body:
+        session.amount_total != null && session.currency
+          ? `💳 Paid ${new Intl.NumberFormat("en-GB", { style: "currency", currency: session.currency.toUpperCase() }).format(session.amount_total / 100)} by card.`
+          : "💳 Paid by card.",
     });
     return;
   }

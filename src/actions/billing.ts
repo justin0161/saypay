@@ -76,3 +76,11 @@ export async function startConnectOnboarding() {
   });
   redirect(link.url);
 }
+
+/** Opens the contractor's own Stripe Express dashboard (payouts, payments, bank details). */
+export async function openStripeDashboard() {
+  const { workspace } = await requireWorkspace();
+  if (!workspace.stripe_connect_account_id) redirect("/settings#get-paid");
+  const login = await getStripe().accounts.createLoginLink(workspace.stripe_connect_account_id);
+  redirect(login.url);
+}

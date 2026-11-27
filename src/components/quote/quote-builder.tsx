@@ -35,6 +35,8 @@ export type BuilderInitial = {
   deposit_percent: number | null;
   deposit_cents: number;
   valid_until: string | null;
+  accept_card?: boolean;
+  accept_bank?: boolean;
 };
 
 const rid = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : Math.random().toString(36).slice(2));
@@ -50,6 +52,8 @@ export function QuoteBuilder({
   initial,
   existingWalkthrough,
   existingMedia = [],
+  cardReady = false,
+  bankReady = false,
 }: {
   mode: "create" | "edit";
   draftId: string;
@@ -60,6 +64,10 @@ export function QuoteBuilder({
   initial?: BuilderInitial;
   existingWalkthrough?: MediaItem | null;
   existingMedia?: MediaItem[];
+  /** The business can take card payments (Stripe connected or own payment link). */
+  cardReady?: boolean;
+  /** The business has saved bank details for transfers. */
+  bankReady?: boolean;
 }) {
   const [title, setTitle] = useState(initial?.title ?? "");
   const [scope, setScope] = useState(initial?.scope ?? "");
@@ -83,6 +91,8 @@ export function QuoteBuilder({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [showMore, setShowMore] = useState(Boolean(initial?.scope || initial?.valid_until));
+  const [acceptCard, setAcceptCard] = useState(initial?.accept_card ?? true);
+  const [acceptBank, setAcceptBank] = useState(initial?.accept_bank ?? true);
   const [pending, startTransition] = useTransition();
 
   const requestUpload = (meta: Parameters<typeof requestOwnerUpload>[1]) => requestOwnerUpload(draftId, meta);
@@ -171,6 +181,8 @@ export function QuoteBuilder({
       tax_rate: taxRateNum,
       deposit,
       valid_until: validUntil,
+      accept_card: acceptCard,
+      accept_bank: acceptBank,
       attachments: staged.map((s) => ({
         path: s.path,
         kind: s.kind,
@@ -362,6 +374,55 @@ export function QuoteBuilder({
               </label>
             </div>
           ))}
+
+        {payMode !== "later" && (
+          <div className="space-y-2 border-t border-line pt-4">
+            <p className="font-semibold">How they can pay</p>
+            {!cardReady && !bankReady ? (
+              <p className="rounded-xl bg-hivis-soft p-3 text-sm text-ink">
+                You haven&apos;t set up how you get paid yet.{" "}
+                <a href="/settings#get-paid" className="font-semibold text-hivis underline underline-offset-2">
+                  Set it up in 2 minutes
+                </a>{" "}
+                — until then, the client is told you&apos;ll send payment details.
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                {(
+                  [
+                    ["Card", cardReady, acceptCard, setAcceptCard],
+                    ["Bank transfer", bankReady, acceptBank, setAcceptBank],
+                  ] as const
+                ).map(([label, ready, on, set]) =>
+                  ready ? (
+                    <button
+                      key={label}
+                      type="button"
+                      aria-pressed={on}
+                      onClick={() => set(!on)}
+                      className={cn(choice(on), "flex items-center justify-center gap-2")}
+                    >
+                      <span className={cn("grid size-5 place-items-center rounded-md ring-1 ring-inset", on ? "bg-night text-hivis ring-night" : "ring-line")}>
+                        {on && "✓"}
+                      </span>
+                      {label}
+                    </button>
+                  ) : (
+                    <a
+                      key={label}
+                      href="/settings#get-paid"
+                      className="flex min-h-12 flex-col items-center justify-center rounded-2xl border border-dashed border-line bg-night px-2 text-center text-sm text-muted hover:text-ink"
+                    >
+                      <span className="font-semibold">{label}</span>
+                      <span className="text-xs">Set up →</span>
+                    </a>
+                  ),
+                )}
+              </div>
+            )}
+            {errors.accept_card && <p className="text-sm font-medium text-stop">{errors.accept_card}</p>}
+          </div>
+        )}
 
         <label className="flex min-h-12 cursor-pointer items-center justify-between gap-3 border-t border-line pt-4">
           <span className="font-semibold">

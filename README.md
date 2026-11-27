@@ -104,7 +104,7 @@ Requires Node 20.9+.
 
 1. Create a project at [supabase.com](https://supabase.com).
 2. Run the migration using **either** method:
-   - **SQL editor**: paste the contents of `supabase/migrations/001_init.sql` and run it, then do the same with `002_bank_transfer.sql`.
+   - **SQL editor**: paste the contents of `supabase/migrations/001_init.sql` and run it, then do the same with `002_bank_transfer.sql` and `003_quote_payment_methods.sql`.
    - **CLI**:
      ```bash
      npx supabase link --project-ref YOUR_REF
@@ -131,22 +131,32 @@ The migration creates a **private** bucket called `quote-media` (50 MB per-file 
 
 How uploads work: the browser asks a Server Action for a **one-time signed upload URL** for a single path. It then uploads straight to Storage. The server checks that the object exists and reads its real size and MIME type before saving a row. Files are viewed through signed URLs that expire after one hour. Neither the service-role key nor public URLs ever reach the browser.
 
-### 4. Stripe (optional for local development)
+### 4. Payments: card (Stripe) and bank transfer
 
-If `STRIPE_SECRET_KEY` is empty, billing is hidden and every workspace is unlimited.
+**Bank transfer** needs no setup from the platform: each contractor adds their account name, sort code and account number in **Settings → Get paid**. Clients see them (with a per-quote reference) only after accepting, tap "I've sent the payment", and the contractor taps **Mark payment received** when it arrives.
 
-1. **Product & price**: create a "SayPay Pro" product with a recurring price, and set `STRIPE_PRICE_ID`.
-2. **Customer Portal**: Settings → Billing → Customer portal. Enable it and allow cancel and update payment method.
-3. **Webhook**: Developers → Webhooks → Add endpoint
+**Card payments** use Stripe Connect: SayPay is the platform, and each contractor connects their own Stripe account, so card payments go straight to them. One-time platform setup:
+
+1. **Stripe account**: sign up at stripe.com and activate the account (business details, bank account).
+2. **Turn on Connect**: Dashboard → **Connect** → Get started → choose **Platform / marketplace** and **Express** accounts. Complete the platform profile and branding (contractors see your name and logo on Stripe's onboarding form).
+3. **Keys**: Developers → API keys → copy the **Secret key** into `STRIPE_SECRET_KEY` (use the `sk_test_…` key while testing, `sk_live_…` for real money).
+4. **Webhook** (marks quotes as paid automatically): Developers → Webhooks → Add endpoint
    - URL: `https://YOUR_DOMAIN/api/stripe/webhook`
-   - Events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`
+   - Events: `checkout.session.completed` (plus `customer.subscription.updated` and `customer.subscription.deleted` if you use the Pro plan)
    - Copy the signing secret into `STRIPE_WEBHOOK_SECRET`.
-4. **Local webhooks**:
-   ```bash
-   stripe listen --forward-to localhost:3000/api/stripe/webhook
-   ```
-   Use the `whsec_…` it prints as `STRIPE_WEBHOOK_SECRET`.
-5. **Deposits via Connect** (optional): enable **Connect** in the Stripe dashboard with Express accounts. Contractors click **Settings → Connect Stripe**. Deposits are destination charges to their account, and you can set a platform fee with `STRIPE_DEPOSIT_FEE_BPS` (100 = 1%). The deposit is marked paid by the same `checkout.session.completed` webhook (`metadata.kind = "deposit"`).
+5. Redeploy. Contractors now see **Connect Stripe** in Settings → Get paid. Payments are destination charges to their account; set an optional platform fee with `STRIPE_DEPOSIT_FEE_BPS` (100 = 1%).
+
+Each quote chooses which methods to offer (card, bank transfer or both).
+
+**SayPay Pro plan (optional)**: the subscription and the free-quote limit only switch on when `STRIPE_PRICE_ID` is also set. Create a "SayPay Pro" product with a recurring price, set `STRIPE_PRICE_ID`, and enable the Customer portal (Settings → Billing → Customer portal).
+
+**Local webhooks**:
+
+```bash
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+```
+
+Use the `whsec_…` it prints as `STRIPE_WEBHOOK_SECRET`.
 
 ### 5. Run it
 

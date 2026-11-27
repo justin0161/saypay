@@ -60,8 +60,18 @@ export const quoteInputSchema = z.object({
     .or(z.literal(""))
     .transform((v) => (v ? v : null)),
   attachments: z.array(stagedAttachmentSchema).max(30).default([]),
+  /** How the client may pay: card (Stripe) and/or bank transfer. */
+  accept_card: z.boolean().default(true),
+  accept_bank: z.boolean().default(true),
+}).refine((v) => v.accept_card || v.accept_bank || isNothingUpfront(v.deposit), {
+  path: ["accept_card"],
+  message: "Choose at least one way for the client to pay",
 });
 export type QuoteInput = z.input<typeof quoteInputSchema>;
+
+function isNothingUpfront(d: z.output<typeof depositSchema>): boolean {
+  return d.type === "percent" ? d.percent <= 0 : d.cents <= 0;
+}
 
 export const uploadRequestSchema = z
   .object({

@@ -68,6 +68,8 @@ type QuoteRow = {
   deposit_status: DepositStatus;
   deposit_paid_at: string | null;
   deposit_checkout_session_id: string | null;
+  accept_card: boolean;
+  accept_bank: boolean;
   last_message_role: SenderRole | null;
   last_message_at: string | null;
   created_at: string;

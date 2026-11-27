@@ -85,14 +85,14 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
   const justPaid = sp.paid === "1";
   const payInFull = isFullPayment(quote.deposit_cents, quote.total_cents);
   const dueLabel = payInFull ? "Payment" : "Deposit";
-  // Card: Stripe Connect (verified at checkout time) or the contractor's own payment link.
-  const cardAvailable = Boolean((isStripeConfigured() && ws.stripe_connect_account_id) || ws.deposit_link_url);
+  // Card: Stripe Connect (verified at checkout time) or the contractor's own payment link — if this quote allows card.
+  const cardAvailable = quote.accept_card && Boolean((isStripeConfigured() && ws.stripe_connect_account_id) || ws.deposit_link_url);
   // Bank details are only revealed once the quote is accepted.
   const bank =
-    quote.status === "approved" && ws.bank_account_name && ws.bank_sort_code && ws.bank_account_number
+    quote.status === "approved" && quote.accept_bank && ws.bank_account_name && ws.bank_sort_code && ws.bank_account_number
       ? { name: ws.bank_account_name, sortCode: ws.bank_sort_code, accountNumber: ws.bank_account_number, reference: paymentReference(quote.id) }
       : null;
-  const bankOffered = Boolean(ws.bank_account_number);
+  const bankOffered = quote.accept_bank && Boolean(ws.bank_account_number);
 
   return (
     <div className="min-h-dvh pb-64">

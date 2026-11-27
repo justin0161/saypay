@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { QuoteBuilder } from "@/components/quote/quote-builder";
 import { requireWorkspace } from "@/lib/auth";
+import { getPaymentSetup } from "@/lib/payments";
 import { loadQuoteBundle, toQuote } from "@/lib/quotes";
 import { createClient } from "@/lib/supabase/server";
 import { uuidSchema } from "@/lib/validation";
@@ -18,7 +19,7 @@ export default async function EditQuotePage({ params }: PageProps<"/quotes/[id]/
   if (data.status === "approved" || data.status === "declined") redirect(`/quotes/${id}`);
 
   const quote = toQuote(data);
-  const bundle = await loadQuoteBundle(supabase, id);
+  const [bundle, pay] = await Promise.all([loadQuoteBundle(supabase, id), getPaymentSetup(workspace)]);
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -43,7 +44,11 @@ export default async function EditQuotePage({ params }: PageProps<"/quotes/[id]/
           deposit_percent: quote.deposit_percent === null ? null : Number(quote.deposit_percent),
           deposit_cents: quote.deposit_cents,
           valid_until: quote.valid_until,
+          accept_card: quote.accept_card,
+          accept_bank: quote.accept_bank,
         }}
+        cardReady={pay.card}
+        bankReady={pay.bank}
         existingWalkthrough={bundle.walkthrough}
         existingMedia={bundle.gallery.filter((m) => m.uploaded_by === "contractor")}
       />

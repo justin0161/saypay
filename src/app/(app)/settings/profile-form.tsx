@@ -57,7 +57,7 @@ export function ProfileForm({ workspace: w }: { workspace: Workspace }) {
           <span className="text-sm text-muted">Pick a dark colour for best contrast.</span>
         </div>
       </Field>
-      <fieldset className="space-y-4 rounded-2xl bg-canvas p-4 sm:p-5">
+      <fieldset id="bank" className="scroll-mt-24 space-y-4 rounded-2xl bg-canvas p-4 ring-1 ring-hivis/30 ring-inset sm:p-5">
         <legend className="sr-only">Bank transfer</legend>
         <div>
           <p className="font-display text-lg font-bold">Bank transfer</p>

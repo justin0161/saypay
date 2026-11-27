@@ -90,6 +90,14 @@ await expectErr("half a set of details is rejected", "authenticated", A,
 await expectErr("badly formatted account number rejected", "authenticated", A,
   `update public.workspaces set bank_account_name='A', bank_sort_code='112233', bank_account_number='123' where id='${wsA}'`, /check constraint/);
 
+console.log("\nQuote payment methods");
+await expectOk("new quotes accept card and bank by default", "authenticated", A,
+  `select accept_card, accept_bank from public.quotes where id='${qA}'`, (r) => r.rows[0].accept_card === true && r.rows[0].accept_bank === true);
+await expectOk("owner turns card off on a quote", "authenticated", A,
+  `update public.quotes set accept_card=false where id='${qA}' returning accept_card`, (r) => r.rows[0].accept_card === false);
+await expectOk("other user cannot change it", "authenticated", B,
+  `update public.quotes set accept_bank=false where id='${qA}' returning id`, (r) => r.rows.length === 0);
+
 console.log("\nRLS — quotes");
 await expectOk("owner reads own quote", "authenticated", A, `select * from public.quotes`, (r) => r.rows.length === 1);
 await expectOk("other user reads none", "authenticated", B, `select * from public.quotes`, (r) => r.rows.length === 0);
