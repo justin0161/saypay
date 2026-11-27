@@ -11,6 +11,8 @@ import { AudioPlayer } from "../media/audio-player";
 import { MediaGallery } from "../media/media-gallery";
 import { MediaPicker } from "../media/media-picker";
 import { VoiceRecorder } from "../media/voice-recorder";
+import type { VoiceQuoteDraft } from "@/actions/voice-quote";
+import { VoiceFill } from "./voice-fill";
 import { Button } from "../ui/button";
 import { Card, CardTitle } from "../ui/card";
 import { cn } from "../ui/cn";
@@ -118,6 +120,46 @@ export function QuoteBuilder({
     ]);
   };
 
+  /** Apply a voice-fill result: only fields that were actually said are set. */
+  const applyVoiceDraft = (d: VoiceQuoteDraft) => {
+    if (d.title) setTitle(d.title);
+    if (d.scope) setScope(d.scope);
+    if (d.client_name) setClientName(d.client_name);
+    if (d.client_phone) setClientPhone(d.client_phone);
+    if (d.client_email) setClientEmail(d.client_email);
+    const spoken = d.line_items
+      .filter((i) => i.description.trim())
+      .map((i) => ({
+        id: rid(),
+        description: i.description.trim(),
+        quantity: String(i.quantity > 0 ? i.quantity : 1),
+        price: i.unit_price != null && i.unit_price >= 0 ? String(Math.round(i.unit_price * 100) / 100) : "",
+      }));
+    if (spoken.length) {
+      // Keep rows the user already filled in; replace empty ones.
+      setRows((rs) => [...rs.filter((r) => r.description.trim() || r.price.trim()), ...spoken]);
+    }
+    if (d.vat.enabled != null) setTaxEnabled(d.vat.enabled);
+    if (d.vat.rate != null && d.vat.rate > 0 && d.vat.rate <= 100) {
+      setTaxEnabled(true);
+      setTaxRate(String(d.vat.rate));
+    }
+    const p = d.payment;
+    if (p.type === "full") {
+      setDepositType("percent");
+      setDepositPercent("100");
+    } else if (p.type === "none") {
+      setDepositType("percent");
+      setDepositPercent("0");
+    } else if (p.type === "percent" && p.percent != null && p.percent >= 0 && p.percent <= 100) {
+      setDepositType("percent");
+      setDepositPercent(String(p.percent));
+    } else if (p.type === "fixed" && p.amount != null && p.amount > 0) {
+      setDepositType("fixed");
+      setDepositFixed(String(p.amount));
+    }
+  };
+
   const submit = () => {
     setFormError(null);
     setErrors({});
@@ -158,6 +200,8 @@ export function QuoteBuilder({
           {formError}
         </p>
       )}
+
+      {mode === "create" && <VoiceFill onFill={applyVoiceDraft} />}
 
       {/* Job */}
       <Card className="space-y-4">
