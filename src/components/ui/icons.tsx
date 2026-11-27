@@ -81,13 +81,15 @@ export const BoltIcon = (p: P) => (
   <svg {...base(p)}><path d="M13 2 4 14h7l-1 8 9-12h-7Z" /></svg>
 );
 
-/** SayPay mark: dark sound bars in a lime disc, with a lowercase wordmark. */
-export const Logo = ({ className }: { className?: string; tone?: string }) => (
+/** SayPay mark: a white sound wave on a blue tile. */
+export const Logo = ({ className, tone = "light" }: { className?: string; tone?: string }) => (
   <span className={className}>
-    <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden className="inline-block align-middle">
-      <circle cx="16" cy="16" r="16" fill="#C8FF3D" />
-      <path d="M9 14v4M13 10v12M17 12v8M21 14v4" stroke="#0B0D10" strokeWidth="2.6" strokeLinecap="round" />
+    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden className="inline-block align-middle">
+      <rect width="32" height="32" rx="9" fill="#2F5BFF" />
+      <path d="M8 18c3-6 5 6 8 0s5 6 8 0" stroke="#fff" strokeWidth="2.8" fill="none" strokeLinecap="round" />
     </svg>
-    <span className="ml-2 align-middle font-display text-[21px] leading-none font-bold tracking-[-0.04em] text-ink">saypay</span>
+    <span className={`ml-2 align-middle font-display text-[21px] leading-none font-bold tracking-[-0.03em] ${tone === "dark" ? "text-white" : "text-ink"}`}>
+      SayPay
+    </span>
   </span>
 );

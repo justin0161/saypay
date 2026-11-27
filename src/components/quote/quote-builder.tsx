@@ -215,7 +215,7 @@ export function QuoteBuilder({
   const choice = (active: boolean) =>
     cn(
       "min-h-12 rounded-2xl px-2 text-sm font-semibold whitespace-nowrap ring-1 ring-inset transition sm:px-4 sm:text-[15px]",
-      active ? "bg-hivis text-on-accent ring-hivis" : "bg-night text-ink-soft ring-line hover:text-ink",
+      active ? "bg-hivis text-on-accent ring-hivis" : "bg-surface text-ink-soft ring-line hover:text-ink hover:ring-[#b8c3d8]",
     );
 
   return (
@@ -402,7 +402,7 @@ export function QuoteBuilder({
                       onClick={() => set(!on)}
                       className={cn(choice(on), "flex items-center justify-center gap-2")}
                     >
-                      <span className={cn("grid size-5 place-items-center rounded-md ring-1 ring-inset", on ? "bg-night text-hivis ring-night" : "ring-line")}>
+                      <span className={cn("grid size-5 place-items-center rounded-md ring-1 ring-inset", on ? "bg-white text-hivis ring-white" : "ring-line")}>
                         {on && "✓"}
                       </span>
                       {label}
@@ -411,7 +411,7 @@ export function QuoteBuilder({
                     <a
                       key={label}
                       href="/settings#get-paid"
-                      className="flex min-h-12 flex-col items-center justify-center rounded-2xl border border-dashed border-line bg-night px-2 text-center text-sm text-muted hover:text-ink"
+                      className="flex min-h-12 flex-col items-center justify-center rounded-2xl border border-dashed border-[#c9d2e3] bg-surface px-2 text-center text-sm text-muted hover:text-ink"
                     >
                       <span className="font-semibold">{label}</span>
                       <span className="text-xs">Set up →</span>
@@ -430,7 +430,7 @@ export function QuoteBuilder({
           </span>
           <input type="checkbox" checked={taxEnabled} onChange={(e) => setTaxEnabled(e.target.checked)} className="peer sr-only" />
           <span aria-hidden className={cn("relative h-7 w-12 shrink-0 rounded-full transition", taxEnabled ? "bg-hivis" : "bg-line")}>
-            <span className={cn("absolute top-1 size-5 rounded-full bg-night transition-all", taxEnabled ? "left-6" : "left-1")} />
+            <span className={cn("absolute top-1 size-5 rounded-full bg-white shadow transition-all", taxEnabled ? "left-6" : "left-1")} />
           </span>
         </label>
       </Card>
@@ -488,7 +488,7 @@ export function QuoteBuilder({
                     <button
                       type="button"
                       onClick={() => setStaged((list) => list.filter((x) => x.path !== s.path))}
-                      className="absolute top-1 right-1 grid size-9 place-items-center rounded-lg bg-night/90 text-stop"
+                      className="absolute top-1 right-1 grid size-9 place-items-center rounded-lg bg-white/95 text-stop shadow"
                       aria-label="Remove"
                     >
                       <TrashIcon width={16} height={16} />

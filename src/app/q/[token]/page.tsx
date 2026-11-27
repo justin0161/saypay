@@ -130,7 +130,7 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
             )}
           </div>
 
-          <h1 className="mt-7 text-4xl leading-[0.95] font-bold break-words sm:text-5xl">{quote.title}</h1>
+          <h1 className="mt-6 text-3xl leading-tight font-bold break-words sm:text-4xl">{quote.title}</h1>
           <p className="mt-1 text-white/70">
             For {quote.client_name} · {new Date(quote.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
             {quote.valid_until &&

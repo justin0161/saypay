@@ -31,7 +31,7 @@ export function LoginForms({ initialMode, next }: { initialMode: "signin" | "sig
 
   return (
     <div className="mt-8 space-y-5">
-      <div className="flex rounded-full bg-surface p-1 shadow-card">
+      <div className="flex rounded-full bg-raised p-1">
         {(
           [
             ["signin", "Log in"],
@@ -42,7 +42,7 @@ export function LoginForms({ initialMode, next }: { initialMode: "signin" | "sig
             key={key}
             type="button"
             onClick={() => setMode(key)}
-            className={cn("min-h-10 flex-1 rounded-full text-sm font-semibold transition", mode === key ? "bg-raised text-ink ring-1 ring-line ring-inset" : "text-muted hover:text-ink")}
+            className={cn("min-h-10 flex-1 rounded-full text-sm font-semibold transition", mode === key ? "bg-surface text-ink shadow-card ring-1 ring-line ring-inset" : "text-muted hover:text-ink")}
           >
             {label}
           </button>

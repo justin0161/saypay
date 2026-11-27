@@ -4,7 +4,7 @@ import { cn } from "./cn";
 
 const tones: Record<Tone, string> = {
   neutral: "bg-raised text-ink-soft ring-line",
-  info: "bg-[#101b2a] text-[#8cc0ff] ring-[#1f3550]",
+  info: "bg-[#eef4ff] text-[#1d4a9e] ring-[#d3e0fb]",
   warning: "bg-hivis-soft text-hivis-ink ring-hivis/25",
   success: "bg-go-soft text-go-ink ring-go/30",
   danger: "bg-stop-soft text-stop ring-stop/30",
@@ -12,7 +12,7 @@ const tones: Record<Tone, string> = {
 
 const dots: Record<Tone, string> = {
   neutral: "bg-muted",
-  info: "bg-[#5aa7ff]",
+  info: "bg-[#2f6fff]",
   warning: "bg-hivis",
   success: "bg-go",
   danger: "bg-rose-500",

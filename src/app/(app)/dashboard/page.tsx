@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ShareActions } from "@/components/quote/share-actions";
 import { buttonClass } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
-import { CardIcon, ChatIcon, CheckIcon, MicIcon, PlusIcon, SearchIcon, SendIcon } from "@/components/ui/icons";
+import { MicIcon, PlusIcon, SearchIcon } from "@/components/ui/icons";
 import { DepositPill, StatusPill } from "@/components/ui/pill";
 import { requireWorkspace } from "@/lib/auth";
-import { publicEnv } from "@/lib/env";
 import { timeAgo } from "@/lib/format";
 import { formatMoney } from "@/lib/quote-math";
-import { shareMessage, shareUrl } from "@/lib/share";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Quotes" };
@@ -29,13 +26,6 @@ const OPEN = ["sent", "viewed", "changes_requested"] as const;
 function sanitizeSearch(q: string): string {
   return q.replace(/[%,()*\\:."']/g, " ").trim().slice(0, 60);
 }
-
-const STAT_ICON = {
-  open: <SendIcon width={16} height={16} />,
-  awaiting: <ChatIcon width={16} height={16} />,
-  approved: <CheckIcon width={16} height={16} />,
-  deposit: <CardIcon width={16} height={16} />,
-} as const;
 
 export default async function DashboardPage({ searchParams }: PageProps<"/dashboard">) {
   const sp = await searchParams;
@@ -95,133 +85,112 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
     return s ? `/dashboard?${s}` : "/dashboard";
   };
 
+  const chips = FILTERS.filter((f) => ["all", "awaiting", "approved", "deposit"].includes(f.key));
+  const chipLabel: Record<string, string> = { all: "All", awaiting: "Waiting on you", approved: "Accepted", deposit: "Paid" };
+  const summary = stats.filter((s) => s.key !== "open");
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {welcome && (
-        <div className="overflow-hidden rounded-card bg-night text-white">
-          <div className="p-6">
-          <p className="font-display text-3xl leading-none font-bold">Welcome to <span className="text-hivis">SayPay</span></p>
-          <p className="mt-2 text-white/70">
-            Add your logo and contact number in <Link href="/settings" className="font-semibold text-hivis underline underline-offset-2">Settings</Link>, then send your first voice quote.
+        <div className="rounded-card bg-hivis-soft p-5 ring-1 ring-hivis/20 ring-inset">
+          <p className="text-lg font-semibold">Welcome to SayPay 👋</p>
+          <p className="mt-1 text-ink-soft">
+            First, set up how you get paid in{" "}
+            <Link href="/settings#get-paid" className="font-semibold text-hivis underline underline-offset-2">
+              Settings
+            </Link>
+            . Then send your first quote.
           </p>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-3xl font-bold sm:text-4xl">Quotes</h1>
+      </div>
+
+      {/* Summary */}
+      {all.length > 0 && (
+        <div className="grid grid-cols-3 divide-x divide-line rounded-card bg-surface shadow-card ring-1 ring-line ring-inset">
+          {summary.map((s) => (
+            <Link key={s.key} href={filterHref(s.key)} className="min-w-0 px-3 py-4 text-center transition hover:bg-raised sm:px-5">
+              <p className="tabular truncate text-xl font-bold sm:text-2xl">{s.value}</p>
+              <p className="mt-0.5 truncate text-xs text-muted sm:text-sm">{chipLabel[s.key] ?? s.label}</p>
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {/* Search + filters */}
+      {all.length > 0 && (
+        <div className="space-y-3">
+          <form action="/dashboard" className="relative">
+            {filter !== "all" && <input type="hidden" name="status" value={filter} />}
+            <SearchIcon className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-muted" width={18} height={18} />
+            <input
+              type="search"
+              name="q"
+              defaultValue={q}
+              placeholder="Search quotes"
+              className="min-h-11 w-full rounded-xl bg-surface pr-4 pl-10 ring-1 ring-[#d5dcea] ring-inset placeholder:text-[#94a1b8] focus:ring-2 focus:ring-hivis focus:outline-none"
+              aria-label="Search quotes"
+            />
+          </form>
+          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none]">
+            {chips.map((f) => (
+              <Link
+                key={f.key}
+                href={filterHref(f.key)}
+                className={cn(
+                  "flex min-h-9 shrink-0 items-center rounded-full px-3.5 text-sm font-medium transition",
+                  filter === f.key ? "bg-ink text-white" : "bg-surface text-ink-soft ring-1 ring-line ring-inset hover:text-ink",
+                )}
+              >
+                {chipLabel[f.key]}
+              </Link>
+            ))}
           </div>
         </div>
       )}
 
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-medium text-muted">{workspace.business_name}</p>
-          <h1 className="mt-1 text-5xl leading-none font-bold sm:text-6xl">Quotes</h1>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {stats.map((s) => (
-          <Link
-            key={s.key}
-            href={filterHref(s.key)}
-            className={cn(
-              "group rounded-card bg-surface p-4 ring-1 ring-line ring-inset transition hover:ring-ink sm:p-5",
-              filter === s.key && "bg-hivis ring-2 ring-ink",
-            )}
-          >
-            <p className="flex items-start justify-between gap-2 text-sm leading-snug font-medium text-muted">
-              <span>{s.label}</span>
-              <span className="shrink-0 text-ink/50 transition group-hover:text-ink max-sm:hidden">{STAT_ICON[s.key]}</span>
-            </p>
-            <p className="tabular mt-3 font-display text-4xl leading-none font-bold sm:text-5xl">{s.value}</p>
-          </Link>
-        ))}
-      </div>
-
-      {/* Search + filters */}
-      <div className="space-y-3">
-        <form action="/dashboard" className="relative">
-          {filter !== "all" && <input type="hidden" name="status" value={filter} />}
-          <SearchIcon className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-muted" />
-          <input
-            type="search"
-            name="q"
-            defaultValue={q}
-            placeholder="Search by job or client"
-            className="min-h-12 w-full rounded-xl bg-surface pr-4 pl-11 ring-1 ring-[#cfcabd] ring-inset transition placeholder:text-[#a5a39c] focus:ring-2 focus:ring-ink focus:shadow-[0_0_0_4px_rgb(255_184_28/0.35)] focus:outline-none"
-            aria-label="Search quotes"
-          />
-        </form>
-        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
-          {FILTERS.map((f) => (
-            <Link
-              key={f.key}
-              href={filterHref(f.key)}
-              className={cn(
-                "flex min-h-10 shrink-0 items-center rounded-full px-4 text-sm font-semibold ring-1 ring-inset transition",
-                filter === f.key ? "bg-hivis text-on-accent ring-hivis" : "bg-surface text-ink-soft ring-line hover:text-ink hover:ring-ink/25",
-              )}
-            >
-              {f.label}
-            </Link>
-          ))}
-        </div>
-      </div>
-
       {/* List */}
       {quotes.length === 0 ? (
-        <div className="relative overflow-hidden rounded-card bg-surface p-12 text-center ring-2 ring-ink">
-          <div className="relative mx-auto grid size-14 place-items-center rounded-2xl bg-hivis text-on-accent shadow-card">
+        <div className="rounded-card bg-surface px-6 py-14 text-center shadow-card ring-1 ring-line ring-inset">
+          <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-hivis-soft text-hivis">
             <MicIcon width={24} height={24} />
-          </div>
-          <p className="relative mt-6 font-display text-3xl leading-none font-bold">{all.length === 0 ? "Send your first voice quote" : "Nothing here yet"}</p>
-          <p className="relative mx-auto mt-1 max-w-sm text-muted">
-            {all.length === 0
-              ? "It takes about 60 seconds: add a few line items, record a quick walkthrough, and share the link."
-              : "Try a different filter or search."}
+          </span>
+          <p className="mt-5 text-xl font-bold">{all.length === 0 ? "Send your first quote" : "No quotes here"}</p>
+          <p className="mx-auto mt-1 max-w-sm text-ink-soft">
+            {all.length === 0 ? "Tap the button, say the job and the prices, and send the link." : "Try another filter or search."}
           </p>
           {all.length === 0 && (
-            <Link href="/quotes/new" className={buttonClass("hivis", "lg", "relative mt-6")}>
+            <Link href="/quotes/new" className={buttonClass("primary", "lg", "mt-6")}>
               <PlusIcon /> New quote
             </Link>
           )}
         </div>
       ) : (
-        <ul className="grid gap-3 md:grid-cols-2">
+        <ul className="divide-y divide-line overflow-hidden rounded-card bg-surface shadow-card ring-1 ring-line ring-inset">
           {quotes.map((quote) => {
             const awaiting =
               (OPEN as readonly string[]).includes(quote.status) &&
               (quote.last_message_role === "client" || quote.status === "changes_requested");
             return (
-              <li
-                key={quote.id}
-                className={cn(
-                  "relative min-w-0 overflow-hidden rounded-card bg-surface p-4 ring-1 ring-line ring-inset transition hover:ring-ink sm:p-5",
-                  awaiting && "ring-2 ring-ink before:absolute before:inset-y-0 before:left-0 before:w-1.5 before:bg-hivis",
-                )}
-              >
-                <Link href={`/quotes/${quote.id}`} className="block">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="truncate font-display text-xl leading-tight font-bold">{quote.title}</p>
-                      <p className="truncate text-sm text-muted">
-                        {quote.client_name} · {timeAgo(quote.updated_at)}
-                      </p>
-                    </div>
-                    <p className="tabular shrink-0 text-[17px] font-semibold">{formatMoney(quote.total_cents, quote.currency)}</p>
+              <li key={quote.id}>
+                <Link href={`/quotes/${quote.id}`} className="flex items-center gap-3 px-4 py-4 transition hover:bg-raised sm:px-5">
+                  <span className={cn("size-2 shrink-0 rounded-full", awaiting ? "bg-hivis" : "bg-transparent")} aria-hidden />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold">{quote.title}</p>
+                    <p className="truncate text-sm text-muted">
+                      {quote.client_name} · {awaiting ? <span className="font-medium text-hivis">New reply</span> : timeAgo(quote.updated_at)}
+                    </p>
                   </div>
-                  <div className="mt-3 flex flex-wrap items-center gap-1.5">
-                    <StatusPill status={quote.status} />
-                    <DepositPill status={quote.deposit_status} />
-                    {awaiting && (
-                      <span className="rounded-full bg-hivis px-2.5 py-1 text-xs font-semibold text-on-accent">New reply</span>
-                    )}
+                  <div className="shrink-0 text-right">
+                    <p className="tabular font-semibold">{formatMoney(quote.total_cents, quote.currency)}</p>
+                    <div className="mt-1 flex justify-end">
+                      {quote.deposit_status === "paid" ? <DepositPill status="paid" /> : <StatusPill status={quote.status} />}
+                    </div>
                   </div>
                 </Link>
-                <div className="mt-4">
-                  <ShareActions
-                    url={shareUrl(publicEnv.siteUrl, quote.share_token)}
-                    message={shareMessage(publicEnv.siteUrl, quote, workspace.business_name)}
-                    phone={quote.client_phone}
-                  />
-                </div>
               </li>
             );
           })}

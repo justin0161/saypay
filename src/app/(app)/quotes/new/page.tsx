@@ -13,7 +13,7 @@ export default async function NewQuotePage() {
   const pay = await getPaymentSetup(workspace);
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="mb-2 text-5xl leading-none font-bold sm:text-6xl">New quote</h1>
+      <h1 className="mb-1 text-3xl font-bold sm:text-4xl">New quote</h1>
       <p className="mb-5 text-muted">Speak it or type it — then send the link.</p>
       <QuoteBuilder
         mode="create"

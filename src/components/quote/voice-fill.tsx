@@ -177,7 +177,7 @@ export function VoiceFill({ onFill }: { onFill: (draft: VoiceQuoteDraft) => void
         onClick={listening ? finish : start}
         className={cn(
           "flex min-h-16 w-full items-center justify-center gap-3 rounded-2xl px-5 text-lg font-semibold transition active:scale-[0.99]",
-          listening ? "bg-stop text-white" : "bg-hivis text-on-accent hover:bg-[#d6ff66]",
+          listening ? "bg-stop text-white" : "bg-hivis text-on-accent hover:bg-[#2549e6]",
         )}
       >
         {listening ? (

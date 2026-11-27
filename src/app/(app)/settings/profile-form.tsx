@@ -31,32 +31,6 @@ export function ProfileForm({ workspace: w }: { workspace: Workspace }) {
           <Input id="contact_email" name="contact_email" type="email" defaultValue={v("contact_email", w.contact_email ?? "")} />
         </Field>
       </div>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <Field label="Currency" htmlFor="currency" error={e.currency}>
-          <Input id="currency" name="currency" defaultValue={v("currency", w.currency)} maxLength={3} className="uppercase" />
-        </Field>
-        <Field label="Tax label" htmlFor="tax_label">
-          <Input id="tax_label" name="tax_label" defaultValue={v("tax_label", w.tax_label)} maxLength={20} />
-        </Field>
-        <Field label="Default tax %" htmlFor="default_tax_rate" error={e.default_tax_rate}>
-          <Input id="default_tax_rate" name="default_tax_rate" inputMode="decimal" defaultValue={v("default_tax_rate", String(w.default_tax_rate))} />
-        </Field>
-        <Field label="Default deposit %" htmlFor="default_deposit_percent" error={e.default_deposit_percent}>
-          <Input id="default_deposit_percent" name="default_deposit_percent" inputMode="decimal" defaultValue={v("default_deposit_percent", String(w.default_deposit_percent))} />
-        </Field>
-      </div>
-      <Field label="Brand colour" htmlFor="brand_color" error={e.brand_color} hint="Used for the header on your client links">
-        <div className="flex items-center gap-3">
-          <input
-            id="brand_color"
-            name="brand_color"
-            type="color"
-            defaultValue={v("brand_color", w.brand_color)}
-            className="h-12 w-16 cursor-pointer rounded-xl border-0 bg-transparent"
-          />
-          <span className="text-sm text-muted">Pick a dark colour for best contrast.</span>
-        </div>
-      </Field>
       <fieldset id="bank" className="scroll-mt-24 space-y-4 rounded-2xl bg-canvas p-4 ring-1 ring-hivis/30 ring-inset sm:p-5">
         <legend className="sr-only">Bank transfer</legend>
         <div>
@@ -92,14 +66,48 @@ export function ProfileForm({ workspace: w }: { workspace: Workspace }) {
           </Field>
         </div>
       </fieldset>
-      <Field
-        label="Card payment link"
-        htmlFor="deposit_link_url"
-        error={e.deposit_link_url}
-        hint="Optional — only needed if you don't connect Stripe below. E.g. a Stripe Payment Link or SumUp link."
-      >
-        <Input id="deposit_link_url" name="deposit_link_url" type="url" inputMode="url" defaultValue={v("deposit_link_url", w.deposit_link_url ?? "")} placeholder="https://" />
-      </Field>
+      <details className="group rounded-xl ring-1 ring-line ring-inset" open={Boolean(state?.fieldErrors && Object.keys(state.fieldErrors).some((k) => ["currency", "tax_label", "default_tax_rate", "default_deposit_percent", "brand_color", "deposit_link_url"].includes(k)))}>
+        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between px-4 text-sm font-semibold text-ink-soft">
+          More settings
+          <span className="text-muted transition group-open:rotate-90">›</span>
+        </summary>
+        <div className="space-y-4 border-t border-line p-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <Field label="Currency" htmlFor="currency" error={e.currency}>
+            <Input id="currency" name="currency" defaultValue={v("currency", w.currency)} maxLength={3} className="uppercase" />
+          </Field>
+          <Field label="Tax label" htmlFor="tax_label">
+            <Input id="tax_label" name="tax_label" defaultValue={v("tax_label", w.tax_label)} maxLength={20} />
+          </Field>
+          <Field label="Default tax %" htmlFor="default_tax_rate" error={e.default_tax_rate}>
+            <Input id="default_tax_rate" name="default_tax_rate" inputMode="decimal" defaultValue={v("default_tax_rate", String(w.default_tax_rate))} />
+          </Field>
+          <Field label="Default deposit %" htmlFor="default_deposit_percent" error={e.default_deposit_percent}>
+            <Input id="default_deposit_percent" name="default_deposit_percent" inputMode="decimal" defaultValue={v("default_deposit_percent", String(w.default_deposit_percent))} />
+          </Field>
+        </div>
+        <Field label="Brand colour" htmlFor="brand_color" error={e.brand_color} hint="Used for the header on your client links">
+          <div className="flex items-center gap-3">
+            <input
+              id="brand_color"
+              name="brand_color"
+              type="color"
+              defaultValue={v("brand_color", w.brand_color)}
+              className="h-12 w-16 cursor-pointer rounded-xl border-0 bg-transparent"
+            />
+            <span className="text-sm text-muted">Pick a dark colour for best contrast.</span>
+          </div>
+        </Field>
+        <Field
+          label="Card payment link"
+          htmlFor="deposit_link_url"
+          error={e.deposit_link_url}
+          hint="Optional — only needed if you don't connect Stripe below. E.g. a Stripe Payment Link or SumUp link."
+        >
+          <Input id="deposit_link_url" name="deposit_link_url" type="url" inputMode="url" defaultValue={v("deposit_link_url", w.deposit_link_url ?? "")} placeholder="https://" />
+        </Field>
+        </div>
+      </details>
       {state?.error && <p className="text-sm font-medium text-stop" role="alert">{state.error}</p>}
       {state?.ok && <p className="text-sm font-semibold text-go-ink" role="status">Saved ✓</p>}
       <Button type="submit" disabled={pending}>

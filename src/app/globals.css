@@ -5,38 +5,39 @@
   --font-display: var(--font-inter-tight), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  /* Midnight: roles, not literal colours. `ink` is the main text colour. */
-  --color-ink: #f2f4f0;
-  --color-ink-soft: #b9beb8;
-  --color-muted: #868c86;
-  --color-line: #24282c;
-  --color-canvas: #0b0d10;
-  --color-surface: #14171b;
-  --color-raised: #1c2025;
-  --color-night: #070809;
-  --color-cream: #101316;
-  --color-on-accent: #0b0d10;
+  /* Clean light theme: roles, not literal colours. `ink` is the main text colour. */
+  --color-ink: #0a1a3a;
+  --color-ink-soft: #46556f;
+  --color-muted: #6b7a93;
+  --color-line: #e3e8f1;
+  --color-canvas: #f6f8fc;
+  --color-surface: #ffffff;
+  --color-raised: #f1f4fa;
+  /* Deep navy for the few dark panels (audio player, phone mock-ups). */
+  --color-night: #0a1a3a;
+  --color-cream: #f1f4fa;
+  --color-on-accent: #ffffff;
 
-  /* Electric lime accent. */
-  --color-hivis: #c8ff3d;
-  --color-hivis-soft: #1b240e;
-  --color-hivis-ink: #d9ff7c;
-  --color-gold: #c8ff3d;
+  /* Trust blue accent. */
+  --color-hivis: #2f5bff;
+  --color-hivis-soft: #eef2ff;
+  --color-hivis-ink: #1f43d6;
+  --color-gold: #2f5bff;
 
-  --color-go: #22b35e;
-  --color-go-soft: #0f2318;
-  --color-go-ink: #7fe5a8;
+  --color-go: #12a150;
+  --color-go-soft: #e8f7ee;
+  --color-go-ink: #0b6b35;
 
-  --color-stop: #ff7a68;
-  --color-stop-soft: #2a1513;
+  --color-stop: #d92d20;
+  --color-stop-soft: #fdecea;
 
-  --radius-card: 1.25rem;
-  --shadow-card: 0 0 0 1px var(--color-line);
-  --shadow-lift: 0 0 0 1px var(--color-line), 0 30px 60px -24px rgb(0 0 0 / 0.7);
+  --radius-card: 1rem;
+  --shadow-card: 0 1px 2px rgb(10 26 58 / 0.05);
+  --shadow-lift: 0 1px 2px rgb(10 26 58 / 0.05), 0 16px 40px -16px rgb(20 50 140 / 0.22);
   --shadow-float: 0 -1px 0 var(--color-line);
-  --shadow-stamp: 0 0 0 1px var(--color-line);
-  --shadow-device: 0 0 0 1px rgb(255 255 255 / 0.08), 0 60px 120px -30px rgb(0 0 0 / 0.9);
-  --shadow-chip: 0 0 0 1px var(--color-line), 0 20px 40px -16px rgb(0 0 0 / 0.8);
+  --shadow-stamp: 0 1px 2px rgb(10 26 58 / 0.06);
+  --shadow-device: 0 0 0 1px rgb(10 26 58 / 0.08), 0 40px 80px -30px rgb(20 50 140 / 0.35);
+  --shadow-chip: 0 0 0 1px var(--color-line), 0 16px 32px -14px rgb(20 50 140 / 0.3);
 
   --animate-pulse-ring: pulse-ring 1.4s ease-out infinite;
   @keyframes pulse-ring {
@@ -65,14 +66,14 @@
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
-    color-scheme: dark;
+    color-scheme: light;
   }
   body {
     @apply bg-canvas text-ink antialiased;
   }
   h1, h2, h3 {
     font-family: var(--font-display);
-    letter-spacing: -0.035em;
+    letter-spacing: -0.022em;
   }
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-hivis;

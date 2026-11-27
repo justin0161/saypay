@@ -52,7 +52,7 @@ export default async function QuoteDetailPage({ params, searchParams }: PageProp
           </Link>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
-              <h1 className="text-4xl leading-[0.95] font-bold break-words sm:text-5xl">{quote.title}</h1>
+              <h1 className="text-3xl leading-tight font-bold break-words sm:text-4xl">{quote.title}</h1>
               <p className="text-muted">
                 {quote.client_name}
                 {quote.client_phone ? ` · ${quote.client_phone}` : ""}
