@@ -5,7 +5,7 @@ import { parseSpokenQuote, type VoiceQuoteDraft } from "@/lib/voice-parse";
 import { Button } from "../ui/button";
 import { cn } from "../ui/cn";
 import { inputClass } from "../ui/field";
-import { CheckIcon, MicIcon, SparkleIcon, StopIcon } from "../ui/icons";
+import { CheckIcon, MicIcon } from "../ui/icons";
 
 // Minimal typings for the Web Speech API (not in TypeScript's DOM lib).
 type SpeechResultEvent = { resultIndex: number; results: ArrayLike<{ isFinal: boolean; 0: { transcript: string } }> };
@@ -18,6 +18,7 @@ type Recognition = {
   onend: (() => void) | null;
   start: () => void;
   stop: () => void;
+  abort: () => void;
 };
 type RecognitionCtor = new () => Recognition;
 
@@ -27,223 +28,225 @@ function getRecognition(): RecognitionCtor | null {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
 }
 
-type MicState = "checking" | "ready" | "blocked" | "unavailable";
+type Phase = "idle" | "listening" | "done" | "blocked";
+
+const nothingFound = (d: VoiceQuoteDraft) => !d.title && !d.client_name && d.line_items.length === 0 && d.vat.enabled == null && !d.payment.type;
 
 /**
- * "Fill in by voice": asks for the microphone as soon as the builder opens,
- * transcribes speech live in the browser, then fills the quote using the free
- * on-device parser (no AI, no cost). The user can edit the transcript first.
+ * One-tap voice fill: tap to speak (the browser asks for the microphone at
+ * that moment, as part of the tap), tap Done, and the quote fills itself in
+ * using the free on-device parser. What was heard can be corrected.
  */
 export function VoiceFill({ onFill }: { onFill: (draft: VoiceQuoteDraft) => void }) {
-  const [mic, setMic] = useState<MicState>("checking");
   const [supported, setSupported] = useState(true);
-  const [listening, setListening] = useState(false);
-  const [finalText, setFinalText] = useState("");
-  const [interim, setInterim] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [filled, setFilled] = useState(false);
+  const [phase, setPhaseState] = useState<Phase>("idle");
+  const [heard, setHeard] = useState("");
+  const [live, setLive] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
   const recRef = useRef<Recognition | null>(null);
-  const wantRef = useRef(false); // keep listening through browser auto-stops
+  const keepGoing = useRef(false); // browsers stop after a pause; restart until Done
+  const textRef = useRef(""); // latest final text, readable inside callbacks
+  const phaseRef = useRef<Phase>("idle");
+  const onFillRef = useRef(onFill);
+  onFillRef.current = onFill;
 
-  // Ask for microphone access straight away, so recording is one tap later.
+  const setPhase = (p: Phase) => {
+    phaseRef.current = p;
+    setPhaseState(p);
+  };
+
   useEffect(() => {
     setSupported(Boolean(getRecognition()));
-    if (!navigator.mediaDevices?.getUserMedia) {
-      setMic("unavailable");
-      return;
-    }
-    let cancelled = false;
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then((stream) => {
-        stream.getTracks().forEach((t) => t.stop()); // only needed the permission
-        if (!cancelled) setMic("ready");
-      })
-      .catch(() => !cancelled && setMic("blocked"));
     return () => {
-      cancelled = true;
-      wantRef.current = false;
-      recRef.current?.stop();
+      keepGoing.current = false;
+      recRef.current?.abort();
     };
   }, []);
 
-  const startListening = () => {
+  const apply = (text: string) => {
+    const draft = parseSpokenQuote(text);
+    if (!text.trim() || nothingFound(draft)) {
+      setMessage("I didn't catch a job or any prices. Tap the button and try again — say each item, then its price.");
+      setPhase(text.trim() ? "done" : "idle");
+      return;
+    }
+    onFillRef.current(draft);
+    setMessage(null);
+    setPhase("done");
+  };
+
+  const start = () => {
     const Ctor = getRecognition();
     if (!Ctor) return;
-    setError(null);
-    setFilled(false);
+    setMessage(null);
+    setEditing(false);
+    textRef.current = "";
+    setHeard("");
+    setLive("");
     const rec = new Ctor();
     rec.lang = "en-GB";
     rec.continuous = true;
     rec.interimResults = true;
     rec.onresult = (e) => {
-      let done = "";
-      let live = "";
+      let finalPart = "";
+      let interim = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const r = e.results[i];
         if (!r) continue;
-        if (r.isFinal) done += r[0].transcript;
-        else live += r[0].transcript;
+        if (r.isFinal) finalPart += r[0].transcript;
+        else interim += r[0].transcript;
       }
-      if (done) setFinalText((t) => `${t} ${done}`.replace(/\s+/g, " ").trimStart());
-      setInterim(live);
+      if (finalPart) {
+        textRef.current = `${textRef.current} ${finalPart}`.replace(/\s+/g, " ").trim();
+        setHeard(textRef.current);
+      }
+      setLive(interim);
     };
     rec.onerror = (e) => {
       if (e.error === "not-allowed" || e.error === "service-not-allowed") {
-        wantRef.current = false;
-        setMic("blocked");
-      } else if (e.error !== "no-speech" && e.error !== "aborted") {
-        setError("Couldn't hear that clearly — try again, or type below.");
+        keepGoing.current = false;
+        setPhase("blocked");
       }
     };
     rec.onend = () => {
-      // Browsers stop after a pause; carry on until the user taps Done.
-      if (wantRef.current) {
+      if (keepGoing.current) {
         try {
           rec.start();
           return;
         } catch {
-          /* fall through */
+          /* fall through and finish */
         }
       }
-      setListening(false);
-      setInterim("");
+      setLive("");
+      // Finished (tapped Done, or the browser stopped): fill in straight away.
+      if (phaseRef.current === "listening") apply(textRef.current);
     };
     recRef.current = rec;
-    wantRef.current = true;
+    keepGoing.current = true;
     try {
       rec.start();
-      setListening(true);
+      setPhase("listening");
     } catch {
-      wantRef.current = false;
-      setError("Couldn't start the microphone. Try again, or type below.");
+      keepGoing.current = false;
+      setMessage("Couldn't start the microphone — please try again.");
     }
   };
 
-  const stopListening = () => {
-    wantRef.current = false;
-    recRef.current?.stop();
-    setListening(false);
+  const finish = () => {
+    keepGoing.current = false;
+    recRef.current?.stop(); // onend fills the quote in
   };
 
-  const transcript = `${finalText} ${interim}`.trim();
+  // Browsers without live speech (e.g. Firefox, some in-app browsers): type or use the keyboard's mic.
+  if (!supported) {
+    return (
+      <section className="rounded-card bg-surface p-5 ring-1 ring-line ring-inset sm:p-6">
+        <h2 className="font-display text-lg font-bold tracking-[-0.02em]">Fill in by voice</h2>
+        <p className="mt-1 text-sm text-ink-soft">
+          Tap the box, then the microphone on your keyboard, and say the quote — e.g. &ldquo;Boiler swap for Sarah Okafor. Combi boiler,
+          £2,150. Plus VAT. 25% deposit.&rdquo;
+        </p>
+        <textarea
+          className={cn(inputClass, "mt-3 min-h-24")}
+          value={heard}
+          onChange={(e) => setHeard(e.target.value)}
+          placeholder="Tap here, then the microphone on your keyboard"
+        />
+        {message && <p className="mt-2 text-sm text-stop">{message}</p>}
+        {phase === "done" && !message && (
+          <p className="mt-2 flex items-center gap-1.5 text-sm font-medium text-go-ink">
+            <CheckIcon width={15} height={15} strokeWidth={3} /> Filled in below — check it over.
+          </p>
+        )}
+        <Button className="mt-3" onClick={() => apply(heard)} disabled={heard.trim().length < 3}>
+          Fill in quote
+        </Button>
+      </section>
+    );
+  }
 
-  const fill = () => {
-    if (listening) stopListening();
-    const text = `${finalText} ${interim}`.trim();
-    setError(null);
-    const draft = parseSpokenQuote(text);
-    const found = draft.title || draft.client_name || draft.line_items.length || draft.vat.enabled != null || draft.payment.type;
-    if (!found) {
-      setFilled(false);
-      return setError("I couldn't pick out a job or any prices. Try saying each item followed by its price, like the example.");
-    }
-    onFill(draft);
-    setFilled(true);
-  };
+  const listening = phase === "listening";
 
   return (
-    <section className="relative overflow-hidden rounded-card bg-surface p-5 ring-1 ring-hivis/40 ring-inset sm:p-6">
-      <div aria-hidden className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-[radial-gradient(closest-side,rgb(200_255_61/0.14),transparent)]" />
-      <div className="relative">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h2 className="flex items-center gap-2 font-display text-xl font-bold tracking-[-0.03em]">
-              <SparkleIcon width={18} height={18} className="text-hivis" /> Fill in by voice
-            </h2>
-            <p className="mt-1 max-w-lg text-sm text-ink-soft">
-              Say the job and who it&apos;s for, then each item followed by its price. Add &ldquo;plus VAT&rdquo; and the deposit if you
-              need them.
-            </p>
-          </div>
-          <span
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset",
-              mic === "ready" ? "bg-go-soft text-go-ink ring-go/30" : mic === "blocked" ? "bg-stop-soft text-stop ring-stop/30" : "bg-raised text-muted ring-line",
-            )}
-            role="status"
-          >
-            <span className={cn("size-1.5 rounded-full", mic === "ready" ? "bg-go" : mic === "blocked" ? "bg-stop" : "bg-muted")} />
-            {mic === "ready" ? "Microphone on" : mic === "blocked" ? "Microphone blocked" : mic === "checking" ? "Asking for microphone…" : "No microphone"}
-          </span>
-        </div>
-
-        {mic === "blocked" && (
-          <p className="mt-3 text-sm text-ink-soft">
-            Allow the microphone for this site in your browser settings (tap the lock or &ldquo;aA&rdquo; icon next to the address), then reload.
-            You can also type below.
-          </p>
+    <section
+      className={cn("rounded-card p-5 ring-1 ring-inset transition sm:p-6", listening ? "bg-hivis-soft ring-hivis/50" : "bg-surface ring-line")}
+    >
+      <button
+        type="button"
+        onClick={listening ? finish : start}
+        className={cn(
+          "flex min-h-16 w-full items-center justify-center gap-3 rounded-2xl px-5 text-lg font-semibold transition active:scale-[0.99]",
+          listening ? "bg-stop text-white" : "bg-hivis text-on-accent hover:bg-[#d6ff66]",
         )}
+      >
+        {listening ? (
+          <>
+            <span className="relative grid size-7 place-items-center">
+              <span className="absolute inset-0 animate-ping rounded-full bg-white/40" />
+              <span className="size-3 rounded-sm bg-white" />
+            </span>
+            Done — fill in my quote
+          </>
+        ) : (
+          <>
+            <MicIcon width={24} height={24} /> {phase === "done" ? "Speak again" : "Speak your quote"}
+          </>
+        )}
+      </button>
 
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          {supported && mic !== "blocked" && mic !== "unavailable" && (
-            listening ? (
-              <Button size="lg" variant="danger" onClick={stopListening}>
-                <StopIcon width={16} height={16} /> Done talking
+      {listening ? (
+        <p className="mt-3 min-h-12 text-[15px] leading-relaxed text-ink" aria-live="polite">
+          {heard || live ? (
+            <>
+              {heard} <span className="text-muted">{live}</span>
+            </>
+          ) : (
+            <span className="text-ink-soft">Listening… say the job, who it&apos;s for, then each item and its price.</span>
+          )}
+        </p>
+      ) : phase === "blocked" ? (
+        <div className="mt-3 rounded-xl bg-stop-soft p-3 text-sm text-ink" role="alert">
+          <p className="font-semibold">Your phone said no to the microphone.</p>
+          <p className="mt-1 text-ink-soft">
+            Tap the <span className="font-semibold text-ink">aA</span> or lock icon next to the web address, set{" "}
+            <span className="font-semibold text-ink">Microphone</span> to Allow, then tap the button again.
+          </p>
+        </div>
+      ) : phase === "done" ? (
+        <div className="mt-3 space-y-2">
+          {message ? (
+            <p className="text-sm font-medium text-stop" role="alert">
+              {message}
+            </p>
+          ) : (
+            <p className="flex items-center gap-1.5 text-sm font-medium text-go-ink" role="status">
+              <CheckIcon width={15} height={15} strokeWidth={3} /> Filled in below — just check it over.
+            </p>
+          )}
+          {editing ? (
+            <div className="space-y-2">
+              <textarea className={cn(inputClass, "min-h-24")} value={heard} onChange={(e) => setHeard(e.target.value)} />
+              <Button size="sm" onClick={() => apply(heard)}>
+                Fill in again
               </Button>
-            ) : (
-              <Button size="lg" onClick={startListening} disabled={mic === "checking"}>
-                <MicIcon width={18} height={18} /> {finalText ? "Keep talking" : "Start talking"}
-              </Button>
+            </div>
+          ) : (
+            heard && (
+              <p className="text-sm text-muted">
+                Heard: &ldquo;{heard}&rdquo;{" "}
+                <button type="button" onClick={() => setEditing(true)} className="font-semibold text-ink underline underline-offset-2">
+                  Fix
+                </button>
+              </p>
             )
           )}
-          {listening && (
-            <span className="flex items-center gap-2 text-sm font-medium text-stop">
-              <span className="size-2 animate-pulse rounded-full bg-stop" /> Listening…
-            </span>
-          )}
         </div>
-
-        {!supported && (
-          <p className="mt-3 text-sm text-muted">
-            Live voice isn&apos;t available in this browser — tap the microphone on your keyboard to dictate into the box below instead.
-          </p>
-        )}
-
-        <label className="mt-4 block">
-          <span className="sr-only">What you said</span>
-          <textarea
-            className={cn(inputClass, "min-h-28 resize-y")}
-            value={listening ? transcript : finalText}
-            onChange={(e) => {
-              setFinalText(e.target.value);
-              setInterim("");
-            }}
-            readOnly={listening}
-            placeholder="e.g. Boiler swap for Sarah Okafor. Combi boiler, £2,150. Magnetic filter, £120. Plus VAT. 25% deposit."
-          />
-        </label>
-
-        {error && (
-          <p className="mt-3 text-sm font-medium text-stop" role="alert">
-            {error}
-          </p>
-        )}
-        {filled && !error && (
-          <p className="mt-3 flex items-center gap-2 text-sm font-medium text-go-ink" role="status">
-            <CheckIcon width={16} height={16} strokeWidth={3} /> Quote filled in below — check the details before sending.
-          </p>
-        )}
-
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Button variant="secondary" onClick={fill} disabled={transcript.length < 3}>
-            <SparkleIcon width={16} height={16} /> Fill in quote
-          </Button>
-          {finalText && !listening && (
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setFinalText("");
-                setInterim("");
-                setFilled(false);
-                setError(null);
-              }}
-            >
-              Clear
-            </Button>
-          )}
-        </div>
-      </div>
+      ) : (
+        <p className="mt-3 text-sm text-ink-soft">
+          {message ?? <>e.g. &ldquo;Boiler swap for Sarah Okafor. Combi boiler, £2,150. Magnetic filter, £120. Plus VAT. 25% deposit.&rdquo;</>}
+        </p>
+      )}
     </section>
   );
 }
