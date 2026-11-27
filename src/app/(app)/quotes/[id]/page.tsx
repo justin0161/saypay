@@ -47,12 +47,12 @@ export default async function QuoteDetailPage({ params, searchParams }: PageProp
       <AutoRefresh />
       <div className="space-y-4">
         <div>
-          <Link href="/dashboard" className="inline-flex min-h-11 items-center text-sm font-semibold text-muted hover:text-ink">
+          <Link href="/dashboard" className="inline-flex min-h-11 items-center font-mono text-xs font-medium tracking-[0.12em] text-muted uppercase hover:text-ink">
             ← All quotes
           </Link>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
-              <h1 className="text-3xl font-semibold tracking-[-0.035em] break-words sm:text-[2.25rem]">{quote.title}</h1>
+              <h1 className="text-4xl leading-[0.95] font-extrabold break-words uppercase sm:text-5xl">{quote.title}</h1>
               <p className="text-muted">
                 {quote.client_name}
                 {quote.client_phone ? ` · ${quote.client_phone}` : ""}
@@ -72,22 +72,22 @@ export default async function QuoteDetailPage({ params, searchParams }: PageProp
         </div>
 
         {/* Share */}
-        <Card className={justSent ? "relative overflow-hidden bg-ink text-white shadow-lift ring-0" : ""}>
+        <Card className={justSent ? "relative overflow-hidden bg-ink text-white ring-0" : ""}>
           {justSent && (
             <>
-              <div aria-hidden className="pointer-events-none absolute -top-24 -right-20 size-80 rounded-full bg-[radial-gradient(closest-side,rgb(245_165_36/0.2),transparent)]" />
+              <div aria-hidden className="absolute inset-x-0 top-0 h-2 bg-hazard" />
             </>
           )}
           <div className="relative">
           {justSent ? (
             <>
-              <p className="font-display text-xl font-semibold tracking-[-0.02em]">Quote ready — send it to {quote.client_name.split(" ")[0]}</p>
+              <p className="font-display text-3xl leading-none font-extrabold uppercase">Ready — send it to <span className="text-hivis">{quote.client_name.split(" ")[0]}</span></p>
               <p className="mt-1 mb-5 text-white/60">They can listen, reply and approve from this link. No login needed.</p>
             </>
           ) : (
             <CardTitle className="mb-3">Client link</CardTitle>
           )}
-          <p className={cn("mb-3 truncate rounded-xl px-3 py-2.5 font-mono text-sm", justSent ? "bg-white/10 text-white/85 ring-1 ring-white/15 ring-inset" : "bg-canvas text-ink-soft ring-1 ring-line ring-inset")}>{url}</p>
+          <p className={cn("mb-3 truncate rounded-xl px-3 py-2.5 font-mono text-sm", justSent ? "rounded-[5px] bg-white/10 text-white/85 ring-1 ring-white/15 ring-inset" : "rounded-[5px] bg-canvas text-ink-soft ring-1 ring-line ring-inset")}>{url}</p>
           <ShareActions url={url} message={message} phone={quote.client_phone} layout={justSent ? "full" : "compact"} />
           </div>
         </Card>

@@ -3,11 +3,11 @@ import type { DepositStatus, QuoteStatus } from "@/lib/types";
 import { cn } from "./cn";
 
 const tones: Record<Tone, string> = {
-  neutral: "bg-slate-50 text-slate-700 ring-slate-200",
-  info: "bg-sky-50 text-sky-800 ring-sky-200/80",
-  warning: "bg-hivis-soft text-hivis-ink ring-amber-200/80",
-  success: "bg-go-soft text-go-ink ring-emerald-200/80",
-  danger: "bg-rose-50 text-rose-800 ring-rose-200",
+  neutral: "bg-canvas text-ink-soft ring-line",
+  info: "bg-[#e8eef6] text-[#1d3f6e] ring-[#bccbe0]",
+  warning: "bg-hivis-soft text-ink ring-hivis-deep/40",
+  success: "bg-go-soft text-go-ink ring-go/30",
+  danger: "bg-red-50 text-stop ring-stop/30",
 };
 
 const dots: Record<Tone, string> = {
@@ -22,12 +22,12 @@ export function Pill({ tone, children, className }: { tone: Tone; children: Reac
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap ring-1 ring-inset",
+        "inline-flex items-center gap-1.5 rounded-[3px] px-2 py-0.5 font-mono text-[11px] font-medium tracking-[0.06em] whitespace-nowrap uppercase ring-1 ring-inset",
         tones[tone],
         className,
       )}
     >
-      <span className={cn("size-1.5 rounded-full", dots[tone])} aria-hidden />
+      <span className={cn("size-1.5", dots[tone])} aria-hidden />
       {children}
     </span>
   );

@@ -20,7 +20,7 @@ export function MessageThread({ messages, viewer }: { messages: ThreadMessage[];
           <li key={m.id} className={cn("flex flex-col", mine ? "items-end" : "items-start")}>
             <div
               className={cn(
-                "max-w-[88%] space-y-2 rounded-2xl px-3.5 py-2.5 sm:max-w-[75%]",
+                "max-w-[88%] space-y-2 rounded-[10px] px-3.5 py-2.5 sm:max-w-[75%]",
                 mine
                   ? "rounded-br-md bg-ink text-white"
                   : "rounded-bl-md bg-canvas text-ink ring-1 ring-line ring-inset",

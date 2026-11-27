@@ -4,17 +4,22 @@ import { Logo } from "@/components/ui/icons";
 
 export default function NotFound() {
   return (
-    <main className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-surface px-6 text-center">
-      <div aria-hidden className="absolute inset-0 bg-grid [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,black,transparent)]" />
-      <Link href="/" className="relative" aria-label="SayPay home">
-        <Logo />
-      </Link>
-      <p className="tabular relative mt-12 font-display text-sm font-medium tracking-[0.1em] text-muted">ERROR 404</p>
-      <h1 className="relative mt-3 text-4xl font-semibold tracking-[-0.035em]">Page not found</h1>
-      <p className="relative mt-3 max-w-sm text-muted">The page you&apos;re looking for doesn&apos;t exist or has moved.</p>
-      <Link href="/" className={buttonClass("primary", "lg", "relative mt-10")}>
-        Back to SayPay
-      </Link>
+    <main className="flex min-h-dvh flex-col bg-hivis">
+      <div aria-hidden className="h-4 bg-hazard" />
+      <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
+        <Link href="/" aria-label="SayPay home">
+          <Logo tone="amber" />
+        </Link>
+        <p className="mt-10 font-display text-[9rem] leading-none font-extrabold text-ink">404</p>
+        <h1 className="mt-2 text-4xl leading-none font-extrabold uppercase">
+          <span className="bg-ink box-decoration-clone px-2 text-hivis">Road closed</span>
+        </h1>
+        <p className="mt-5 max-w-sm font-medium text-ink/75">This page doesn&apos;t exist or has moved. Let&apos;s get you back on site.</p>
+        <Link href="/" className={buttonClass("primary", "lg", "mt-9")}>
+          Back to SayPay
+        </Link>
+      </div>
+      <div aria-hidden className="h-4 bg-hazard" />
     </main>
   );
 }

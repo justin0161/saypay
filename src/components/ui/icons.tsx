@@ -81,13 +81,20 @@ export const BoltIcon = (p: P) => (
   <svg {...base(p)}><path d="M13 2 4 14h7l-1 8 9-12h-7Z" /></svg>
 );
 
-/** SayPay mark: amber sound-wave bars on an ink tile. `tone` = colour of the surface behind it. */
-export const Logo = ({ className, tone = "light" }: { className?: string; tone?: "light" | "dark" }) => (
+/**
+ * SayPay mark: charcoal sound-wave bars on a hi-vis amber plate.
+ * `tone` = the surface behind it: "light" (chalk/white), "dark" (charcoal) or "amber" (hi-vis, which flips the plate to charcoal).
+ */
+export const Logo = ({ className, tone = "light" }: { className?: string; tone?: "light" | "dark" | "amber" }) => (
   <span className={className}>
-    <svg width="28" height="28" viewBox="0 0 64 64" aria-hidden className="inline-block align-middle">
-      <rect width="64" height="64" rx="16" fill={tone === "dark" ? "#FFFFFF" : "#0A0D1A"} />
-      <path d="M20 27v10M28 20v24M36 24v16M44 29v6" stroke="#F5A524" strokeWidth="5.5" strokeLinecap="round" />
+    <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden className="inline-block align-middle">
+      <rect width="64" height="64" rx="8" fill={tone === "amber" ? "#16181B" : "#FFB81C"} />
+      <path d="M19 27v10M27 19v26M35 24v16M43 29v6" stroke={tone === "amber" ? "#FFB81C" : "#16181B"} strokeWidth="6" strokeLinecap="square" />
     </svg>
-    <span className="ml-2 align-middle font-display text-[18px] font-semibold tracking-[-0.03em]">SayPay</span>
+    <span
+      className={`ml-2 align-middle font-display text-[22px] leading-none font-extrabold tracking-[0.01em] uppercase ${tone === "dark" ? "text-white" : "text-ink"}`}
+    >
+      SayPay
+    </span>
   </span>
 );

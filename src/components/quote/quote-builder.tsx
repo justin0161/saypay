@@ -202,7 +202,7 @@ export function QuoteBuilder({
       </Card>
 
       {/* Voice walkthrough */}
-      <Card className={cn("space-y-4", !hasWalkthrough && "ring-[1.5px] ring-hivis/70")}>
+      <Card className={cn("space-y-4", !hasWalkthrough && "ring-2 ring-hivis")}>
         <div className="flex items-center justify-between">
           <CardTitle>Voice walkthrough</CardTitle>
           <span className="text-xs font-semibold text-muted">Up to 60s</span>
@@ -240,7 +240,7 @@ export function QuoteBuilder({
             const li = lineItems[idx];
             const err = (f: string) => errors[`line_items.${idx}.${f}`];
             return (
-              <li key={row.id} className="rounded-2xl bg-canvas p-3 ring-1 ring-line ring-inset">
+              <li key={row.id} className="rounded-[6px] bg-canvas p-3 ring-1 ring-line ring-inset">
                 <div className="flex gap-2">
                   <input
                     value={row.description}
@@ -303,7 +303,7 @@ export function QuoteBuilder({
               key={q}
               type="button"
               onClick={() => addRow(q)}
-              className="min-h-10 rounded-full bg-surface px-3.5 text-sm font-medium text-ink-soft ring-1 ring-line ring-inset transition hover:text-ink hover:ring-ink/20"
+              className="min-h-10 rounded-[5px] bg-surface px-3.5 text-sm font-semibold text-ink-soft ring-[1.5px] ring-ink/15 ring-inset transition hover:text-ink hover:ring-ink"
             >
               + {q}
             </button>
@@ -351,8 +351,8 @@ export function QuoteBuilder({
                   setDepositPercent(p);
                 }}
                 className={cn(
-                  "min-h-11 min-w-16 rounded-[10px] px-4 text-sm font-medium ring-1 ring-inset transition",
-                  depositType === "percent" && Number(depositPercent) === Number(p) ? "bg-ink text-white ring-ink" : "bg-surface ring-line hover:ring-ink/20",
+                  "min-h-11 min-w-16 rounded-[5px] px-4 text-sm font-semibold ring-[1.5px] ring-inset transition",
+                  depositType === "percent" && Number(depositPercent) === Number(p) ? "bg-ink text-hivis ring-ink" : "bg-surface ring-ink/15 hover:ring-ink",
                 )}
               >
                 {p === "0" ? "None" : `${p}%`}
@@ -362,8 +362,8 @@ export function QuoteBuilder({
               type="button"
               onClick={() => setDepositType("percent")}
               className={cn(
-                "min-h-11 rounded-[10px] px-4 text-sm font-medium ring-1 ring-inset transition",
-                depositType === "percent" && !["0", "25", "50"].includes(String(Number(depositPercent))) ? "bg-ink text-white ring-ink" : "bg-surface ring-line hover:ring-ink/20",
+                "min-h-11 rounded-[5px] px-4 text-sm font-semibold ring-[1.5px] ring-inset transition",
+                depositType === "percent" && !["0", "25", "50"].includes(String(Number(depositPercent))) ? "bg-ink text-hivis ring-ink" : "bg-surface ring-ink/15 hover:ring-ink",
               )}
             >
               Custom %
@@ -371,7 +371,7 @@ export function QuoteBuilder({
             <button
               type="button"
               onClick={() => setDepositType("fixed")}
-              className={cn("min-h-11 rounded-[10px] px-4 text-sm font-medium ring-1 ring-inset transition", depositType === "fixed" ? "bg-ink text-white ring-ink" : "bg-surface ring-line hover:ring-ink/20")}
+              className={cn("min-h-11 rounded-[5px] px-4 text-sm font-semibold ring-[1.5px] ring-inset transition", depositType === "fixed" ? "bg-ink text-hivis ring-ink" : "bg-surface ring-ink/15 hover:ring-ink")}
             >
               Fixed amount
             </button>
@@ -444,7 +444,7 @@ export function QuoteBuilder({
       </Card>
 
       {/* Sticky summary */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-white/85 pb-safe shadow-float backdrop-blur-xl sm:bottom-0">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-ink bg-canvas/95 pb-safe backdrop-blur sm:bottom-0">
         <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 pt-3">
           <div className="min-w-0 flex-1">
             <p className="tabular text-xl leading-tight font-semibold">{formatMoney(totals.total_cents, currency)}</p>

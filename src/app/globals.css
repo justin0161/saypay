@@ -1,48 +1,57 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-inter-tight), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-sans: var(--font-barlow), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: var(--font-barlow-condensed), var(--font-barlow), "Arial Narrow", sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  /* Near-black ink with a hint of navy; neutral greys. */
-  --color-ink: #0a0d1a;
-  --color-ink-soft: #424656;
-  --color-muted: #6c7080;
-  --color-line: #e6e7eb;
-  --color-canvas: #f7f7f8;
-  --color-surface: #ffffff;
+  /* Workwear charcoal + site-board chalk. */
+  --color-ink: #16181b;
+  --color-ink-soft: #3d4148;
+  --color-muted: #6b6e73;
+  --color-line: #dedad0;
+  --color-canvas: #f3f0e8;
+  --color-surface: #fffdf8;
 
-  /* Brand amber — used sparingly, as an accent only. */
-  --color-hivis: #f5a524;
-  --color-hivis-soft: #fef6e7;
-  --color-hivis-ink: #5c3a00;
-  --color-gold: #b7791f;
+  /* Hi-vis safety amber — the brand. */
+  --color-hivis: #ffb81c;
+  --color-hivis-soft: #fff1cc;
+  --color-hivis-ink: #16181b;
+  --color-hivis-deep: #e59a00;
 
-  --color-go: #0f8a5f;
-  --color-go-soft: #ecf7f2;
-  --color-go-ink: #05482f;
+  --color-go: #138a4a;
+  --color-go-soft: #e3f3e8;
+  --color-go-ink: #0b4d2a;
 
-  --radius-card: 1rem;
-  --shadow-card: 0 1px 2px rgb(10 13 26 / 0.04), 0 1px 1px rgb(10 13 26 / 0.02);
-  --shadow-lift: 0 1px 2px rgb(10 13 26 / 0.04), 0 12px 32px -12px rgb(10 13 26 / 0.14);
-  --shadow-float: 0 -1px 0 rgb(10 13 26 / 0.04), 0 -12px 32px -16px rgb(10 13 26 / 0.18);
-  --shadow-device: 0 0 0 1px rgb(10 13 26 / 0.06), 0 40px 80px -24px rgb(10 13 26 / 0.35), 0 16px 32px -16px rgb(10 13 26 / 0.2);
+  --color-stop: #c8321e;
+
+  --radius-card: 0.375rem;
+  /* Hard, "stamped" shadows — no soft blur. */
+  --shadow-card: 0 1px 0 rgb(22 24 27 / 0.06);
+  --shadow-lift: 4px 4px 0 var(--color-ink);
+  --shadow-stamp: 3px 3px 0 var(--color-ink);
+  --shadow-float: 0 -2px 0 rgb(22 24 27 / 0.08);
+  --shadow-device: 10px 10px 0 var(--color-ink);
 
   --animate-pulse-ring: pulse-ring 1.4s ease-out infinite;
   @keyframes pulse-ring {
-    0% { box-shadow: 0 0 0 0 rgb(239 68 68 / 0.45); }
-    100% { box-shadow: 0 0 0 14px rgb(239 68 68 / 0); }
+    0% { box-shadow: 0 0 0 0 rgb(200 50 30 / 0.45); }
+    100% { box-shadow: 0 0 0 14px rgb(200 50 30 / 0); }
   }
   --animate-bar: bar 1s ease-in-out infinite;
   @keyframes bar {
     0%, 100% { transform: scaleY(0.35); }
     50% { transform: scaleY(1); }
   }
-  --animate-rise: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-rise: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   @keyframes rise {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+  --animate-stamp: stamp 0.35s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+  @keyframes stamp {
+    from { opacity: 0; transform: rotate(-8deg) scale(1.6); }
+    to { opacity: 1; transform: rotate(-8deg) scale(1); }
   }
 }
 
@@ -54,17 +63,20 @@
   }
   body {
     @apply bg-canvas text-ink antialiased;
-    font-feature-settings: "cv11", "ss01", "ss03";
   }
-  h1, h2, h3, h4 {
+  h1, h2 {
     font-family: var(--font-display);
-    letter-spacing: -0.025em;
+    letter-spacing: -0.005em;
+  }
+  h3, h4 {
+    letter-spacing: -0.005em;
   }
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-ink;
+    @apply outline-[3px] outline-offset-2 outline-hivis;
   }
   ::selection {
-    background: rgb(245 165 36 / 0.25);
+    background: var(--color-hivis);
+    color: var(--color-ink);
   }
   input, textarea, select {
     /* 16px prevents iOS zoom-on-focus. */
@@ -88,17 +100,27 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Fine architectural grid for hero / feature backgrounds. */
-@utility bg-grid {
-  background-image:
-    linear-gradient(to right, rgb(10 13 26 / 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(10 13 26 / 0.05) 1px, transparent 1px);
-  background-size: 56px 56px;
+/* Hazard tape: diagonal amber / charcoal stripes. */
+@utility bg-hazard {
+  background-image: repeating-linear-gradient(-45deg, var(--color-hivis) 0 14px, var(--color-ink) 14px 28px);
 }
 
-@utility bg-grid-dark {
+/* Hi-vis vest reflective band. */
+@utility bg-reflective {
+  background-image: linear-gradient(180deg, #d9dadc 0%, #f4f5f6 45%, #c9cbce 100%);
+}
+
+/* Tape-measure tick marks (every 8px, longer every 40px). */
+@utility bg-ruler {
   background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px);
-  background-size: 56px 56px;
+    repeating-linear-gradient(90deg, var(--color-ink) 0 1.5px, transparent 1.5px 40px),
+    repeating-linear-gradient(90deg, var(--color-ink) 0 1px, transparent 1px 8px);
+  background-size: 100% 16px, 100% 8px;
+  background-repeat: repeat-x;
+  background-position: 0 0, 0 0;
+}
+
+/* Lined job-sheet paper. */
+@utility bg-jobsheet {
+  background-image: repeating-linear-gradient(180deg, transparent 0 31px, rgb(22 24 27 / 0.07) 31px 32px);
 }

@@ -6,24 +6,25 @@ export type ButtonVariant = "primary" | "go" | "secondary" | "ghost" | "danger" 
 type Size = "md" | "lg" | "sm";
 
 const base =
-  "group/btn inline-flex items-center justify-center gap-2 rounded-[10px] font-semibold tracking-[-0.01em] transition duration-150 active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50 select-none";
+  "group/btn inline-flex items-center justify-center gap-2 rounded-[5px] font-semibold uppercase tracking-[0.04em] transition duration-100 disabled:pointer-events-none disabled:opacity-50 select-none";
 
 const variants: Record<ButtonVariant, string> = {
-  primary: "bg-ink text-white shadow-[0_1px_0_rgb(255_255_255/0.08)_inset,0_1px_2px_rgb(10_13_26/0.3)] hover:bg-[#1c2032]",
-  go: "bg-go text-white shadow-[0_1px_0_rgb(255_255_255/0.12)_inset,0_1px_2px_rgb(10_13_26/0.2)] hover:bg-[#0c7a54]",
-  // Main call-to-action. Ink, like the primary, so the brand reads premium; amber stays an accent.
-  hivis: "bg-ink text-white shadow-[0_1px_0_rgb(255_255_255/0.08)_inset,0_1px_2px_rgb(10_13_26/0.3)] hover:bg-[#1c2032]",
-  secondary: "bg-surface text-ink ring-1 ring-line ring-inset shadow-[0_1px_2px_rgb(10_13_26/0.04)] hover:bg-canvas",
-  ghost: "text-ink hover:bg-ink/[0.05]",
-  danger: "bg-surface text-rose-700 ring-1 ring-rose-200 ring-inset hover:bg-rose-50",
+  primary: "bg-ink text-white hover:bg-[#2a2d32] active:translate-y-px",
+  go: "bg-go text-white hover:bg-[#0f773f] active:translate-y-px",
+  // Hi-vis CTA: amber with a hard stamped shadow that presses in on click.
+  hivis:
+    "bg-hivis text-ink ring-2 ring-ink ring-inset shadow-stamp hover:-translate-x-px hover:-translate-y-px hover:shadow-[4px_4px_0_var(--color-ink)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none",
+  secondary: "bg-surface text-ink ring-2 ring-ink/80 ring-inset hover:bg-canvas active:translate-y-px",
+  ghost: "text-ink hover:bg-ink/[0.06]",
+  danger: "bg-surface text-stop ring-2 ring-stop/40 ring-inset hover:bg-red-50",
   // For dark backgrounds.
-  inverse: "bg-white text-ink hover:bg-white/90",
-  glass: "bg-white/[0.06] text-white ring-1 ring-white/15 ring-inset hover:bg-white/10",
+  inverse: "bg-hivis text-ink hover:bg-[#ffc640] active:translate-y-px",
+  glass: "text-white ring-2 ring-white/30 ring-inset hover:bg-white/[0.06] active:translate-y-px",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "min-h-10 px-3.5 text-sm",
-  md: "min-h-11 px-4 text-[15px]",
+  sm: "min-h-10 px-3.5 text-[13px]",
+  md: "min-h-11 px-4 text-sm",
   lg: "min-h-13 px-6 text-[15px]",
 };
 
