@@ -52,7 +52,7 @@ export default async function QuoteDetailPage({ params, searchParams }: PageProp
           </Link>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
-              <h1 className="text-3xl font-extrabold tracking-tight break-words sm:text-4xl">{quote.title}</h1>
+              <h1 className="text-3xl font-semibold tracking-[-0.035em] break-words sm:text-[2.25rem]">{quote.title}</h1>
               <p className="text-muted">
                 {quote.client_name}
                 {quote.client_phone ? ` · ${quote.client_phone}` : ""}
@@ -75,15 +75,14 @@ export default async function QuoteDetailPage({ params, searchParams }: PageProp
         <Card className={justSent ? "relative overflow-hidden bg-ink text-white shadow-lift ring-0" : ""}>
           {justSent && (
             <>
-              <div aria-hidden className="pointer-events-none absolute -top-20 -right-16 size-64 rounded-full bg-sunset opacity-50 blur-3xl" />
-              <div aria-hidden className="pointer-events-none absolute -bottom-24 -left-10 size-56 rounded-full bg-grape opacity-40 blur-3xl" />
+              <div aria-hidden className="pointer-events-none absolute -top-24 -right-20 size-80 rounded-full bg-[radial-gradient(closest-side,rgb(245_165_36/0.2),transparent)]" />
             </>
           )}
           <div className="relative">
           {justSent ? (
             <>
-              <p className="text-xl font-extrabold">Quote ready — send it to {quote.client_name.split(" ")[0]} 🚀</p>
-              <p className="mt-1 mb-4 text-white/70">They can listen, reply and approve from this link. No login needed.</p>
+              <p className="font-display text-xl font-semibold tracking-[-0.02em]">Quote ready — send it to {quote.client_name.split(" ")[0]}</p>
+              <p className="mt-1 mb-5 text-white/60">They can listen, reply and approve from this link. No login needed.</p>
             </>
           ) : (
             <CardTitle className="mb-3">Client link</CardTitle>
@@ -104,7 +103,7 @@ export default async function QuoteDetailPage({ params, searchParams }: PageProp
                   : "bg-hivis-soft ring-1 ring-amber-200 ring-inset"
             }
           >
-            <p className="flex items-center gap-2 font-bold">
+            <p className="flex items-center gap-2 font-semibold">
               {quote.status === "approved" && <LockIcon width={18} height={18} />}
               {quote.status === "approved" ? "Approved" : quote.status === "declined" ? "Declined" : "Changes requested"} by{" "}
               {quote.decided_by_name}
@@ -130,7 +129,7 @@ export default async function QuoteDetailPage({ params, searchParams }: PageProp
           <Card className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle>Deposit</CardTitle>
-              <p className="mt-1 text-xl font-extrabold">
+              <p className="mt-1 text-xl font-semibold">
                 {formatMoney(quote.deposit_cents, quote.currency)}{" "}
                 <span className="text-base font-semibold text-muted">
                   {quote.deposit_status === "paid"

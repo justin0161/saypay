@@ -1,39 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-bricolage), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-inter-tight), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  /* Deep indigo ink — calmer and richer than pure navy. */
-  --color-ink: #0d1033;
-  --color-ink-soft: #454b6b;
-  --color-muted: #6b7194;
-  --color-line: #e7e8f2;
-  --color-canvas: #f6f7fc;
+  /* Near-black ink with a hint of navy; neutral greys. */
+  --color-ink: #0a0d1a;
+  --color-ink-soft: #424656;
+  --color-muted: #6c7080;
+  --color-line: #e6e7eb;
+  --color-canvas: #f7f7f8;
   --color-surface: #ffffff;
 
-  /* Hi-vis accent: still SayPay's signature amber. */
-  --color-hivis: #ffb020;
-  --color-hivis-soft: #fff4dc;
-  --color-hivis-ink: #4a3000;
+  /* Brand amber — used sparingly, as an accent only. */
+  --color-hivis: #f5a524;
+  --color-hivis-soft: #fef6e7;
+  --color-hivis-ink: #5c3a00;
+  --color-gold: #b7791f;
 
-  /* Playful supporting colours for the gradient + icon tiles. */
-  --color-tangerine: #ff7a3d;
-  --color-bubblegum: #ff4f9a;
-  --color-grape: #7b5cff;
-  --color-sky: #1fb6ff;
-  --color-mint: #2ee6a6;
+  --color-go: #0f8a5f;
+  --color-go-soft: #ecf7f2;
+  --color-go-ink: #05482f;
 
-  --color-go: #0e9f6e;
-  --color-go-soft: #e7f7ef;
-  --color-go-ink: #04543a;
-
-  --radius-card: 1.25rem;
-  --shadow-card: 0 0 0 1px rgb(13 16 51 / 0.04), 0 1px 2px rgb(13 16 51 / 0.04), 0 8px 24px -8px rgb(13 16 51 / 0.1);
-  --shadow-lift: 0 0 0 1px rgb(13 16 51 / 0.04), 0 2px 4px rgb(13 16 51 / 0.04), 0 24px 48px -16px rgb(50 30 120 / 0.22);
-  --shadow-float: 0 -8px 30px -10px rgb(13 16 51 / 0.22);
-  --shadow-pop: 0 1px 0 rgb(255 255 255 / 0.35) inset, 0 8px 20px -6px rgb(255 100 80 / 0.55);
+  --radius-card: 1rem;
+  --shadow-card: 0 1px 2px rgb(10 13 26 / 0.04), 0 1px 1px rgb(10 13 26 / 0.02);
+  --shadow-lift: 0 1px 2px rgb(10 13 26 / 0.04), 0 12px 32px -12px rgb(10 13 26 / 0.14);
+  --shadow-float: 0 -1px 0 rgb(10 13 26 / 0.04), 0 -12px 32px -16px rgb(10 13 26 / 0.18);
+  --shadow-device: 0 0 0 1px rgb(10 13 26 / 0.06), 0 40px 80px -24px rgb(10 13 26 / 0.35), 0 16px 32px -16px rgb(10 13 26 / 0.2);
 
   --animate-pulse-ring: pulse-ring 1.4s ease-out infinite;
   @keyframes pulse-ring {
@@ -45,25 +39,9 @@
     0%, 100% { transform: scaleY(0.35); }
     50% { transform: scaleY(1); }
   }
-  --animate-blob: blob 18s ease-in-out infinite alternate;
-  @keyframes blob {
-    0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
-    50% { transform: translate3d(6%, -4%, 0) scale(1.12) rotate(12deg); }
-    100% { transform: translate3d(-5%, 5%, 0) scale(0.95) rotate(-8deg); }
-  }
-  --animate-float: float 6s ease-in-out infinite;
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-  --animate-marquee: marquee 40s linear infinite;
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-100%); }
-  }
-  --animate-rise: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-rise: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   @keyframes rise {
-    from { opacity: 0; transform: translateY(14px); }
+    from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
 }
@@ -76,16 +54,17 @@
   }
   body {
     @apply bg-canvas text-ink antialiased;
+    font-feature-settings: "cv11", "ss01", "ss03";
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
   }
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-grape;
+    @apply outline-2 outline-offset-2 outline-ink;
   }
   ::selection {
-    background: rgb(123 92 255 / 0.2);
+    background: rgb(245 165 36 / 0.25);
   }
   input, textarea, select {
     /* 16px prevents iOS zoom-on-focus. */
@@ -109,28 +88,17 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* The signature SayPay sunset: amber → tangerine → bubblegum → grape. */
-@utility bg-sunset {
-  background-image: linear-gradient(115deg, #ffb020 0%, #ff7a3d 30%, #ff4f9a 62%, #7b5cff 100%);
+/* Fine architectural grid for hero / feature backgrounds. */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(10 13 26 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(10 13 26 / 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
 }
 
-@utility text-sunset {
-  background-image: linear-gradient(100deg, #ff9a1f 0%, #ff5a5f 40%, #ff4f9a 65%, #7b5cff 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Gradient hairline border for "featured" cards. */
-@utility ring-sunset {
-  border: 2px solid transparent;
-  background:
-    linear-gradient(var(--color-surface), var(--color-surface)) padding-box,
-    linear-gradient(115deg, #ffb020, #ff4f9a 55%, #7b5cff) border-box;
-}
-
-/* Faint dot grid for section backgrounds. */
-@utility bg-dots {
-  background-image: radial-gradient(rgb(13 16 51 / 0.07) 1px, transparent 1px);
-  background-size: 22px 22px;
+@utility bg-grid-dark {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
 }

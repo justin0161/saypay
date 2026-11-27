@@ -34,9 +34,7 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
 
   return (
     <div className="mx-auto max-w-2xl space-y-4">
-      <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-        <span className="text-sunset">Settings</span>
-      </h1>
+      <h1 className="text-3xl font-semibold tracking-[-0.035em] sm:text-[2.25rem]">Settings</h1>
 
       {sp.billing === "success" && (
         <p className="rounded-2xl bg-go-soft p-4 font-semibold text-go-ink ring-1 ring-emerald-200 ring-inset">You&apos;re on SayPay Pro. Thanks! It can take a few seconds to show below.</p>

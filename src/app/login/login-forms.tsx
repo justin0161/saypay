@@ -10,13 +10,13 @@ function Notice({ state }: { state: AuthState }) {
   if (!state) return null;
   if (state.error)
     return (
-      <p className="rounded-xl bg-rose-50 p-3 text-sm font-medium text-rose-800 ring-1 ring-rose-200 ring-inset" role="alert">
+      <p className="rounded-[10px] bg-rose-50 p-3 text-sm font-medium text-rose-800 ring-1 ring-rose-200 ring-inset" role="alert">
         {state.error}
       </p>
     );
   if (state.message)
     return (
-      <p className="rounded-xl bg-go-soft p-3 text-sm font-medium text-go-ink ring-1 ring-emerald-200 ring-inset" role="status">
+      <p className="rounded-[10px] bg-go-soft p-3 text-sm font-medium text-go-ink ring-1 ring-emerald-200 ring-inset" role="status">
         {state.message}
       </p>
     );
@@ -31,7 +31,7 @@ export function LoginForms({ initialMode, next }: { initialMode: "signin" | "sig
 
   return (
     <div className="mt-8 space-y-5">
-      <div className="flex rounded-full bg-canvas p-1 ring-1 ring-line ring-inset">
+      <div className="flex rounded-[12px] bg-canvas p-1 ring-1 ring-line ring-inset">
         {(
           [
             ["signin", "Log in"],
@@ -42,7 +42,7 @@ export function LoginForms({ initialMode, next }: { initialMode: "signin" | "sig
             key={key}
             type="button"
             onClick={() => setMode(key)}
-            className={cn("min-h-11 flex-1 rounded-full text-sm font-bold transition", mode === key ? "bg-surface text-ink shadow-card" : "text-muted hover:text-ink")}
+            className={cn("min-h-10 flex-1 rounded-[9px] text-sm font-medium transition", mode === key ? "bg-surface text-ink shadow-card ring-1 ring-line ring-inset" : "text-muted hover:text-ink")}
           >
             {label}
           </button>
@@ -89,7 +89,7 @@ export function LoginForms({ initialMode, next }: { initialMode: "signin" | "sig
         </form>
       )}
 
-      <div className="flex items-center gap-3 text-xs font-semibold text-muted uppercase">
+      <div className="flex items-center gap-3 text-xs font-medium text-muted uppercase">
         <span className="h-px flex-1 bg-line" /> or <span className="h-px flex-1 bg-line" />
       </div>
       <Button variant="secondary" size="lg" className="w-full" onClick={() => setMethod(method === "password" ? "magic" : "password")}>

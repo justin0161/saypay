@@ -90,11 +90,11 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
         {/* Soft light + glow over the contractor's brand colour. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(28rem_16rem_at_100%_0%,rgb(255_255_255/0.16),transparent_70%),radial-gradient(24rem_14rem_at_0%_100%,rgb(255_79_154/0.22),transparent_70%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(32rem_18rem_at_100%_0%,rgb(255_255_255/0.1),transparent_70%)]"
         />
         <div className="relative mx-auto max-w-2xl px-4 pt-5 pb-7">
           <div className="flex items-center gap-3">
-            <div className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white/15 text-base font-extrabold ring-1 ring-white/20 ring-inset">
+            <div className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white/15 text-base font-semibold ring-1 ring-white/20 ring-inset">
               {logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={logoUrl} alt="" className="size-full object-cover" />
@@ -103,7 +103,7 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[17px] font-bold">{ws.business_name}</p>
+              <p className="truncate text-[17px] font-semibold">{ws.business_name}</p>
               {ws.trade && <p className="truncate text-sm text-white/70">{ws.trade}</p>}
             </div>
             {ws.contact_phone && (
@@ -117,17 +117,17 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
             )}
           </div>
 
-          <h1 className="mt-6 text-3xl leading-tight font-extrabold tracking-tight break-words sm:text-4xl">{quote.title}</h1>
+          <h1 className="mt-7 text-3xl leading-tight font-semibold tracking-[-0.035em] break-words sm:text-[2.25rem]">{quote.title}</h1>
           <p className="mt-1 text-white/70">
             For {quote.client_name} · {new Date(quote.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
             {quote.valid_until &&
               ` · ${expired ? "Expired" : "Valid until"} ${new Date(quote.valid_until).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`}
           </p>
-          <p className="mt-3 font-display text-4xl font-extrabold tracking-tight tabular">{formatMoney(quote.total_cents, quote.currency)}</p>
+          <p className="mt-4 font-display text-4xl font-semibold tracking-[-0.04em] tabular">{formatMoney(quote.total_cents, quote.currency)}</p>
 
           {walkthrough && (
             <div className="mt-5">
-              <p className="mb-2 text-xs font-bold tracking-wide text-white/65 uppercase">🎧 Voice walkthrough from {firstName}</p>
+              <p className="mb-2.5 text-xs font-medium tracking-[0.06em] text-white/60 uppercase">Voice walkthrough from {firstName}</p>
               <AudioPlayer src={walkthrough.url} durationHint={walkthrough.duration_seconds} tone="brand" size="lg" label="Play walkthrough" />
             </div>
           )}
@@ -140,7 +140,7 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
           <div className="flex gap-3 rounded-card bg-go-soft p-4 text-go-ink ring-1 ring-emerald-200 ring-inset" role="status">
             <LockIcon className="mt-0.5 shrink-0" />
             <div>
-              <p className="font-bold">Approved by {quote.decided_by_name}</p>
+              <p className="font-semibold">Approved by {quote.decided_by_name}</p>
               {quote.decided_at && <p className="text-sm">{formatDateTime(quote.decided_at)}</p>}
               <p className="mt-1 text-sm opacity-80">The price and scope are locked. {firstName} has been notified.</p>
               {quote.deposit_cents > 0 && (
@@ -159,7 +159,7 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
           <div className="flex gap-3 rounded-card bg-rose-50 p-4 text-rose-900 ring-1 ring-rose-200 ring-inset">
             <XIcon className="mt-0.5 shrink-0" />
             <div>
-              <p className="font-bold">You declined this quote</p>
+              <p className="font-semibold">You declined this quote</p>
               {quote.decided_at && <p className="text-sm">{formatDateTime(quote.decided_at)}</p>}
               <p className="mt-1 text-sm">Changed your mind? Send {firstName} a message below.</p>
             </div>
@@ -167,7 +167,7 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
         )}
         {quote.status === "changes_requested" && (
           <div className="rounded-card bg-hivis-soft p-4 text-hivis-ink ring-1 ring-amber-200 ring-inset">
-            <p className="font-bold">Changes requested</p>
+            <p className="font-semibold">Changes requested</p>
             <p className="text-sm">{firstName} will update the quote — this page refreshes automatically. You can still approve as-is.</p>
           </div>
         )}
@@ -222,7 +222,7 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
       />
       {quote.status === "approved" && quote.deposit_status === "paid" && (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 pb-safe backdrop-blur">
-          <p className="mx-auto flex min-h-14 max-w-2xl items-center justify-center gap-2 px-4 pt-3 font-bold text-go-ink">
+          <p className="mx-auto flex min-h-14 max-w-2xl items-center justify-center gap-2 px-4 pt-3 font-semibold text-go-ink">
             <CheckIcon /> All set — deposit paid
           </p>
         </div>

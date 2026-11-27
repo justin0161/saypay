@@ -46,7 +46,7 @@ export function MediaGallery({
               </button>
               <span
                 className={cn(
-                  "pointer-events-none absolute top-1.5 left-1.5 rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase",
+                  "pointer-events-none absolute top-1.5 left-1.5 rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase",
                   item.uploaded_by === "client" ? "bg-hivis text-hivis-ink" : "bg-ink/80 text-white",
                 )}
               >

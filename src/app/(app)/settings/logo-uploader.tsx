@@ -33,7 +33,7 @@ export function LogoUploader({ logoUrl, businessName, brandColor }: { logoUrl: s
 
   return (
     <div className="flex items-center gap-4">
-      <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl text-lg font-extrabold text-white" style={{ backgroundColor: brandColor }}>
+      <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl text-lg font-semibold text-white" style={{ backgroundColor: brandColor }}>
         {preview ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={preview} alt="Logo" className="size-full object-cover" />

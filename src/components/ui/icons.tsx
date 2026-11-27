@@ -81,22 +81,13 @@ export const BoltIcon = (p: P) => (
   <svg {...base(p)}><path d="M13 2 4 14h7l-1 8 9-12h-7Z" /></svg>
 );
 
-/** SayPay mark: sound-wave bars on a sunset tile. `tone` = colour of the surface behind it. */
+/** SayPay mark: amber sound-wave bars on an ink tile. `tone` = colour of the surface behind it. */
 export const Logo = ({ className, tone = "light" }: { className?: string; tone?: "light" | "dark" }) => (
   <span className={className}>
-    <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden className="inline-block align-middle">
-      <defs>
-        <linearGradient id="saypay-logo" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#FFB020" />
-          <stop offset="0.45" stopColor="#FF5F6D" />
-          <stop offset="1" stopColor="#7B5CFF" />
-        </linearGradient>
-      </defs>
-      <rect width="64" height="64" rx="18" fill="url(#saypay-logo)" />
-      <path d="M20 27v10M28 20v24M36 24v16M44 29v6" stroke="#fff" strokeWidth="5.5" strokeLinecap="round" />
+    <svg width="28" height="28" viewBox="0 0 64 64" aria-hidden className="inline-block align-middle">
+      <rect width="64" height="64" rx="16" fill={tone === "dark" ? "#FFFFFF" : "#0A0D1A"} />
+      <path d="M20 27v10M28 20v24M36 24v16M44 29v6" stroke="#F5A524" strokeWidth="5.5" strokeLinecap="round" />
     </svg>
-    <span className="ml-2 align-middle font-display text-[19px] font-extrabold tracking-tight">
-      Say<span className={tone === "dark" ? "text-hivis" : "text-sunset"}>Pay</span>
-    </span>
+    <span className="ml-2 align-middle font-display text-[18px] font-semibold tracking-[-0.03em]">SayPay</span>
   </span>
 );

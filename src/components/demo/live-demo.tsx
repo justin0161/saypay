@@ -100,12 +100,12 @@ function DemoVoiceNote() {
   const secs = Math.round(progress * SCRIPT_SECONDS);
 
   return (
-    <div className="rounded-2xl bg-white/[0.08] p-3 text-white ring-1 ring-white/10 ring-inset">
+    <div className="rounded-2xl bg-white/[0.06] p-3 text-white ring-1 ring-white/10 ring-inset">
       <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={play}
-          className="grid size-14 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#ffd15c,#ffb020_45%,#ff7a3d)] text-hivis-ink shadow-[0_8px_20px_-6px_rgb(255_138_61/0.8)] transition hover:scale-105 active:scale-95"
+          className="grid size-14 shrink-0 place-items-center rounded-full bg-hivis text-ink transition hover:brightness-105 active:scale-95"
           aria-label={playing ? "Pause voice note" : "Play Dan's voice note"}
         >
           {playing ? <PauseIcon /> : <PlayIcon className="translate-x-px" />}
@@ -235,8 +235,8 @@ export function LiveDemo() {
   return (
     <div className="relative min-w-0">
       {/* View toggle */}
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <div className="flex flex-1 rounded-full bg-white/80 p-1 shadow-card backdrop-blur sm:flex-none" role="tablist" aria-label="Demo view">
+      <div className="mx-auto mb-4 flex w-full max-w-[400px] items-center justify-between gap-3">
+        <div className="flex flex-1 rounded-[12px] bg-canvas p-1 ring-1 ring-line ring-inset sm:flex-none" role="tablist" aria-label="Demo view">
           {(
             [
               ["client", "Client view"],
@@ -253,27 +253,27 @@ export function LiveDemo() {
                 if (key === "contractor") setUnseen(0);
               }}
               className={cn(
-                "relative min-h-11 flex-1 rounded-full px-4 text-sm font-bold transition sm:flex-none",
-                view === key ? "bg-ink text-white shadow-md" : "text-ink-soft hover:text-ink",
+                "relative min-h-10 flex-1 rounded-[9px] px-4 text-sm font-medium transition sm:flex-none",
+                view === key ? "bg-surface text-ink shadow-card ring-1 ring-line ring-inset" : "text-muted hover:text-ink",
               )}
             >
               {label}
               {key === "contractor" && unseen > 0 && view !== "contractor" && (
-                <span className="absolute -top-1.5 -right-1.5 grid size-5 place-items-center rounded-full bg-hivis text-[11px] font-bold text-hivis-ink">
+                <span className="absolute -top-1.5 -right-1.5 grid size-5 place-items-center rounded-full bg-hivis text-[11px] font-semibold text-hivis-ink">
                   {unseen}
                 </span>
               )}
             </button>
           ))}
         </div>
-        <button type="button" onClick={reset} className="min-h-11 rounded-full bg-white/80 px-4 text-sm font-bold text-ink-soft shadow-card backdrop-blur hover:text-ink">
+        <button type="button" onClick={reset} className="min-h-10 px-3 text-sm font-medium text-muted transition hover:text-ink">
           Reset
         </button>
       </div>
 
       {/* Device frame */}
-      <div className="mx-auto w-full max-w-[420px] rounded-[2.5rem] bg-ink p-2.5 shadow-[0_50px_100px_-20px_rgb(50_30_120/0.45),0_30px_60px_-30px_rgb(0_0_0/0.5)] ring-1 ring-white/20">
-        <div className="relative h-[640px] overflow-hidden rounded-[2rem] bg-canvas text-ink">
+      <div className="mx-auto w-full max-w-[400px] rounded-[2.75rem] bg-[#16192a] p-2.5 shadow-device ring-1 ring-black/40">
+        <div className="relative h-[640px] overflow-hidden rounded-[2.2rem] bg-canvas text-ink">
           <div className="flex h-7 items-center justify-center bg-surface text-[10px] font-semibold text-muted">
             {view === "client" ? "🔒 saypay.co/q/x8Kf…  ·  no login needed" : "saypay.co/dashboard"}
           </div>
@@ -281,18 +281,18 @@ export function LiveDemo() {
           {view === "client" ? (
             <div className="h-[calc(100%-1.75rem)] overflow-y-auto pb-28">
               {/* Business header */}
-              <div className="bg-ink bg-[radial-gradient(20rem_10rem_at_100%_0%,rgb(123_92_255/0.45),transparent_70%),radial-gradient(16rem_10rem_at_0%_100%,rgb(255_79_154/0.25),transparent_70%)] px-4 pt-4 pb-5 text-white">
+              <div className="bg-ink px-4 pt-4 pb-5 text-white">
                 <div className="flex items-center gap-3">
-                  <div className="grid size-11 place-items-center rounded-xl bg-[linear-gradient(135deg,#ffd15c,#ff8a3d)] text-sm font-extrabold text-hivis-ink">H&S</div>
+                  <div className="grid size-11 place-items-center rounded-xl bg-white/10 text-sm font-semibold text-white ring-1 ring-white/15 ring-inset">H&S</div>
                   <div className="min-w-0">
-                    <p className="truncate font-bold">{BUSINESS.name}</p>
+                    <p className="truncate font-semibold">{BUSINESS.name}</p>
                     <p className="truncate text-xs text-white/65">{BUSINESS.trade}</p>
                   </div>
                 </div>
-                <h3 className="mt-4 text-xl leading-tight font-extrabold">Back bedroom radiator & system flush</h3>
+                <h3 className="mt-4 text-xl leading-tight font-semibold">Back bedroom radiator & system flush</h3>
                 <p className="mt-1 text-sm text-white/70">For {CLIENT} · 14 Elm Road</p>
                 <div className="mt-4">
-                  <p className="mb-2 text-xs font-bold tracking-wide text-white/60 uppercase">Voice walkthrough from Dan</p>
+                  <p className="mb-2 text-xs font-semibold tracking-wide text-white/60 uppercase">Voice walkthrough from Dan</p>
                   <DemoVoiceNote />
                 </div>
               </div>
@@ -307,14 +307,14 @@ export function LiveDemo() {
                   >
                     {status === "approved" ? <LockIcon className="mt-0.5 shrink-0" /> : <XIcon className="mt-0.5 shrink-0" />}
                     <div className="text-sm">
-                      <p className="font-bold">{status === "approved" ? `Approved by ${name}` : "Quote declined"}</p>
+                      <p className="font-semibold">{status === "approved" ? `Approved by ${name}` : "Quote declined"}</p>
                       {decidedAt && <p className="opacity-80">{formatDateTime(new Date(decidedAt).toISOString())} · terms locked</p>}
                     </div>
                   </div>
                 )}
                 {status === "changes_requested" && (
                   <div className="rounded-2xl bg-hivis-soft p-3.5 text-sm text-hivis-ink ring-1 ring-amber-200 ring-inset">
-                    <p className="font-bold">Changes requested</p>
+                    <p className="font-semibold">Changes requested</p>
                     <p>Dan&apos;s been notified and will send an updated quote.</p>
                   </div>
                 )}
@@ -334,7 +334,7 @@ export function LiveDemo() {
                       <dt>VAT 20%</dt>
                       <dd className="tabular">{formatMoney(VAT)}</dd>
                     </div>
-                    <div className="flex justify-between text-lg font-extrabold">
+                    <div className="flex justify-between text-lg font-semibold">
                       <dt>Total</dt>
                       <dd className="tabular">{formatMoney(TOTAL)}</dd>
                     </div>
@@ -348,19 +348,19 @@ export function LiveDemo() {
                 {/* Gallery */}
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    ["from-slate-500 to-slate-700", "Cracked valve"],
-                    ["from-amber-600 to-orange-800", "Sludge test"],
-                    ["from-sky-600 to-indigo-800", "Wall to fit"],
+                    ["from-stone-400 to-stone-600", "Cracked valve"],
+                    ["from-[#a58a6a] to-[#6b5640]", "Sludge test"],
+                    ["from-slate-400 to-slate-600", "Wall to fit"],
                   ].map(([g, label]) => (
                     <div key={label} className={cn("flex aspect-square items-end rounded-xl bg-gradient-to-br p-2", g)}>
-                      <span className="text-[11px] font-semibold text-white">📷 {label}</span>
+                      <span className="text-[11px] font-medium text-white/95">{label}</span>
                     </div>
                   ))}
                 </div>
 
                 {/* Thread */}
                 <div className="rounded-2xl bg-surface p-4 shadow-card">
-                  <p className="mb-3 text-xs font-bold tracking-wide text-muted uppercase">Messages</p>
+                  <p className="mb-3 text-xs font-semibold tracking-wide text-muted uppercase">Messages</p>
                   <DemoThread messages={messages} viewer="client" typing={typing} />
                   <div ref={threadEnd} />
                   <div className="mt-3 flex gap-2">
@@ -383,7 +383,7 @@ export function LiveDemo() {
               <div className="absolute inset-x-0 bottom-0 border-t border-line bg-surface/95 p-3 backdrop-blur">
                 {status === "approved" ? (
                   deposit === "paid" ? (
-                    <div className="flex min-h-14 items-center justify-center gap-2 rounded-xl bg-go-soft font-bold text-go-ink">
+                    <div className="flex min-h-14 items-center justify-center gap-2 rounded-xl bg-go-soft font-semibold text-go-ink">
                       <CheckIcon /> Deposit paid — you&apos;re booked in
                     </div>
                   ) : (
@@ -407,8 +407,8 @@ export function LiveDemo() {
                       <CheckIcon /> Approve & pay deposit
                     </Button>
                     <div className="flex gap-2">
-                      <Button variant="secondary" className="flex-1" onClick={() => setSheet("changes")}>
-                        <PencilIcon width={18} height={18} /> Request changes
+                      <Button variant="secondary" className="flex-1 whitespace-nowrap" onClick={() => setSheet("changes")}>
+                        <PencilIcon width={16} height={16} /> Request changes
                       </Button>
                       <Button variant="ghost" className="flex-1 text-rose-700" onClick={() => setSheet("decline")}>
                         Decline
@@ -423,7 +423,7 @@ export function LiveDemo() {
                 <div className="absolute inset-0 z-10 flex items-end bg-black/40" onClick={() => setSheet(null)}>
                   <div className="w-full space-y-3 rounded-t-3xl bg-surface p-4" onClick={(e) => e.stopPropagation()}>
                     <div className="mx-auto h-1.5 w-10 rounded-full bg-slate-200" />
-                    <h4 className="text-lg font-extrabold">
+                    <h4 className="text-lg font-semibold">
                       {sheet === "approve" ? "Approve this quote" : sheet === "changes" ? "Request changes" : "Decline quote"}
                     </h4>
                     {sheet === "approve" && (
@@ -527,7 +527,7 @@ function ContractorDemo({
       <div className="mt-2 grid grid-cols-2 gap-2">
         {stats.map((s) => (
           <div key={s.label} className="rounded-2xl bg-surface p-3 shadow-card">
-            <p className="tabular text-xl font-extrabold">{s.value}</p>
+            <p className="tabular text-xl font-semibold">{s.value}</p>
             <p className="text-xs font-medium text-muted">{s.label}</p>
           </div>
         ))}
@@ -536,14 +536,14 @@ function ContractorDemo({
       <div className="mt-3 rounded-2xl bg-surface p-4 shadow-card ring-2 ring-hivis">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <p className="truncate font-bold">Back bedroom radiator & flush</p>
+            <p className="truncate font-semibold">Back bedroom radiator & flush</p>
             <p className="text-sm text-muted">{clientName} · {formatMoney(TOTAL)}</p>
           </div>
           <StatusPill status={status} />
         </div>
         <div className="mt-2 flex flex-wrap gap-1.5">
           {approved && <DepositPill status={deposit} />}
-          <span className="rounded-full bg-canvas px-2.5 py-1 text-xs font-semibold text-muted">🎧 Voice note played</span>
+          <span className="rounded-full bg-canvas px-2.5 py-1 text-xs font-semibold text-muted">Voice note played</span>
         </div>
         {decidedAt && (
           <p className="mt-2 text-xs text-muted">

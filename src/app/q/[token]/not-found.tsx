@@ -5,7 +5,7 @@ export default function QuoteNotFound() {
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center px-6 text-center">
       <Logo />
-      <h1 className="mt-8 text-3xl font-extrabold tracking-tight">This quote link isn&apos;t available</h1>
+      <h1 className="mt-8 text-3xl font-semibold tracking-[-0.035em]">This quote link isn&apos;t available</h1>
       <p className="mt-2 max-w-sm text-muted">
         It may have been withdrawn or the link was copied incompletely. Ask your contractor to resend it.
       </p>

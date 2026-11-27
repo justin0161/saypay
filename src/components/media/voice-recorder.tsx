@@ -186,7 +186,7 @@ export function VoiceRecorder({
                   <span className="mr-2 inline-block size-2 animate-pulse rounded-full bg-rose-500" />
                   Recording
                 </span>
-                <span className="tabular text-2xl font-bold">{formatDuration(elapsed)}</span>
+                <span className="tabular text-2xl font-semibold">{formatDuration(elapsed)}</span>
               </div>
               <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/15">
                 <div className={cn("h-full rounded-full transition-[width]", remaining < 10 ? "bg-rose-400" : "bg-hivis")} style={{ width: `${pct}%` }} />

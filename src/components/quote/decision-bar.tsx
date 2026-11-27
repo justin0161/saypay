@@ -129,7 +129,7 @@ export function DecisionBar({
       </div>
 
       {sheet && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/50 backdrop-blur-sm sm:items-center" onClick={() => !pending && setSheet(null)}>
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 backdrop-blur-[2px] sm:items-center" onClick={() => !pending && setSheet(null)}>
           <div
             role="dialog"
             aria-modal="true"
@@ -138,7 +138,7 @@ export function DecisionBar({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mx-auto h-1.5 w-10 rounded-full bg-slate-200 sm:hidden" />
-            <h2 id="decision-title" className="text-xl font-extrabold">
+            <h2 id="decision-title" className="text-xl font-semibold">
               {sheet === "approve" ? "Approve this quote" : sheet === "request_changes" ? "Request changes" : "Decline this quote"}
             </h2>
 

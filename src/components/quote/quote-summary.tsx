@@ -37,8 +37,8 @@ export function QuoteSummary({ quote }: { quote: Quote }) {
           </>
         )}
         <div className="flex items-baseline justify-between pt-1">
-          <dt className="text-lg font-bold">Total</dt>
-          <dd className="tabular text-2xl font-extrabold">{formatMoney(quote.total_cents, c)}</dd>
+          <dt className="text-lg font-semibold">Total</dt>
+          <dd className="tabular text-2xl font-semibold">{formatMoney(quote.total_cents, c)}</dd>
         </div>
         {quote.deposit_cents > 0 && (
           <div className="mt-2 flex items-center justify-between rounded-xl bg-hivis-soft px-3.5 py-2.5 font-semibold text-hivis-ink">

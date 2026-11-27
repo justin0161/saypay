@@ -11,9 +11,7 @@ export default async function NewQuotePage() {
   const draftId = randomUUID();
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="mb-1 text-3xl font-extrabold tracking-tight sm:text-4xl">
-        New <span className="text-sunset">quote</span>
-      </h1>
+      <h1 className="mb-1 text-3xl font-semibold tracking-[-0.035em] sm:text-[2.25rem]">New quote</h1>
       <p className="mb-5 text-muted">Title, client, a few items and a voice note. About 60 seconds.</p>
       <QuoteBuilder
         mode="create"
