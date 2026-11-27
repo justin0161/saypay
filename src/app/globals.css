@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --color-ink: #0b1220;
+  --color-ink-soft: #3b4556;
+  --color-muted: #667085;
+  --color-line: #e4e7ec;
+  --color-canvas: #f5f6f8;
+  --color-surface: #ffffff;
+
+  /* Hi-vis accent: trades-native, AA on ink. */
+  --color-hivis: #ffb020;
+  --color-hivis-soft: #fff4dc;
+  --color-hivis-ink: #4a3000;
+
+  --color-go: #0e9f6e;
+  --color-go-soft: #e7f7ef;
+  --color-go-ink: #04543a;
+
+  --radius-card: 1.25rem;
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 4px 16px -4px rgb(16 24 40 / 0.08);
+  --shadow-float: 0 -8px 30px -10px rgb(16 24 40 / 0.25);
+
+  --animate-pulse-ring: pulse-ring 1.4s ease-out infinite;
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgb(239 68 68 / 0.45); }
+    100% { box-shadow: 0 0 0 14px rgb(239 68 68 / 0); }
+  }
+  --animate-bar: bar 1s ease-in-out infinite;
+  @keyframes bar {
+    0%, 100% { transform: scaleY(0.35); }
+    50% { transform: scaleY(1); }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-canvas text-ink antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ink;
+  }
+  input, textarea, select {
+    /* 16px prevents iOS zoom-on-focus. */
+    font-size: 16px;
+  }
+}
+
+@utility pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
