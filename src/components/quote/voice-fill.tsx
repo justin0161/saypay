@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
-import { parseQuoteFromSpeech, type VoiceQuoteDraft } from "@/actions/voice-quote";
+import { useEffect, useRef, useState } from "react";
+import { parseSpokenQuote, type VoiceQuoteDraft } from "@/lib/voice-parse";
 import { Button } from "../ui/button";
 import { cn } from "../ui/cn";
 import { inputClass } from "../ui/field";
@@ -31,8 +31,8 @@ type MicState = "checking" | "ready" | "blocked" | "unavailable";
 
 /**
  * "Fill in by voice": asks for the microphone as soon as the builder opens,
- * transcribes speech live in the browser, then asks the server to turn the
- * transcript into quote fields. The user can edit the transcript first.
+ * transcribes speech live in the browser, then fills the quote using the free
+ * on-device parser (no AI, no cost). The user can edit the transcript first.
  */
 export function VoiceFill({ onFill }: { onFill: (draft: VoiceQuoteDraft) => void }) {
   const [mic, setMic] = useState<MicState>("checking");
@@ -42,7 +42,6 @@ export function VoiceFill({ onFill }: { onFill: (draft: VoiceQuoteDraft) => void
   const [interim, setInterim] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [filled, setFilled] = useState(false);
-  const [pending, start] = useTransition();
   const recRef = useRef<Recognition | null>(null);
   const wantRef = useRef(false); // keep listening through browser auto-stops
 
@@ -133,12 +132,14 @@ export function VoiceFill({ onFill }: { onFill: (draft: VoiceQuoteDraft) => void
     if (listening) stopListening();
     const text = `${finalText} ${interim}`.trim();
     setError(null);
-    start(async () => {
-      const res = await parseQuoteFromSpeech(text);
-      if (!res.ok) return setError(res.error);
-      onFill(res.data);
-      setFilled(true);
-    });
+    const draft = parseSpokenQuote(text);
+    const found = draft.title || draft.client_name || draft.line_items.length || draft.vat.enabled != null || draft.payment.type;
+    if (!found) {
+      setFilled(false);
+      return setError("I couldn't pick out a job or any prices. Try saying each item followed by its price, like the example.");
+    }
+    onFill(draft);
+    setFilled(true);
   };
 
   return (
@@ -151,7 +152,8 @@ export function VoiceFill({ onFill }: { onFill: (draft: VoiceQuoteDraft) => void
               <SparkleIcon width={18} height={18} className="text-hivis" /> Fill in by voice
             </h2>
             <p className="mt-1 max-w-lg text-sm text-ink-soft">
-              Say the job, the client, each item with its price, VAT and the deposit — we&apos;ll fill in the quote for you to check.
+              Say the job and who it&apos;s for, then each item followed by its price. Add &ldquo;plus VAT&rdquo; and the deposit if you
+              need them.
             </p>
           </div>
           <span
@@ -180,7 +182,7 @@ export function VoiceFill({ onFill }: { onFill: (draft: VoiceQuoteDraft) => void
                 <StopIcon width={16} height={16} /> Done talking
               </Button>
             ) : (
-              <Button size="lg" onClick={startListening} disabled={pending || mic === "checking"}>
+              <Button size="lg" onClick={startListening} disabled={mic === "checking"}>
                 <MicIcon width={18} height={18} /> {finalText ? "Keep talking" : "Start talking"}
               </Button>
             )
@@ -208,7 +210,7 @@ export function VoiceFill({ onFill }: { onFill: (draft: VoiceQuoteDraft) => void
               setInterim("");
             }}
             readOnly={listening}
-            placeholder="e.g. Boiler swap for Sarah Okafor, 07700 900456. Supply and fit combi boiler, two thousand one hundred and fifty pounds. Magnetic filter, a hundred and twenty. Plus VAT, 25% deposit."
+            placeholder="e.g. Boiler swap for Sarah Okafor. Combi boiler, £2,150. Magnetic filter, £120. Plus VAT. 25% deposit."
           />
         </label>
 
@@ -224,8 +226,8 @@ export function VoiceFill({ onFill }: { onFill: (draft: VoiceQuoteDraft) => void
         )}
 
         <div className="mt-4 flex flex-wrap gap-2">
-          <Button variant="secondary" onClick={fill} disabled={pending || transcript.length < 3}>
-            <SparkleIcon width={16} height={16} /> {pending ? "Filling in…" : "Fill in quote"}
+          <Button variant="secondary" onClick={fill} disabled={transcript.length < 3}>
+            <SparkleIcon width={16} height={16} /> Fill in quote
           </Button>
           {finalText && !listening && (
             <Button
@@ -236,7 +238,6 @@ export function VoiceFill({ onFill }: { onFill: (draft: VoiceQuoteDraft) => void
                 setFilled(false);
                 setError(null);
               }}
-              disabled={pending}
             >
               Clear
             </Button>

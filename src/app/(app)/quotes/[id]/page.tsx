@@ -45,7 +45,7 @@ export default async function QuoteDetailPage({ params, searchParams }: PageProp
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_380px] lg:items-start">
       <AutoRefresh />
-      <div className="space-y-4">
+      <div className="min-w-0 space-y-4">
         <div>
           <Link href="/dashboard" className="inline-flex min-h-11 items-center text-xs font-medium text-muted hover:text-ink">
             ← All quotes
