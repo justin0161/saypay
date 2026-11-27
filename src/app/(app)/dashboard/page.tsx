@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ShareActions } from "@/components/quote/share-actions";
 import { buttonClass } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
-import { MicIcon, PlusIcon, SearchIcon } from "@/components/ui/icons";
+import { CardIcon, ChatIcon, CheckIcon, MicIcon, PlusIcon, SearchIcon, SendIcon } from "@/components/ui/icons";
 import { DepositPill, StatusPill } from "@/components/ui/pill";
 import { requireWorkspace } from "@/lib/auth";
 import { publicEnv } from "@/lib/env";
@@ -29,6 +29,13 @@ const OPEN = ["sent", "viewed", "changes_requested"] as const;
 function sanitizeSearch(q: string): string {
   return q.replace(/[%,()*\\:."']/g, " ").trim().slice(0, 60);
 }
+
+const STAT_STYLE = {
+  open: { tile: "bg-violet-50 text-grape", bar: "bg-grape", icon: <SendIcon width={18} height={18} /> },
+  awaiting: { tile: "bg-pink-50 text-bubblegum", bar: "bg-bubblegum", icon: <ChatIcon width={18} height={18} /> },
+  approved: { tile: "bg-go-soft text-go", bar: "bg-go", icon: <CheckIcon width={18} height={18} /> },
+  deposit: { tile: "bg-hivis-soft text-[#c77700]", bar: "bg-hivis", icon: <CardIcon width={18} height={18} /> },
+} as const;
 
 export default async function DashboardPage({ searchParams }: PageProps<"/dashboard">) {
   const sp = await searchParams;
@@ -91,9 +98,11 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
   return (
     <div className="space-y-6">
       {welcome && (
-        <div className="rounded-card bg-ink p-5 text-white">
-          <p className="text-lg font-bold">Welcome to SayPay 👋</p>
-          <p className="mt-1 text-white/75">
+        <div className="relative overflow-hidden rounded-card bg-ink p-6 text-white shadow-lift">
+          <div aria-hidden className="absolute -top-16 -right-10 size-56 rounded-full bg-sunset opacity-60 blur-3xl" />
+          <div aria-hidden className="absolute -bottom-20 left-10 size-48 rounded-full bg-grape opacity-40 blur-3xl" />
+          <p className="relative font-display text-xl font-extrabold">Welcome to SayPay 👋</p>
+          <p className="relative mt-1 text-white/80">
             Add your logo and contact number in <Link href="/settings" className="font-semibold text-hivis underline">Settings</Link>, then send your first voice quote.
           </p>
         </div>
@@ -101,8 +110,10 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
 
       <div className="flex items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">Quotes</h1>
-          <p className="text-muted">{workspace.business_name}</p>
+          <p className="text-sm font-bold text-muted">{workspace.business_name}</p>
+          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Your <span className="text-sunset">quotes</span>
+          </h1>
         </div>
       </div>
 
@@ -113,12 +124,16 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
             key={s.key}
             href={filterHref(s.key)}
             className={cn(
-              "rounded-card bg-surface p-4 shadow-card transition hover:ring-2 hover:ring-line sm:p-5",
-              filter === s.key && "ring-2 ring-ink",
+              "group relative overflow-hidden rounded-card bg-surface p-4 shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-lift sm:p-5",
+              filter === s.key && "ring-2 ring-grape",
             )}
           >
-            <p className="tabular text-2xl font-extrabold sm:text-3xl">{s.value}</p>
-            <p className="mt-0.5 text-sm font-medium text-muted">{s.label}</p>
+            <span className={cn("grid size-9 place-items-center rounded-xl transition group-hover:scale-110", STAT_STYLE[s.key].tile)}>
+              {STAT_STYLE[s.key].icon}
+            </span>
+            <p className="tabular mt-3 font-display text-2xl font-extrabold tracking-tight sm:text-3xl">{s.value}</p>
+            <p className="mt-0.5 text-sm font-semibold text-muted">{s.label}</p>
+            <span aria-hidden className={cn("absolute inset-x-0 bottom-0 h-1 opacity-0 transition group-hover:opacity-100", STAT_STYLE[s.key].bar, filter === s.key && "opacity-100")} />
           </Link>
         ))}
       </div>
@@ -133,7 +148,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
             name="q"
             defaultValue={q}
             placeholder="Search by job or client"
-            className="min-h-12 w-full rounded-xl bg-surface pr-3 pl-11 ring-1 ring-line ring-inset focus:ring-2 focus:ring-ink focus:outline-none"
+            className="min-h-12 w-full rounded-full bg-surface pr-4 pl-11 shadow-card ring-1 ring-line ring-inset transition focus:ring-2 focus:ring-grape focus:shadow-[0_0_0_4px_rgb(123_92_255/0.12)] focus:outline-none"
             aria-label="Search quotes"
           />
         </form>
@@ -143,8 +158,8 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
               key={f.key}
               href={filterHref(f.key)}
               className={cn(
-                "flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-semibold ring-1 ring-inset",
-                filter === f.key ? "bg-ink text-white ring-ink" : "bg-surface text-ink-soft ring-line",
+                "flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-bold ring-1 ring-inset transition",
+                filter === f.key ? "bg-ink text-white shadow-md ring-ink" : "bg-surface text-ink-soft ring-line hover:text-ink hover:ring-ink/20",
               )}
             >
               {f.label}
@@ -155,18 +170,19 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
 
       {/* List */}
       {quotes.length === 0 ? (
-        <div className="rounded-card bg-surface p-8 text-center shadow-card">
-          <div className="mx-auto grid size-14 place-items-center rounded-2xl bg-hivis-soft text-hivis-ink">
-            <MicIcon />
+        <div className="relative overflow-hidden rounded-card bg-surface p-10 text-center shadow-card">
+          <div aria-hidden className="absolute inset-0 bg-dots [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
+          <div className="relative mx-auto grid size-16 animate-float place-items-center rounded-3xl bg-sunset text-white shadow-[0_14px_30px_-10px_rgb(255_79_154/0.8)]">
+            <MicIcon width={28} height={28} />
           </div>
-          <p className="mt-4 text-lg font-bold">{all.length === 0 ? "Send your first voice quote" : "Nothing here yet"}</p>
-          <p className="mx-auto mt-1 max-w-sm text-muted">
+          <p className="relative mt-5 font-display text-xl font-extrabold">{all.length === 0 ? "Send your first voice quote" : "Nothing here yet"}</p>
+          <p className="relative mx-auto mt-1 max-w-sm text-muted">
             {all.length === 0
               ? "It takes about 60 seconds: add a few line items, record a quick walkthrough, and share the link."
               : "Try a different filter or search."}
           </p>
           {all.length === 0 && (
-            <Link href="/quotes/new" className={buttonClass("hivis", "lg", "mt-6")}>
+            <Link href="/quotes/new" className={buttonClass("hivis", "lg", "relative mt-6")}>
               <PlusIcon /> New quote
             </Link>
           )}
@@ -178,22 +194,28 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
               (OPEN as readonly string[]).includes(quote.status) &&
               (quote.last_message_role === "client" || quote.status === "changes_requested");
             return (
-              <li key={quote.id} className={cn("rounded-card bg-surface p-4 shadow-card sm:p-5", awaiting && "ring-2 ring-hivis")}>
+              <li
+                key={quote.id}
+                className={cn(
+                  "min-w-0 rounded-card bg-surface p-4 shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-lift sm:p-5",
+                  awaiting && "ring-sunset",
+                )}
+              >
                 <Link href={`/quotes/${quote.id}`} className="block">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate text-[17px] font-bold">{quote.title}</p>
+                      <p className="truncate font-display text-lg font-extrabold">{quote.title}</p>
                       <p className="truncate text-sm text-muted">
                         {quote.client_name} · {timeAgo(quote.updated_at)}
                       </p>
                     </div>
-                    <p className="tabular shrink-0 text-lg font-extrabold">{formatMoney(quote.total_cents, quote.currency)}</p>
+                    <p className="tabular shrink-0 font-display text-xl font-extrabold tracking-tight">{formatMoney(quote.total_cents, quote.currency)}</p>
                   </div>
                   <div className="mt-3 flex flex-wrap items-center gap-1.5">
                     <StatusPill status={quote.status} />
                     <DepositPill status={quote.deposit_status} />
                     {awaiting && (
-                      <span className="rounded-full bg-hivis px-2.5 py-1 text-xs font-bold text-hivis-ink">New reply</span>
+                      <span className="rounded-full bg-sunset px-2.5 py-1 text-xs font-extrabold text-white shadow-sm">New reply</span>
                     )}
                   </div>
                 </Link>

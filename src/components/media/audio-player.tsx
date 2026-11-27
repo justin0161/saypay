@@ -98,7 +98,9 @@ export function AudioPlayer({
         className={cn(
           "grid shrink-0 place-items-center rounded-full transition active:scale-95 disabled:opacity-40",
           size === "lg" ? "size-14" : "size-11",
-          dark ? "bg-hivis text-hivis-ink" : "bg-ink text-white",
+          dark
+            ? "bg-[linear-gradient(135deg,#ffd15c,#ffb020_45%,#ff7a3d)] text-hivis-ink shadow-[0_8px_20px_-8px_rgb(255_138_61/0.8)]"
+            : "bg-sunset text-white shadow-[0_8px_18px_-8px_rgb(255_79_154/0.7)]",
         )}
       >
         {playing ? <PauseIcon /> : <PlayIcon className="translate-x-px" />}
@@ -120,7 +122,7 @@ export function AudioPlayer({
               key={i}
               className={cn(
                 "w-full max-w-1.5 flex-1 rounded-full transition-colors",
-                active ? (dark ? "bg-hivis" : "bg-ink") : dark ? "bg-white/25" : "bg-slate-300",
+                active ? (dark ? "bg-hivis" : "bg-grape") : dark ? "bg-white/25" : "bg-slate-300",
               )}
               style={{ height: `${h * 100}%` }}
             />

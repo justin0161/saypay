@@ -10,13 +10,13 @@ function Notice({ state }: { state: AuthState }) {
   if (!state) return null;
   if (state.error)
     return (
-      <p className="rounded-xl bg-rose-50 p-3 text-sm font-medium text-rose-800" role="alert">
+      <p className="rounded-xl bg-rose-50 p-3 text-sm font-medium text-rose-800 ring-1 ring-rose-200 ring-inset" role="alert">
         {state.error}
       </p>
     );
   if (state.message)
     return (
-      <p className="rounded-xl bg-go-soft p-3 text-sm font-medium text-go-ink" role="status">
+      <p className="rounded-xl bg-go-soft p-3 text-sm font-medium text-go-ink ring-1 ring-emerald-200 ring-inset" role="status">
         {state.message}
       </p>
     );
@@ -31,7 +31,7 @@ export function LoginForms({ initialMode, next }: { initialMode: "signin" | "sig
 
   return (
     <div className="mt-8 space-y-5">
-      <div className="flex rounded-xl bg-surface p-1 ring-1 ring-line ring-inset">
+      <div className="flex rounded-full bg-canvas p-1 ring-1 ring-line ring-inset">
         {(
           [
             ["signin", "Log in"],
@@ -42,7 +42,7 @@ export function LoginForms({ initialMode, next }: { initialMode: "signin" | "sig
             key={key}
             type="button"
             onClick={() => setMode(key)}
-            className={cn("min-h-11 flex-1 rounded-lg text-sm font-semibold", mode === key ? "bg-ink text-white" : "text-muted")}
+            className={cn("min-h-11 flex-1 rounded-full text-sm font-bold transition", mode === key ? "bg-surface text-ink shadow-card" : "text-muted hover:text-ink")}
           >
             {label}
           </button>
@@ -72,7 +72,7 @@ export function LoginForms({ initialMode, next }: { initialMode: "signin" | "sig
             />
           </Field>
           <Notice state={pwState} />
-          <Button type="submit" size="lg" className="w-full" disabled={pwPending}>
+          <Button type="submit" variant="hivis" size="lg" className="w-full" disabled={pwPending}>
             {pwPending ? "One sec…" : mode === "signup" ? "Create my account" : "Log in"}
           </Button>
         </form>
@@ -83,7 +83,7 @@ export function LoginForms({ initialMode, next }: { initialMode: "signin" | "sig
             <Input id="ml-email" name="email" type="email" autoComplete="email" inputMode="email" required />
           </Field>
           <Notice state={mlState} />
-          <Button type="submit" size="lg" className="w-full" disabled={mlPending}>
+          <Button type="submit" variant="hivis" size="lg" className="w-full" disabled={mlPending}>
             {mlPending ? "Sending…" : "Email me a magic link"}
           </Button>
         </form>

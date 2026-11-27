@@ -71,14 +71,32 @@ export const UploadIcon = (p: P) => (
 export const CardIcon = (p: P) => (
   <svg {...base(p)}><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></svg>
 );
+export const ArrowRightIcon = (p: P) => (
+  <svg {...base(p)}><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+);
+export const SparkleIcon = (p: P) => (
+  <svg {...base(p)}><path d="M12 3l1.9 5.6L19.5 10.5 13.9 12.4 12 18l-1.9-5.6L4.5 10.5l5.6-1.9Z" /><path d="M19 3v4M17 5h4" /></svg>
+);
+export const BoltIcon = (p: P) => (
+  <svg {...base(p)}><path d="M13 2 4 14h7l-1 8 9-12h-7Z" /></svg>
+);
+
+/** SayPay mark: sound-wave bars on a sunset tile. `tone` = colour of the surface behind it. */
 export const Logo = ({ className, tone = "light" }: { className?: string; tone?: "light" | "dark" }) => (
   <span className={className}>
-    <svg width="28" height="28" viewBox="0 0 64 64" aria-hidden className="inline-block align-middle">
-      <rect width="64" height="64" rx="16" fill="#0B1220" />
-      <path d="M20 26v12M28 20v24M36 24v16M44 28v8" stroke="#FFB020" strokeWidth="5" strokeLinecap="round" />
+    <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden className="inline-block align-middle">
+      <defs>
+        <linearGradient id="saypay-logo" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFB020" />
+          <stop offset="0.45" stopColor="#FF5F6D" />
+          <stop offset="1" stopColor="#7B5CFF" />
+        </linearGradient>
+      </defs>
+      <rect width="64" height="64" rx="18" fill="url(#saypay-logo)" />
+      <path d="M20 27v10M28 20v24M36 24v16M44 29v6" stroke="#fff" strokeWidth="5.5" strokeLinecap="round" />
     </svg>
-    <span className="ml-2 align-middle text-lg font-extrabold tracking-tight">
-      Say<span className={tone === "dark" ? "text-hivis" : "text-amber-600"}>Pay</span>
+    <span className="ml-2 align-middle font-display text-[19px] font-extrabold tracking-tight">
+      Say<span className={tone === "dark" ? "text-hivis" : "text-sunset"}>Pay</span>
     </span>
   </span>
 );

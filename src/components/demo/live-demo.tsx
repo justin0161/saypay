@@ -100,12 +100,12 @@ function DemoVoiceNote() {
   const secs = Math.round(progress * SCRIPT_SECONDS);
 
   return (
-    <div className="rounded-2xl bg-ink p-3 text-white">
+    <div className="rounded-2xl bg-white/[0.08] p-3 text-white ring-1 ring-white/10 ring-inset">
       <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={play}
-          className="grid size-14 shrink-0 place-items-center rounded-full bg-hivis text-hivis-ink transition active:scale-95"
+          className="grid size-14 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#ffd15c,#ffb020_45%,#ff7a3d)] text-hivis-ink shadow-[0_8px_20px_-6px_rgb(255_138_61/0.8)] transition hover:scale-105 active:scale-95"
           aria-label={playing ? "Pause voice note" : "Play Dan's voice note"}
         >
           {playing ? <PauseIcon /> : <PlayIcon className="translate-x-px" />}
@@ -158,14 +158,16 @@ export function LiveDemo() {
   const [unseen, setUnseen] = useState(0);
   const nextId = useRef(2);
   const threadEnd = useRef<HTMLDivElement>(null);
-  const firstRender = useRef(true);
+  const seenCount = useRef<number | null>(null);
 
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-    threadEnd.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    // Only scroll when something new appears (not on mount, which runs twice in dev).
+    const prev = seenCount.current;
+    seenCount.current = messages.length;
+    if (prev === null || (messages.length <= prev && !typing)) return;
+    // Scroll only the phone's own screen — scrollIntoView would also scroll the landing page.
+    const box = threadEnd.current?.closest<HTMLElement>(".overflow-y-auto");
+    box?.scrollTo({ top: box.scrollHeight, behavior: "smooth" });
   }, [messages, typing]);
 
   const push = (from: Msg["from"], text: string) => {
@@ -234,7 +236,7 @@ export function LiveDemo() {
     <div className="relative min-w-0">
       {/* View toggle */}
       <div className="mb-4 flex items-center justify-between gap-3">
-        <div className="flex flex-1 rounded-xl bg-white/10 p-1 ring-1 ring-white/15 ring-inset sm:flex-none" role="tablist" aria-label="Demo view">
+        <div className="flex flex-1 rounded-full bg-white/80 p-1 shadow-card backdrop-blur sm:flex-none" role="tablist" aria-label="Demo view">
           {(
             [
               ["client", "Client view"],
@@ -251,8 +253,8 @@ export function LiveDemo() {
                 if (key === "contractor") setUnseen(0);
               }}
               className={cn(
-                "relative min-h-11 flex-1 rounded-lg px-4 text-sm font-semibold transition sm:flex-none",
-                view === key ? "bg-white text-ink" : "text-white/75 hover:text-white",
+                "relative min-h-11 flex-1 rounded-full px-4 text-sm font-bold transition sm:flex-none",
+                view === key ? "bg-ink text-white shadow-md" : "text-ink-soft hover:text-ink",
               )}
             >
               {label}
@@ -264,14 +266,14 @@ export function LiveDemo() {
             </button>
           ))}
         </div>
-        <button type="button" onClick={reset} className="min-h-11 px-2 text-sm font-semibold text-white/70 hover:text-white">
+        <button type="button" onClick={reset} className="min-h-11 rounded-full bg-white/80 px-4 text-sm font-bold text-ink-soft shadow-card backdrop-blur hover:text-ink">
           Reset
         </button>
       </div>
 
       {/* Device frame */}
-      <div className="mx-auto w-full max-w-[420px] rounded-[2.25rem] bg-black p-2 shadow-2xl ring-1 ring-white/10">
-        <div className="relative h-[640px] overflow-hidden rounded-[1.8rem] bg-canvas text-ink">
+      <div className="mx-auto w-full max-w-[420px] rounded-[2.5rem] bg-ink p-2.5 shadow-[0_50px_100px_-20px_rgb(50_30_120/0.45),0_30px_60px_-30px_rgb(0_0_0/0.5)] ring-1 ring-white/20">
+        <div className="relative h-[640px] overflow-hidden rounded-[2rem] bg-canvas text-ink">
           <div className="flex h-7 items-center justify-center bg-surface text-[10px] font-semibold text-muted">
             {view === "client" ? "🔒 saypay.co/q/x8Kf…  ·  no login needed" : "saypay.co/dashboard"}
           </div>
@@ -279,9 +281,9 @@ export function LiveDemo() {
           {view === "client" ? (
             <div className="h-[calc(100%-1.75rem)] overflow-y-auto pb-28">
               {/* Business header */}
-              <div className="bg-ink px-4 pt-4 pb-5 text-white">
+              <div className="bg-ink bg-[radial-gradient(20rem_10rem_at_100%_0%,rgb(123_92_255/0.45),transparent_70%),radial-gradient(16rem_10rem_at_0%_100%,rgb(255_79_154/0.25),transparent_70%)] px-4 pt-4 pb-5 text-white">
                 <div className="flex items-center gap-3">
-                  <div className="grid size-11 place-items-center rounded-xl bg-hivis text-sm font-extrabold text-hivis-ink">H&S</div>
+                  <div className="grid size-11 place-items-center rounded-xl bg-[linear-gradient(135deg,#ffd15c,#ff8a3d)] text-sm font-extrabold text-hivis-ink">H&S</div>
                   <div className="min-w-0">
                     <p className="truncate font-bold">{BUSINESS.name}</p>
                     <p className="truncate text-xs text-white/65">{BUSINESS.trade}</p>

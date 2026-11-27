@@ -97,7 +97,7 @@ export function DecisionBar({
 
   return (
     <>
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 pb-safe shadow-float backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-white/85 pb-safe shadow-float backdrop-blur-xl">
         <div className="mx-auto max-w-2xl space-y-2 px-4 pt-3">
           {needsDeposit ? (
             <>
@@ -129,12 +129,12 @@ export function DecisionBar({
       </div>
 
       {sheet && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 sm:items-center" onClick={() => !pending && setSheet(null)}>
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/50 backdrop-blur-sm sm:items-center" onClick={() => !pending && setSheet(null)}>
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="decision-title"
-            className="w-full max-w-lg space-y-4 rounded-t-3xl bg-surface p-5 pb-safe sm:rounded-3xl"
+            className="w-full max-w-lg animate-rise space-y-4 rounded-t-3xl bg-surface p-5 pb-safe shadow-lift sm:rounded-3xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mx-auto h-1.5 w-10 rounded-full bg-slate-200 sm:hidden" />

@@ -21,10 +21,10 @@ export function ShareActions({
   if (layout === "compact") {
     return (
       <div className="flex gap-2">
-        <CopyButton text={url} className="flex-1">
+        <CopyButton text={url} className="min-w-0 flex-1 px-3!">
           <LinkIcon width={18} height={18} /> Copy link
         </CopyButton>
-        <CopyButton text={message} className="flex-1">
+        <CopyButton text={message} className="min-w-0 flex-1 px-3!">
           <ChatIcon width={18} height={18} /> Copy message
         </CopyButton>
       </div>

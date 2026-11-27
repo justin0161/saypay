@@ -86,8 +86,13 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
       <AutoRefresh intervalMs={15_000} />
 
       {/* Business header */}
-      <header className="text-white" style={{ backgroundColor: ws.brand_color }}>
-        <div className="mx-auto max-w-2xl px-4 pt-5 pb-6">
+      <header className="relative overflow-hidden text-white" style={{ backgroundColor: ws.brand_color }}>
+        {/* Soft light + glow over the contractor's brand colour. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(28rem_16rem_at_100%_0%,rgb(255_255_255/0.16),transparent_70%),radial-gradient(24rem_14rem_at_0%_100%,rgb(255_79_154/0.22),transparent_70%)]"
+        />
+        <div className="relative mx-auto max-w-2xl px-4 pt-5 pb-7">
           <div className="flex items-center gap-3">
             <div className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white/15 text-base font-extrabold ring-1 ring-white/20 ring-inset">
               {logoUrl ? (
@@ -112,13 +117,13 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
             )}
           </div>
 
-          <h1 className="mt-5 text-2xl leading-tight font-extrabold tracking-tight break-words sm:text-3xl">{quote.title}</h1>
+          <h1 className="mt-6 text-3xl leading-tight font-extrabold tracking-tight break-words sm:text-4xl">{quote.title}</h1>
           <p className="mt-1 text-white/70">
             For {quote.client_name} · {new Date(quote.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
             {quote.valid_until &&
               ` · ${expired ? "Expired" : "Valid until"} ${new Date(quote.valid_until).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`}
           </p>
-          <p className="mt-3 text-3xl font-extrabold tabular">{formatMoney(quote.total_cents, quote.currency)}</p>
+          <p className="mt-3 font-display text-4xl font-extrabold tracking-tight tabular">{formatMoney(quote.total_cents, quote.currency)}</p>
 
           {walkthrough && (
             <div className="mt-5">
@@ -129,7 +134,7 @@ export default async function ClientQuotePage({ params, searchParams }: PageProp
         </div>
       </header>
 
-      <main className="mx-auto max-w-2xl space-y-4 px-4 py-4">
+      <main className="relative mx-auto -mt-3 max-w-2xl space-y-4 px-4 pb-4">
         {/* State banners */}
         {quote.status === "approved" && (
           <div className="flex gap-3 rounded-card bg-go-soft p-4 text-go-ink ring-1 ring-emerald-200 ring-inset" role="status">

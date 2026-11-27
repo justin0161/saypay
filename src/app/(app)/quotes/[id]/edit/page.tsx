@@ -22,7 +22,9 @@ export default async function EditQuotePage({ params }: PageProps<"/quotes/[id]/
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="mb-1 text-2xl font-extrabold tracking-tight sm:text-3xl">Edit quote</h1>
+      <h1 className="mb-1 text-3xl font-extrabold tracking-tight sm:text-4xl">
+        Edit <span className="text-sunset">quote</span>
+      </h1>
       <p className="mb-5 text-muted">Saving re-sends it — your client&apos;s link stays the same.</p>
       <QuoteBuilder
         mode="edit"

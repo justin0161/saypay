@@ -202,7 +202,7 @@ export function QuoteBuilder({
       </Card>
 
       {/* Voice walkthrough */}
-      <Card className={cn("space-y-4", !hasWalkthrough && "ring-2 ring-hivis")}>
+      <Card className={cn("space-y-4", !hasWalkthrough && "ring-sunset")}>
         <div className="flex items-center justify-between">
           <CardTitle>Voice walkthrough</CardTitle>
           <span className="text-xs font-semibold text-muted">Up to 60s</span>
@@ -223,7 +223,7 @@ export function QuoteBuilder({
         ) : (
           <>
             <p className="flex gap-2 text-sm text-ink-soft">
-              <MicIcon className="shrink-0 text-amber-600" width={18} height={18} />
+              <MicIcon className="shrink-0 text-bubblegum" width={18} height={18} />
               Quotes with a voice note get approved faster. Explain the job like you would on the doorstep.
             </p>
             <VoiceRecorder onSave={saveWalkthrough} prompt="Record walkthrough" />
@@ -303,7 +303,7 @@ export function QuoteBuilder({
               key={q}
               type="button"
               onClick={() => addRow(q)}
-              className="min-h-11 rounded-full px-3.5 text-sm font-semibold text-ink-soft ring-1 ring-line ring-inset hover:bg-canvas"
+              className="min-h-11 rounded-full bg-surface px-3.5 text-sm font-bold text-ink-soft ring-1 ring-line ring-inset transition hover:-translate-y-px hover:text-ink hover:ring-ink/20"
             >
               + {q}
             </button>
@@ -332,7 +332,7 @@ export function QuoteBuilder({
             <input type="checkbox" checked={taxEnabled} onChange={(e) => setTaxEnabled(e.target.checked)} className="peer sr-only" />
             <span
               aria-hidden
-              className={cn("relative h-7 w-12 rounded-full transition", taxEnabled ? "bg-go" : "bg-slate-300")}
+              className={cn("relative h-7 w-12 rounded-full transition", taxEnabled ? "bg-grape" : "bg-slate-300")}
             >
               <span className={cn("absolute top-1 size-5 rounded-full bg-white shadow transition-all", taxEnabled ? "left-6" : "left-1")} />
             </span>
@@ -351,8 +351,8 @@ export function QuoteBuilder({
                   setDepositPercent(p);
                 }}
                 className={cn(
-                  "min-h-11 min-w-16 rounded-xl px-4 text-sm font-bold ring-1 ring-inset",
-                  depositType === "percent" && Number(depositPercent) === Number(p) ? "bg-ink text-white ring-ink" : "ring-line",
+                  "min-h-11 min-w-16 rounded-full px-4 text-sm font-bold ring-1 ring-inset transition",
+                  depositType === "percent" && Number(depositPercent) === Number(p) ? "bg-ink text-white shadow-md ring-ink" : "bg-surface ring-line hover:ring-ink/20",
                 )}
               >
                 {p === "0" ? "None" : `${p}%`}
@@ -362,8 +362,8 @@ export function QuoteBuilder({
               type="button"
               onClick={() => setDepositType("percent")}
               className={cn(
-                "min-h-11 rounded-xl px-4 text-sm font-bold ring-1 ring-inset",
-                depositType === "percent" && !["0", "25", "50"].includes(String(Number(depositPercent))) ? "bg-ink text-white ring-ink" : "ring-line",
+                "min-h-11 rounded-full px-4 text-sm font-bold ring-1 ring-inset transition",
+                depositType === "percent" && !["0", "25", "50"].includes(String(Number(depositPercent))) ? "bg-ink text-white shadow-md ring-ink" : "bg-surface ring-line hover:ring-ink/20",
               )}
             >
               Custom %
@@ -371,7 +371,7 @@ export function QuoteBuilder({
             <button
               type="button"
               onClick={() => setDepositType("fixed")}
-              className={cn("min-h-11 rounded-xl px-4 text-sm font-bold ring-1 ring-inset", depositType === "fixed" ? "bg-ink text-white ring-ink" : "ring-line")}
+              className={cn("min-h-11 rounded-full px-4 text-sm font-bold ring-1 ring-inset transition", depositType === "fixed" ? "bg-ink text-white shadow-md ring-ink" : "bg-surface ring-line hover:ring-ink/20")}
             >
               Fixed amount
             </button>
@@ -444,7 +444,7 @@ export function QuoteBuilder({
       </Card>
 
       {/* Sticky summary */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 pb-safe shadow-float backdrop-blur sm:bottom-0">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-white/85 pb-safe shadow-float backdrop-blur-xl sm:bottom-0">
         <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 pt-3">
           <div className="min-w-0 flex-1">
             <p className="tabular text-xl leading-tight font-extrabold">{formatMoney(totals.total_cents, currency)}</p>

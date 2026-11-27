@@ -21,7 +21,9 @@ export function MessageThread({ messages, viewer }: { messages: ThreadMessage[];
             <div
               className={cn(
                 "max-w-[88%] space-y-2 rounded-2xl px-3.5 py-2.5 sm:max-w-[75%]",
-                mine ? "rounded-br-md bg-ink text-white" : "rounded-bl-md bg-canvas text-ink ring-1 ring-line ring-inset",
+                mine
+                  ? "rounded-br-md bg-[linear-gradient(135deg,#8a6dff,#5b3df5)] text-white shadow-[0_8px_18px_-10px_rgb(91_61_245/0.8)]"
+                  : "rounded-bl-md bg-canvas text-ink ring-1 ring-line ring-inset",
               )}
             >
               {m.audio && (
