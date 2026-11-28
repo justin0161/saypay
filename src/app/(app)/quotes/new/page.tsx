@@ -14,7 +14,7 @@ export default async function NewQuotePage() {
   return (
     <div className="mx-auto max-w-2xl">
       <h1 className="mb-1 text-3xl font-bold sm:text-4xl">New quote</h1>
-      <p className="mb-5 text-muted">Speak it or type it — then send the link.</p>
+      <p className="mb-5 text-muted">Add your prices and a voice note — then send the link.</p>
       <QuoteBuilder
         mode="create"
         draftId={draftId}

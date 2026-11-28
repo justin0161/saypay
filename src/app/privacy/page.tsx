@@ -24,8 +24,7 @@ export default function PrivacyPage() {
       <section>
         <h2>Voice</h2>
         <p>
-          When you use &ldquo;Speak your quote&rdquo;, speech is turned into text by your own browser or phone. SayPay only receives the text you choose to
-          use. Voice notes you record and attach to a quote are stored so your client can play them.
+          Voice notes you record and attach to a quote are stored so your client can play them.
         </p>
       </section>
       <section>

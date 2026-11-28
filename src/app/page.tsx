@@ -5,7 +5,7 @@ import { freeQuoteLimit, isBillingConfigured } from "@/lib/env";
 import { ArrowRightIcon, CardIcon, CheckIcon, LinkIcon, LockIcon, Logo, MicIcon } from "@/components/ui/icons";
 
 const STEPS = [
-  { icon: MicIcon, title: "Say your quote", body: "Tap the mic and describe the job and prices. SayPay fills in the quote and adds your voice note." },
+  { icon: MicIcon, title: "Add a voice note", body: "Type your prices, then record a quick voice note explaining the job in your own words." },
   { icon: LinkIcon, title: "Send one link", body: "Share it by WhatsApp, text or email. Your client opens it straight away — no app, no login." },
   { icon: CardIcon, title: "Get paid", body: "They accept in one tap and pay a deposit or in full, by card or bank transfer." },
 ];
