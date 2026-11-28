@@ -211,10 +211,14 @@ export function parseSpokenQuote(raw: string): VoiceQuoteDraft {
   // 4. Client name: "client is X", "customer X", or "... for X".
   const clientRe = /\b(?:client|customer)(?:'s name)?(?:\s+is|\s+name is|\s*:)?\s+([a-z][a-z'-]*(?:\s+[a-z][a-z'-]*){0,2})/;
   const forRe = /\bfor\s+((?:(?:mrs|mr|ms|miss|dr)\.?\s+)?[a-z][a-z'-]*(?:\s+[a-z][a-z'-]*){0,2})/;
+  // Names are at most two words (plus a title like "Mrs"), so "for sarah okafor combi boiler…"
+  // without punctuation still gives "Sarah Okafor".
   const takeName = (words: string) => {
     const kept: string[] = [];
+    let limit = 2;
     for (const w of words.split(/\s+/)) {
-      if (NAME_STOP.has(w) || /\d/.test(w)) break;
+      if (NAME_STOP.has(w) || /\d/.test(w) || kept.length >= limit) break;
+      if (kept.length === 0 && /^(?:mrs|mr|ms|miss|dr)\.?$/.test(w)) limit = 3;
       kept.push(w);
     }
     return kept.length ? titleCase(kept.join(" ")) : null;

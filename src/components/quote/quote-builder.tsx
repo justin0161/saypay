@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition } from "react";
 import { createQuote, deleteAttachment, requestOwnerUpload, updateQuote } from "@/actions/quotes";
 import { formatDuration } from "@/lib/media";
 import { computeTotals, formatMoney, parseMoneyToCents, type DepositInput } from "@/lib/quote-math";
@@ -129,6 +129,9 @@ export function QuoteBuilder({
     ]);
   };
 
+  // Rows created by voice fill, so speaking again replaces them instead of duplicating.
+  const voiceRowIds = useRef<Set<string>>(new Set());
+
   /** Apply a voice-fill result: only fields that were actually said are set. */
   const applyVoiceDraft = (d: VoiceQuoteDraft) => {
     if (d.title) setTitle(d.title);
@@ -142,8 +145,10 @@ export function QuoteBuilder({
         price: i.unit_price != null && i.unit_price >= 0 ? String(Math.round(i.unit_price * 100) / 100) : "",
       }));
     if (spoken.length) {
-      // Keep rows the user already filled in; replace empty ones.
-      setRows((rs) => [...rs.filter((r) => r.description.trim() || r.price.trim()), ...spoken]);
+      // Keep rows the user typed; replace empty rows and earlier voice-filled rows.
+      const previous = voiceRowIds.current;
+      voiceRowIds.current = new Set(spoken.map((r) => r.id));
+      setRows((rs) => [...rs.filter((r) => !previous.has(r.id) && (r.description.trim() || r.price.trim())), ...spoken]);
     }
     if (d.vat.enabled != null) setTaxEnabled(d.vat.enabled);
     if (d.vat.rate != null && d.vat.rate > 0 && d.vat.rate <= 100) {

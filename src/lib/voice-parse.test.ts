@@ -74,6 +74,18 @@ test("fixed deposit and VAT rate", () => {
   assert.deepEqual(d.payment, { type: "fixed", percent: null, amount: 300 });
 });
 
+test("no punctuation, name runs straight into the job", () => {
+  const d = parseSpokenQuote("boiler swap for sarah okafor combi boiler two thousand one hundred and fifty pounds magnetic filter a hundred and twenty quid");
+  assert.equal(d.client_name, "Sarah Okafor");
+  assert.deepEqual(
+    d.line_items.map((i) => [i.description, i.unit_price]),
+    [
+      ["Combi boiler", 2150],
+      ["Magnetic filter", 120],
+    ],
+  );
+});
+
 test("says nothing useful → nothing invented", () => {
   const d = parseSpokenQuote("um hello testing");
   assert.equal(d.client_name, null);

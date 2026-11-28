@@ -124,8 +124,8 @@ export function DecisionBar({
 
   return (
     <>
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas/90 pb-safe backdrop-blur-xl">
-        <div className="mx-auto max-w-2xl space-y-2 px-4 pt-3">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-white/95 pb-safe shadow-[0_-8px_24px_-16px_rgb(10_26_58/0.25)] backdrop-blur">
+        <div className="mx-auto max-w-xl space-y-2 px-4 pt-3">
           {needsDeposit ? (
             <>
               {bankSent && (
@@ -134,14 +134,14 @@ export function DecisionBar({
                 </p>
               )}
               {(cardAvailable || !bank) && (
-                <Button variant="go" size="lg" className="w-full" onClick={pay} disabled={paying}>
+                <Button size="lg" className="w-full" onClick={pay} disabled={paying}>
                   <CardIcon /> {paying
                     ? "Opening secure checkout…"
                     : `Pay ${due}${payInFull ? "" : " deposit"}${cardAvailable ? " by card" : ""}`}
                 </Button>
               )}
               {bank && (
-                <Button variant={cardAvailable ? "secondary" : "go"} size="lg" className="w-full" onClick={() => setSheet("bank")}>
+                <Button variant={cardAvailable ? "secondary" : "primary"} size="lg" className="w-full" onClick={() => setSheet("bank")}>
                   Pay {cardAvailable ? "" : `${due} `}by bank transfer
                 </Button>
               )}
@@ -153,14 +153,14 @@ export function DecisionBar({
             </p>
           ) : (
             <>
-              <Button variant="go" size="lg" className="w-full" onClick={() => setSheet("approve")}>
-                <CheckIcon /> {depositCents > 0 ? (payInFull ? "Approve & pay" : "Approve & pay deposit") : "Approve quote"}
+              <Button size="lg" className="w-full" onClick={() => setSheet("approve")}>
+                <CheckIcon /> {depositCents > 0 ? (payInFull ? "Accept & pay" : "Accept & pay deposit") : "Accept quote"}
               </Button>
               <div className="flex gap-2">
                 <Button variant="secondary" className="flex-1 whitespace-nowrap" onClick={() => setSheet("request_changes")}>
-                  Request changes
+                  Ask for changes
                 </Button>
-                <Button variant="ghost" className="flex-1 text-stop" onClick={() => setSheet("decline")}>
+                <Button variant="ghost" className="flex-1 text-muted" onClick={() => setSheet("decline")}>
                   Decline
                 </Button>
               </div>
@@ -218,7 +218,7 @@ export function DecisionBar({
                   <Button variant="ghost" size="lg" onClick={() => setSheet(null)} disabled={notifying}>
                     Close
                   </Button>
-                  <Button variant="go" size="lg" className="flex-1" onClick={sentBankTransfer} disabled={notifying}>
+                  <Button size="lg" className="flex-1" onClick={sentBankTransfer} disabled={notifying}>
                     <CheckIcon /> {notifying ? "Letting them know…" : "I've sent the payment"}
                   </Button>
                 </div>
@@ -226,7 +226,7 @@ export function DecisionBar({
             ) : (
             <>
             <h2 id="decision-title" className="text-3xl leading-none font-bold">
-              {sheet === "approve" ? "Approve this quote" : sheet === "request_changes" ? "Request changes" : "Decline this quote"}
+              {sheet === "approve" ? "Accept this quote" : sheet === "request_changes" ? "Ask for changes" : "Decline this quote"}
             </h2>
 
             {sheet === "approve" && (
@@ -248,13 +248,13 @@ export function DecisionBar({
                 )}
                 <p className="flex gap-2 pt-1 text-sm text-muted">
                   <ShieldIcon width={18} height={18} className="shrink-0 text-go" />
-                  Your approval is time-stamped and the price is locked. {businessName} can&apos;t change it afterwards.
+                  Your acceptance is time-stamped and the price is locked. {businessName} can&apos;t change it afterwards.
                 </p>
               </div>
             )}
 
             <label className="block space-y-1.5">
-              <span className="text-sm font-semibold">{sheet === "approve" ? "Type your full name to sign" : "Your name"}</span>
+              <span className="text-sm font-semibold">{sheet === "approve" ? "Your full name" : "Your name"}</span>
               <input
                 className={inputClass}
                 value={name}
@@ -295,7 +295,7 @@ export function DecisionBar({
                 Cancel
               </Button>
               <Button
-                variant={sheet === "decline" ? "danger" : sheet === "approve" ? "go" : "primary"}
+                variant={sheet === "decline" ? "danger" : "primary"}
                 size="lg"
                 className="flex-1"
                 onClick={submit}
@@ -304,7 +304,7 @@ export function DecisionBar({
                 {pending
                   ? "Sending…"
                   : sheet === "approve"
-                    ? `Approve ${formatMoney(totalCents, currency)}`
+                    ? `Accept ${formatMoney(totalCents, currency)}`
                     : sheet === "request_changes"
                       ? "Send request"
                       : "Decline quote"}
