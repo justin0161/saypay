@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LiveDemo } from "@/components/demo/live-demo";
 import { ButtonLink } from "@/components/ui/button";
+import { freeQuoteLimit, isBillingConfigured } from "@/lib/env";
 import { ArrowRightIcon, CardIcon, CheckIcon, LinkIcon, LockIcon, Logo, MicIcon } from "@/components/ui/icons";
 
 const STEPS = [
@@ -18,6 +19,27 @@ function Tick() {
 }
 
 export default function LandingPage() {
+  // Only advertise a paid plan when SayPay Pro billing is actually switched on.
+  const billing = isBillingConfigured();
+  const limit = freeQuoteLimit();
+  const freeLine = billing ? `Free for your first ${limit} quotes` : "Free while we launch";
+  const plans = billing
+    ? [
+        { name: "Starter", price: "Free", per: "", note: `Your first ${limit} quotes`, items: ["Voice quotes", "Card and bank transfer", "Deposit or full payment"], cta: "Get started", featured: false },
+        { name: "Pro", price: "£19", per: "/month", note: "Unlimited quotes", items: ["Everything in Starter", "Unlimited quotes", "Cancel any time"], cta: "Go Pro", featured: true },
+      ]
+    : [
+        {
+          name: "Launch offer",
+          price: "Free",
+          per: "",
+          note: "Unlimited quotes while we launch",
+          items: ["Voice quotes and voice notes", "Card and bank transfer", "Deposit or full payment", "No card needed to sign up"],
+          cta: "Get started free",
+          featured: true,
+        },
+      ];
+
   return (
     <div className="overflow-x-clip bg-surface">
       {/* Nav */}
@@ -62,7 +84,7 @@ export default function LandingPage() {
               </ButtonLink>
             </div>
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-soft">
-              {["Free for your first 5 quotes", "No app for clients", "Card payments by Stripe"].map((t) => (
+              {[freeLine, "No app for clients", "Card payments by Stripe"].map((t) => (
                 <li key={t} className="flex items-center gap-2">
                   <Tick /> {t}
                 </li>
@@ -153,13 +175,10 @@ export default function LandingPage() {
         <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
           <div className="text-center">
             <h2 className="text-3xl font-bold sm:text-[2.75rem] sm:leading-[1.1]">Simple pricing.</h2>
-            <p className="mt-3 text-lg text-ink-soft">Start free. Upgrade when you need more.</p>
+            <p className="mt-3 text-lg text-ink-soft">{billing ? "Start free. Upgrade when you need more." : "Free for everyone during our launch. Card fees are Stripe\u2019s standard rates."}</p>
           </div>
-          <div className="mx-auto mt-12 grid max-w-3xl gap-4 md:grid-cols-2">
-            {[
-              { name: "Starter", price: "Free", per: "", note: "Your first 5 quotes", items: ["Voice quotes", "Card and bank transfer", "Deposit or full payment"], cta: "Get started", featured: false },
-              { name: "Pro", price: "£19", per: "/month", note: "Unlimited quotes", items: ["Everything in Starter", "Unlimited quotes", "Cancel any time"], cta: "Go Pro", featured: true },
-            ].map((plan) => (
+          <div className={`mx-auto mt-12 grid gap-4 ${plans.length > 1 ? "max-w-3xl md:grid-cols-2" : "max-w-md"}`}>
+            {plans.map((plan) => (
               <div
                 key={plan.name}
                 className={`flex flex-col rounded-2xl bg-surface p-8 ring-inset ${plan.featured ? "shadow-lift ring-2 ring-hivis" : "ring-1 ring-line"}`}
@@ -190,7 +209,7 @@ export default function LandingPage() {
       <section className="px-4 pb-20 sm:px-6">
         <div className="mx-auto max-w-6xl rounded-3xl bg-hivis px-6 py-16 text-center text-white sm:py-20">
           <h2 className="mx-auto max-w-2xl text-3xl font-bold sm:text-5xl sm:leading-[1.08]">Send your first quote today.</h2>
-          <p className="mx-auto mt-4 max-w-md text-lg text-white/80">Free for your first 5 quotes. No card needed.</p>
+          <p className="mx-auto mt-4 max-w-md text-lg text-white/80">{billing ? `Free for your first ${limit} quotes.` : "Free while we launch."} No card needed.</p>
           <ButtonLink href="/login?mode=signup" variant="inverse" size="lg" className="mt-8">
             Get started free <ArrowRightIcon width={18} height={18} />
           </ButtonLink>
@@ -200,9 +219,11 @@ export default function LandingPage() {
       <footer className="border-t border-line">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-10 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <Logo />
-          <div className="flex gap-6">
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
             <a href="#how" className="hover:text-ink">How it works</a>
             <a href="#pricing" className="hover:text-ink">Pricing</a>
+            <Link href="/privacy" className="hover:text-ink">Privacy</Link>
+            <Link href="/terms" className="hover:text-ink">Terms</Link>
             <Link href="/login" className="hover:text-ink">Log in</Link>
           </div>
           <p>© {new Date().getFullYear()} SayPay</p>

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(publicEnv.siteUrl),
   title: { default: "SayPay — Win more quotes with a voice note", template: "%s · SayPay" },
   description:
-    "SayPay helps tradespeople and service businesses send quotes with a voice-note walkthrough and site photos, get approvals in one tap, and collect deposits faster.",
+    "Send quotes with a voice note. Clients accept in one tap and pay a deposit or in full, by card or bank transfer. Built for tradespeople.",
   applicationName: "SayPay",
   manifest: "/manifest.json",
   appleWebApp: { capable: true, title: "SayPay", statusBarStyle: "default" },
@@ -20,11 +20,13 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "SayPay — win more quotes with a voice note",
-    description: "Send a quote with a 60-second voice note. Get it approved and the deposit paid — from your van.",
-    url: "https://saypay.co",
+    description: "Send a quote with a voice note. Clients accept in one tap and pay a deposit — by card or bank transfer.",
+    locale: "en_GB",
+    url: "/",
     siteName: "SayPay",
     type: "website",
   },
+  twitter: { card: "summary_large_image" },
   formatDetection: { telephone: false },
 };
 

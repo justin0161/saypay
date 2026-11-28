@@ -1,7 +1,7 @@
 {
   "name": "SayPay — Quotes with a voice note",
   "short_name": "SayPay",
-  "description": "Send quotes with a voice note, get approvals in one tap, and collect deposits faster.",
+  "description": "Send quotes with a voice note, get accepted in one tap, and collect deposits faster.",
   "id": "/dashboard",
   "start_url": "/dashboard?source=pwa",
   "scope": "/",

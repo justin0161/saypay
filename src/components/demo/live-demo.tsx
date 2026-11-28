@@ -204,7 +204,7 @@ export function LiveDemo() {
     if (sheet === "approve") {
       setStatus("approved");
       setDecidedAt(now());
-      push("client", `✅ Approved the quote${note.trim() ? ` — ${note.trim()}` : ""}`);
+      push("client", `✅ Accepted the quote${note.trim() ? ` — ${note.trim()}` : ""}`);
       contractorReplies("Brilliant, thanks Priya! You're booked in for Tuesday 8am.");
     } else if (sheet === "changes") {
       setStatus("changes_requested");
@@ -275,7 +275,7 @@ export function LiveDemo() {
       <div className="mx-auto w-full max-w-[400px] rounded-[2.75rem] bg-night p-2.5 shadow-device">
         <div className="relative h-[640px] overflow-hidden rounded-[2.2rem] bg-canvas text-ink">
           <div className="flex h-7 items-center justify-center bg-surface text-[10px] font-semibold text-muted">
-            {view === "client" ? "🔒 saypay.co/q/x8Kf… · no login needed" : "saypay.co/dashboard"}
+            {view === "client" ? "🔒 Private quote link · no login needed" : "Your SayPay dashboard"}
           </div>
 
           {view === "client" ? (
@@ -307,7 +307,7 @@ export function LiveDemo() {
                   >
                     {status === "approved" ? <LockIcon className="mt-0.5 shrink-0" /> : <XIcon className="mt-0.5 shrink-0" />}
                     <div className="text-sm">
-                      <p className="font-semibold">{status === "approved" ? `Approved by ${name}` : "Quote declined"}</p>
+                      <p className="font-semibold">{status === "approved" ? `Accepted by ${name}` : "Quote declined"}</p>
                       {decidedAt && <p className="opacity-80">{formatDateTime(new Date(decidedAt).toISOString())} · terms locked</p>}
                     </div>
                   </div>
@@ -404,11 +404,11 @@ export function LiveDemo() {
                 ) : (
                   <div className="space-y-2">
                     <Button variant="go" size="lg" className="w-full" onClick={() => setSheet("approve")}>
-                      <CheckIcon /> Approve & pay deposit
+                      <CheckIcon /> Accept & pay deposit
                     </Button>
                     <div className="flex gap-2">
                       <Button variant="secondary" className="flex-1 whitespace-nowrap" onClick={() => setSheet("changes")}>
-                        <PencilIcon width={16} height={16} /> Request changes
+                        <PencilIcon width={16} height={16} /> Ask for changes
                       </Button>
                       <Button variant="ghost" className="flex-1 text-stop" onClick={() => setSheet("decline")}>
                         Decline
@@ -424,12 +424,12 @@ export function LiveDemo() {
                   <div className="w-full space-y-3 rounded-t-3xl bg-surface p-4" onClick={(e) => e.stopPropagation()}>
                     <div className="mx-auto h-1.5 w-10 rounded-full bg-raised" />
                     <h4 className="text-lg font-semibold">
-                      {sheet === "approve" ? "Approve this quote" : sheet === "changes" ? "Request changes" : "Decline quote"}
+                      {sheet === "approve" ? "Accept this quote" : sheet === "changes" ? "Request changes" : "Decline quote"}
                     </h4>
                     {sheet === "approve" && (
                       <p className="flex items-start gap-2 text-sm text-muted">
                         <ShieldIcon className="mt-0.5 shrink-0 text-go" width={18} height={18} />
-                        Your approval is time-stamped and the price is locked — no surprises.
+                        Your acceptance is time-stamped and the price is locked — no surprises.
                       </p>
                     )}
                     <input
@@ -456,7 +456,7 @@ export function LiveDemo() {
                       className="w-full"
                       onClick={decide}
                     >
-                      {sheet === "approve" ? `Approve ${formatMoney(TOTAL)}` : sheet === "changes" ? "Send to Dan" : "Decline quote"}
+                      {sheet === "approve" ? `Accept ${formatMoney(TOTAL)}` : sheet === "changes" ? "Send to Dan" : "Decline quote"}
                     </Button>
                   </div>
                 </div>
@@ -518,7 +518,7 @@ function ContractorDemo({
   const stats = [
     { label: "Open quotes", value: approved || status === "declined" ? 3 : 4 },
     { label: "Awaiting reply", value: messages.at(-1)?.from === "client" ? 2 : 1 },
-    { label: "Approved", value: approved ? 8 : 7 },
+    { label: "Accepted", value: approved ? 8 : 7 },
     { label: "Deposits secured", value: formatMoney(184000 + (deposit === "paid" ? DEPOSIT : 0)) },
   ];
   return (
@@ -547,7 +547,7 @@ function ContractorDemo({
         </div>
         {decidedAt && (
           <p className="mt-2 text-xs text-muted">
-            {approved ? "Approved" : "Declined"} {formatDateTime(new Date(decidedAt).toISOString())}
+            {approved ? "Accepted" : "Declined"} {formatDateTime(new Date(decidedAt).toISOString())}
           </p>
         )}
         <div className="mt-3 border-t border-line pt-3">

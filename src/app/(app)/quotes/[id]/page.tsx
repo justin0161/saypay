@@ -104,14 +104,14 @@ export default async function QuoteDetailPage({ params, searchParams }: PageProp
           >
             <p className="flex items-center gap-2 font-semibold">
               {quote.status === "approved" && <LockIcon width={18} height={18} />}
-              {quote.status === "approved" ? "Approved" : quote.status === "declined" ? "Declined" : "Changes requested"} by{" "}
+              {quote.status === "approved" ? "Accepted" : quote.status === "declined" ? "Declined" : "Changes requested"} by{" "}
               {quote.decided_by_name}
             </p>
             {quote.decided_at && <p className="text-sm opacity-80">{formatDateTime(quote.decided_at)}</p>}
             {quote.decision_note && <p className="mt-2 whitespace-pre-wrap">“{quote.decision_note}”</p>}
             {quote.status === "approved" && (
               <p className="mt-2 text-xs opacity-70">
-                Terms locked at approval{meta?.ip ? ` · IP ${meta.ip}` : ""}
+                Price locked when accepted{meta?.ip ? ` · IP ${meta.ip}` : ""}
                 {meta?.user_agent ? ` · ${meta.user_agent.slice(0, 60)}…` : ""}
               </p>
             )}

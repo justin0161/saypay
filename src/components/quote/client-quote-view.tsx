@@ -172,7 +172,7 @@ export function ClientQuoteView(props: ClientQuoteViewProps) {
           </p>
           <p>
             Sent with{" "}
-            <a href="https://saypay-cyan.vercel.app" className="font-semibold text-ink-soft hover:underline">
+            <a href="/" className="font-semibold text-ink-soft hover:underline">
               SayPay
             </a>
           </p>

@@ -243,7 +243,7 @@ export function DecisionBar({
                 )}
                 {depositCents > 0 && (cardAvailable || bankOffered) && (
                   <p className="text-sm text-ink-soft">
-                    Pay by {[cardAvailable && "card", bankOffered && "bank transfer"].filter(Boolean).join(" or ")} after approving.
+                    Pay by {[cardAvailable && "card", bankOffered && "bank transfer"].filter(Boolean).join(" or ")} next.
                   </p>
                 )}
                 <p className="flex gap-2 pt-1 text-sm text-muted">

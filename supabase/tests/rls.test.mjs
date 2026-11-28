@@ -140,6 +140,19 @@ await expectOk("owner adds contractor attachment", "authenticated", A,
 await expectErr("owner cannot add client attachment", "authenticated", A,
   `insert into public.quote_attachments (quote_id, uploaded_by, kind, storage_path, mime_type, size_bytes) values ('${qA}', 'client', 'image', 'p', 'image/png', 10)`, /row-level security/);
 
+console.log("\nHardening (004)");
+await expectErr("signed-out visitor cannot call ownership helper", "anon", null, `select public.owns_quote('${qA}')`, /permission denied/);
+await expectErr("nobody can call the new-user trigger function directly", "authenticated", A, `select public.handle_new_user()`, /permission denied/);
+await expectOk("owner check still works for signed-in users", "authenticated", A, `select public.owns_quote('${qA}') as ok`, (r) => r.rows[0].ok === true);
+// Sign-up runs as a non-superuser that has no EXECUTE on handle_new_user: the trigger must still fire.
+{
+  const C = "33333333-3333-3333-3333-333333333333";
+  await db.exec(`grant insert on auth.users to service_role`);
+  await db.exec(`begin; set local role service_role; insert into auth.users (id, email) values ('${C}', 'c@x.co'); commit;`);
+  const n = (await db.query(`select count(*)::int as n from public.workspaces where owner_id = '${C}'`)).rows[0].n;
+  n === 1 ? (pass++, console.log("  ✓ new sign-ups still get a workspace (trigger still fires)")) : (fail++, console.log("  ✗ new sign-ups still get a workspace → got", n));
+}
+
 console.log("\nStorage policies");
 await expectOk("owner uploads into own workspace folder", "authenticated", A,
   `insert into storage.objects (bucket_id, name) values ('quote-media', '${wsA}/${qA}/x.jpg') returning id`, (r) => r.rows.length === 1);

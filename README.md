@@ -104,7 +104,7 @@ Requires Node 20.9+.
 
 1. Create a project at [supabase.com](https://supabase.com).
 2. Run the migration using **either** method:
-   - **SQL editor**: paste the contents of `supabase/migrations/001_init.sql` and run it, then do the same with `002_bank_transfer.sql` and `003_quote_payment_methods.sql`.
+   - **SQL editor**: paste the contents of `supabase/migrations/001_init.sql` and run it, then do the same with `002_bank_transfer.sql`, `003_quote_payment_methods.sql` and `004_hardening.sql`.
    - **CLI**:
      ```bash
      npx supabase link --project-ref YOUR_REF

@@ -1,12 +1,12 @@
 import "server-only";
 import Stripe from "stripe";
-import { requireServerEnv } from "./env";
+import { publicEnv, requireServerEnv } from "./env";
 
 let stripe: Stripe | undefined;
 
 export function getStripe(): Stripe {
   stripe ??= new Stripe(requireServerEnv("STRIPE_SECRET_KEY"), {
-    appInfo: { name: "SayPay", url: "https://saypay.co" },
+    appInfo: { name: "SayPay", url: publicEnv.siteUrl },
     typescript: true,
   });
   return stripe;

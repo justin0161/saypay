@@ -15,7 +15,7 @@ const FILTERS = [
   { key: "all", label: "All" },
   { key: "open", label: "Open" },
   { key: "awaiting", label: "Awaiting reply" },
-  { key: "approved", label: "Approved" },
+  { key: "approved", label: "Accepted" },
   { key: "deposit", label: "Deposit secured" },
   { key: "declined", label: "Declined" },
 ] as const;

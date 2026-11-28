@@ -9,7 +9,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "node --test --experimental-strip-types src/lib/*.test.ts",
-    "test:db": "node supabase/tests/rls.test.mjs supabase/migrations/001_init.sql supabase/migrations/002_bank_transfer.sql supabase/migrations/003_quote_payment_methods.sql"
+    "test:db": "node supabase/tests/rls.test.mjs supabase/migrations/001_init.sql supabase/migrations/002_bank_transfer.sql supabase/migrations/003_quote_payment_methods.sql supabase/migrations/004_hardening.sql"
   },
   "engines": {
     "node": ">=20.9"
