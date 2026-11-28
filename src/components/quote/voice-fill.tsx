@@ -50,6 +50,27 @@ const ERRORS: Record<string, string> = {
   "language-not-supported": "Voice isn't available for English (UK) on this phone. Use your keyboard's microphone below.",
 };
 
+/** True when SayPay was opened from an iPhone home-screen icon rather than Safari. */
+function isHomeScreenApp(): boolean {
+  const nav = navigator as Navigator & { standalone?: boolean };
+  return nav.standalone === true || window.matchMedia?.("(display-mode: standalone)").matches === true;
+}
+
+type Blocked = "mic" | "speech" | "home-screen";
+
+/** After a "not allowed" error, work out whether the microphone itself is off or the phone's speech service is. */
+async function diagnoseBlocked(code: string): Promise<Blocked> {
+  if (isHomeScreenApp()) return "home-screen";
+  try {
+    const status = await navigator.permissions?.query({ name: "microphone" as PermissionName });
+    if (status?.state === "denied") return "mic";
+    if (status?.state === "granted") return "speech";
+  } catch {
+    /* older browsers can't say */
+  }
+  return code === "service-not-allowed" ? "speech" : "mic";
+}
+
 const nothingFound = (d: VoiceQuoteDraft) => !d.title && !d.client_name && d.line_items.length === 0 && d.vat.enabled == null && !d.payment.type;
 
 /**
@@ -64,7 +85,7 @@ export function VoiceFill({ onFill }: { onFill: (draft: VoiceQuoteDraft) => void
   const [text, setText] = useState(""); // everything heard so far (editable)
   const [live, setLive] = useState("");
   const [message, setMessage] = useState<string | null>(null);
-  const [blocked, setBlocked] = useState(false);
+  const [blocked, setBlocked] = useState<Blocked | null>(null);
   const [filled, setFilled] = useState(false);
   const [showBox, setShowBox] = useState(false);
   const [iPhone, setIPhone] = useState(false);
@@ -97,7 +118,7 @@ export function VoiceFill({ onFill }: { onFill: (draft: VoiceQuoteDraft) => void
     const Ctor = getRecognition();
     if (!Ctor) return;
     setMessage(null);
-    setBlocked(false);
+    setBlocked(null);
     setFilled(false);
     errorRef.current = null;
     baseRef.current = text.trim();
@@ -123,7 +144,10 @@ export function VoiceFill({ onFill }: { onFill: (draft: VoiceQuoteDraft) => void
     };
     rec.onerror = (e) => {
       errorRef.current = e.error;
-      if (e.error === "not-allowed" || e.error === "service-not-allowed") setBlocked(true);
+      if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+        setShowBox(true); // typing / keyboard mic always works as a way out
+        void diagnoseBlocked(e.error).then(setBlocked);
+      }
       else if (e.error !== "aborted") setMessage(ERRORS[e.error] ?? `Voice stopped (${e.error}). Try again, or use your keyboard's microphone.`);
     };
     rec.onend = () => {
@@ -192,18 +216,43 @@ export function VoiceFill({ onFill }: { onFill: (draft: VoiceQuoteDraft) => void
 
       {blocked && (
         <div className="mt-3 rounded-xl bg-stop-soft p-3 text-sm" role="alert">
-          <p className="font-semibold text-stop">The microphone is turned off for SayPay.</p>
-          {iPhone ? (
-            <p className="mt-1 text-ink-soft">
-              Tap <span className="font-semibold text-ink">aA</span> in the address bar → <span className="font-semibold text-ink">Website Settings</span> →
-              set Microphone to <span className="font-semibold text-ink">Allow</span>. Also check iPhone Settings → Safari → Microphone. Then tap Speak again.
-            </p>
+          {blocked === "home-screen" ? (
+            <>
+              <p className="font-semibold text-stop">Live voice doesn&apos;t work in the home-screen app.</p>
+              <p className="mt-1 text-ink-soft">
+                {iPhone ? "Apple only allows it in Safari. " : ""}Open SayPay in {iPhone ? "Safari" : "your browser"} to speak your quote — or tap the box
+                below and use the <span className="font-semibold text-ink">microphone on your keyboard</span>.
+              </p>
+            </>
+          ) : blocked === "speech" ? (
+            <>
+              <p className="font-semibold text-stop">Your phone&apos;s dictation is switched off.</p>
+              {iPhone ? (
+                <p className="mt-1 text-ink-soft">
+                  Go to iPhone <span className="font-semibold text-ink">Settings → General → Keyboard</span> and turn on{" "}
+                  <span className="font-semibold text-ink">Enable Dictation</span>. Then come back and tap Speak again.
+                </p>
+              ) : (
+                <p className="mt-1 text-ink-soft">Turn on voice typing / speech services in your phone&apos;s settings, then tap Speak again.</p>
+              )}
+            </>
           ) : (
-            <p className="mt-1 text-ink-soft">
-              Tap the icon left of the web address → <span className="font-semibold text-ink">Permissions</span> → turn Microphone on, then tap Speak
-              again.
-            </p>
+            <>
+              <p className="font-semibold text-stop">The microphone is turned off for SayPay.</p>
+              {iPhone ? (
+                <p className="mt-1 text-ink-soft">
+                  Tap <span className="font-semibold text-ink">aA</span> in the address bar → <span className="font-semibold text-ink">Website Settings</span> →
+                  Microphone → <span className="font-semibold text-ink">Allow</span>. Then tap Speak again.
+                </p>
+              ) : (
+                <p className="mt-1 text-ink-soft">
+                  Tap the icon left of the web address → <span className="font-semibold text-ink">Permissions</span> → turn Microphone on, then tap Speak
+                  again.
+                </p>
+              )}
+            </>
           )}
+          <p className="mt-2 text-ink-soft">Or just type it in the box below.</p>
         </div>
       )}
 
